@@ -48,17 +48,26 @@ export default function SimulationRunner({ simulation, scenario }: Props) {
   const [tab, setTab] = useState<Tab>('scenario')
   const [ending, setEnding] = useState(false)
   const [newEventAlert, setNewEventAlert] = useState(false)
-  const intervalRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const elapsedSecondsRef = useRef(0)
   const elapsedSeconds = useElapsedSeconds(simulation.started_at)
+
+  // Garder une ref à jour sans déclencher de re-render dans l'effet
+  elapsedSecondsRef.current = elapsedSeconds
 
   const totalMissionSeconds = MISSION_DURATION_MINUTES * 60
   const progressPercent = Math.min((elapsedSeconds / totalMissionSeconds) * 100, 100)
   const remainingSeconds = Math.max(totalMissionSeconds - elapsedSeconds, 0)
 
   useEffect(() => {
+    // Délai aléatoire entre 4 et 9 minutes
+    function randomDelay() {
+      return (4 + Math.random() * 5) * 60 * 1000
+    }
+
     function scheduleNext() {
-      const delay = 600000 + Math.random() * 300000
-      intervalRef.current = setTimeout(async () => {
+      if (timerRef.current) clearTimeout(timerRef.current)
+      timerRef.current = setTimeout(async () => {
         const eventType = EVENT_TYPES[Math.floor(Math.random() * EVENT_TYPES.length)]
         const res = await fetch('/api/simulation/event', {
           method: 'POST',
@@ -66,7 +75,7 @@ export default function SimulationRunner({ simulation, scenario }: Props) {
           body: JSON.stringify({
             simulationId: simulation.id,
             eventType,
-            elapsedMinutes: Math.floor(elapsedSeconds / 60),
+            elapsedMinutes: Math.floor(elapsedSecondsRef.current / 60),
           }),
         })
         if (res.ok) {
@@ -78,19 +87,22 @@ export default function SimulationRunner({ simulation, scenario }: Props) {
             content: data.content,
             injected_at: new Date().toISOString(),
           }
-          setEvents(prev => [...prev, newEvent])
+          // 50% de chance de remplacer la dernière alerte, 50% d'en ajouter une nouvelle
+          const shouldReplace = Math.random() < 0.5
+          setEvents(prev => shouldReplace && prev.length > 0 ? [...prev.slice(0, -1), newEvent] : [...prev, newEvent])
           setNewEventAlert(true)
-          setTimeout(() => setNewEventAlert(false), 5000)
+          setTimeout(() => setNewEventAlert(false), 8000)
         }
         scheduleNext()
-      }, delay)
+      }, randomDelay())
     }
 
     scheduleNext()
     return () => {
-      if (intervalRef.current) clearTimeout(intervalRef.current)
+      if (timerRef.current) clearTimeout(timerRef.current)
     }
-  }, [simulation.id, simulation.started_at, elapsedSeconds])
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [simulation.id])
 
   async function handleEnd() {
     setEnding(true)
