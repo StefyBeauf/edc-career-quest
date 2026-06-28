@@ -1,34 +1,12 @@
-import { createClient } from '@/lib/supabase/server'
-import type { Group, Simulation, Mission } from '@/types'
-import UniverseHeader from '@/components/shared/UniverseHeader'
-import SimulationLauncher from './SimulationLauncher'
-import SimulationRunner from './SimulationRunner'
+import type { Group } from '@/types'
+import HorizonShell from './HorizonShell'
 
 interface Props {
   group: Group
 }
 
 export default async function Univers3Page({ group }: Props) {
-  const supabase = await createClient()
-
-  const { data: missionData } = await supabase
-    .from('missions')
-    .select('*')
-    .eq('universe', 'mission-horizon')
-    .eq('number', group.active_mission)
-    .single()
-
-  const mission = missionData as Mission | null
-
-  const { data: simData } = await supabase
-    .from('simulations')
-    .select('*')
-    .eq('group_id', group.id)
-    .eq('mission_id', mission?.id ?? '')
-    .eq('status', 'active')
-    .maybeSingle()
-
-  const activeSimulation = simData as Simulation | null
+  const missionNumber = group.active_mission
 
   return (
     <div
@@ -157,18 +135,8 @@ export default async function Univers3Page({ group }: Props) {
         </p>
       </div>
 
-      <main className="relative z-10 px-4 pb-16">
-        {!activeSimulation ? (
-          <SimulationLauncher
-            group={group}
-            mission={mission}
-          />
-        ) : (
-          <SimulationRunner
-            simulation={activeSimulation}
-            scenario={activeSimulation.scenario_json}
-          />
-        )}
+      <main className="relative z-10">
+        <HorizonShell group={group} missionNumber={missionNumber} />
       </main>
     </div>
   )

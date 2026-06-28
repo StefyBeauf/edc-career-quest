@@ -20,7 +20,7 @@ const structureCV = [
   {
     section: 'En-tête',
     couleur: 'sky',
-    contenu: 'Prénom NOM (grand), Titre du poste visé, Téléphone, Email pro, LinkedIn, Ville',
+    contenu: 'Prénom NOM (grand), Titre du poste visé, Téléphone, Email pro, LinkedIn, Mobilité : Île-de-France',
     piege: 'Éviter la photo sauf si demandée, et jamais de date de naissance.',
   },
   {

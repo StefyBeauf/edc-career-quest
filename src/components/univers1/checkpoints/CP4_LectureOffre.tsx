@@ -3,93 +3,93 @@
 import { useState } from 'react'
 
 const offre = {
-  poste: 'Assistant(e) Commercial(e) — Stage 6 mois',
-  entreprise: 'TechSolutions SAS',
-  localisation: 'Lyon (69) — Présentiel',
+  poste: 'Conseiller(ère) de Vente — Stage 6 mois',
+  entreprise: 'Maison Dorcel & Fils',
+  localisation: 'Paris 8ème (75) — Présentiel',
   duree: '6 mois à partir de janvier 2025',
-  remuneration: 'Gratification légale + tickets restaurant',
-  presentation: `TechSolutions SAS est une PME innovante spécialisée dans les solutions logicielles B2B pour les PME industrielles. Fondée en 2012, elle compte aujourd'hui 85 collaborateurs et réalise un chiffre d'affaires de 12 M€. Dans le cadre de notre développement commercial, nous recherchons un(e) assistant(e) commercial(e) dynamique et organisé(e).`,
+  remuneration: 'Gratification légale + tickets restaurant + 50 % pass Navigo',
+  presentation: `Maison Dorcel & Fils est une enseigne parisienne spécialisée dans la vente de prêt-à-porter masculin haut de gamme, implantée depuis 1987 dans le 8ème arrondissement de Paris. Forte d'une clientèle fidèle de professionnels et de particuliers exigeants, nous recherchons un(e) conseiller(ère) de vente passionné(e) pour renforcer notre équipe pendant la saison printemps-été.`,
   missions: [
-    'Soutenir l\'équipe commerciale dans le suivi des prospects et clients (CRM Salesforce)',
-    'Préparer les devis, offres commerciales et présentations clients',
-    'Réaliser une veille concurrentielle mensuelle',
-    'Participer aux rendez-vous clients en accompagnement des commerciaux',
-    'Mettre à jour les tableaux de bord commerciaux (Excel)',
-    'Contribuer à l\'animation des réseaux sociaux professionnels (LinkedIn)',
+    'Accueillir et conseiller la clientèle en boutique avec une approche personnalisée',
+    'Identifier les besoins du client et proposer des articles adaptés (techniques de vente conseil)',
+    'Réaliser les opérations d\'encaissement et de fidélisation (carte client, suivi CRM)',
+    'Participer à la mise en valeur des collections et au merchandising visuel',
+    'Gérer les stocks, les réassorts et les retours en lien avec le responsable de rayon',
+    'Contribuer à l\'atteinte des objectifs de chiffre d\'affaires et de satisfaction client',
   ],
   profil: [
-    'Étudiant(e) en Bac+2/3 en commerce, gestion ou marketing',
-    'Maîtrise du Pack Office (Excel niveau intermédiaire requis)',
-    'Première expérience en stage ou alternance appréciée',
-    'Anglais niveau B1 minimum (contacts clients occasionnels)',
-    'Autonome, rigoureux(se), avec un bon sens du relationnel',
-    'Connaissance d\'un CRM (Salesforce ou HubSpot) est un plus',
+    'Étudiant(e) en Bac+2/3 en commerce, vente ou management de la distribution',
+    'Première expérience en vente ou en contact client appréciée',
+    'Excellente présentation et aisance relationnelle indispensables',
+    'Goût pour la mode masculine et les environnements haut de gamme',
+    'Autonome, souriant(e), avec un vrai sens du service client',
+    'Anglais conversationnel apprécié (clientèle internationale ponctuelle)',
   ],
 }
 
 const annotations = [
   {
-    cible: 'solutions logicielles B2B',
-    titre: 'Modèle BtoB identifié',
-    explication: 'L\'entreprise vend à d\'autres entreprises. En stage, vos clients seront des professionnels, pas des particuliers. Adaptez votre posture en conséquence.',
-    categorie: 'contexte',
-  },
-  {
-    cible: 'CRM Salesforce',
-    titre: 'Compétence technique nommée',
-    explication: 'Salesforce est un logiciel de gestion de la relation client. Même si vous ne le maîtrisez pas, le mentionner dans votre lettre montre que vous avez bien lu l\'offre.',
-    categorie: 'competence',
-  },
-  {
-    cible: 'veille concurrentielle mensuelle',
-    titre: 'Mission récurrente',
-    explication: 'La veille est une mission autonome et régulière. Elle montre que vous devrez être pro-actif(ve) sans qu\'on vous rappelle de le faire.',
+    cible: 'approche personnalisée',
+    titre: 'La vente conseil, c\'est quoi ?',
+    explication: 'En vente haut de gamme, on ne vend pas un produit : on répond à un besoin. "Approche personnalisée" signifie que vous devez écouter avant de proposer. Préparez des exemples de situations où vous avez adapté votre discours à un interlocuteur.',
     categorie: 'mission',
   },
   {
-    cible: 'Excel niveau intermédiaire requis',
-    titre: 'Compétence impérative',
-    explication: '"Requis" signifie que c\'est non-négociable. Si vous ne maîtrisez pas Excel, formez-vous avant l\'entretien. C\'est un filtre d\'entrée.',
+    cible: 'fidélisation (carte client, suivi CRM)',
+    titre: 'CRM mentionné dans une offre de vente',
+    explication: 'Même en boutique physique, les enseignes utilisent des outils de gestion client (CRM). Ici, c\'est pour enregistrer les achats, les préférences, et relancer les clients. Si vous connaissez un outil CRM, citez-le dans votre candidature.',
     categorie: 'competence',
   },
   {
-    cible: 'Anglais niveau B1 minimum',
-    titre: 'Niveau de langue précis',
-    explication: 'B1 = niveau intermédiaire (peut tenir une conversation simple). Soyez honnête sur votre niveau dans le CV et en entretien. "Contacts occasionnels" = vous ne serez pas immergé(e) en permanence.',
-    categorie: 'competence',
+    cible: 'merchandising visuel',
+    titre: 'Compétence souvent sous-estimée',
+    explication: 'Le merchandising, c\'est la mise en scène des produits en boutique. Cela inclut : disposition des articles, facing, signalétique, vitrine. C\'est une vraie compétence à valoriser si vous avez déjà fait de la vente.',
+    categorie: 'mission',
   },
   {
-    cible: 'Autonome, rigoureux(se)',
-    titre: 'Qualités attendues',
-    explication: 'En PME (85 personnes), vous aurez moins d\'encadrement qu\'en grande entreprise. L\'autonomie n\'est pas un bonus : c\'est une exigence. Préparez des exemples concrets d\'autonomie pour l\'entretien.',
+    cible: 'Excellente présentation',
+    titre: 'Critère impératif en haut de gamme',
+    explication: '"Excellente présentation" en contexte haut de gamme signifie : tenue soignée, langage soutenu, posture professionnelle. C\'est un filtre d\'entrée non négociable. Votre tenue en entretien sera observée avec la même attention que vos compétences.',
     categorie: 'profil',
+  },
+  {
+    cible: 'objectifs de chiffre d\'affaires',
+    titre: 'Vous aurez des objectifs chiffrés',
+    explication: 'Même en stage, vous serez associé(e) aux objectifs de vente. Cela signifie : connaître le panier moyen, savoir proposer des articles complémentaires (vente additionnelle), et participer aux rituels d\'équipe (brief du matin, résultats du jour).',
+    categorie: 'mission',
+  },
+  {
+    cible: 'Anglais conversationnel apprécié',
+    titre: '"Apprécié" ≠ obligatoire',
+    explication: '"Apprécié" signifie que c\'est un plus, pas un filtre. Une clientèle internationale ponctuelle = vous aurez peut-être 2 ou 3 clients étrangers par semaine. Un niveau A2/B1 suffit pour les échanges basiques. Soyez honnête sur votre niveau.',
+    categorie: 'competence',
   },
 ]
 
 const erreursFrequentes = [
   {
-    titre: 'Candidater sans lire l\'offre en entier',
-    explication: 'Beaucoup d\'étudiants postulent sur le titre seul. Or l\'offre contient des indices essentiels : secteur, outils, niveau de langue attendu. Une candidature mal ciblée se voit immédiatement.',
+    titre: 'Postuler sans connaître l\'enseigne',
+    explication: 'Pour un poste en boutique haut de gamme, ne pas connaître la marque se voit immédiatement. Avant l\'entretien : visitez la boutique, regardez les collections, comprenez le positionnement prix. Le recruteur vous demandera forcément "Pourquoi nous ?".',
   },
   {
-    titre: 'Ignorer le profil de l\'entreprise',
-    explication: 'Ici : PME de 85 personnes en B2B. Ce contexte change tout : polyvalence attendue, moins de process formalisés, contact direct avec la direction possible. Mentionnez-le dans votre lettre.',
+    titre: 'Parler uniquement de soi, pas du client',
+    explication: 'En vente, le recruteur attend que vous parliez du client. "J\'aime les gens" ne suffit pas. Préparez des exemples précis : une situation où vous avez identifié un besoin, proposé une solution adaptée, géré une insatisfaction.',
   },
   {
-    titre: 'Confondre "apprécié" et "requis"',
-    explication: '"Première expérience appréciée" signifie que ce n\'est pas bloquant. "Excel niveau intermédiaire requis" est un filtre. Ne postulez pas si vous ne maîtrisez vraiment pas Excel, ou formez-vous d\'abord.',
+    titre: 'Ignorer la notion de vente additionnelle',
+    explication: 'Une des compétences clés du conseiller de vente est de proposer des produits complémentaires (ceinture + chaussures avec une veste). Si vous ne mentionnez jamais ce concept en entretien, le recruteur doutera de votre connaissance du métier.',
   },
   {
-    titre: 'Ne pas mentionner les outils cités',
-    explication: 'Salesforce, HubSpot, LinkedIn sont nommés. Si vous les connaissez, dites-le dans le CV et la lettre. Si vous ne les connaissez pas, dites que vous êtes prêt(e) à les apprendre rapidement.',
+    titre: 'Sous-estimer l\'importance de la présentation',
+    explication: 'En boutique de prêt-à-porter haut de gamme, votre apparence est un signal professionnel. Venez en entretien avec une tenue soignée et sobre. Évitez les accessoires trop voyants ou les tenues décontractées.',
   },
   {
-    titre: 'Envoyer le même CV pour toutes les offres',
-    explication: 'Le mot-clé "CRM", le secteur "B2B industriel" et la taille "PME" doivent se retrouver dans votre candidature. Un CV générique est reconnu en 5 secondes par un recruteur expérimenté.',
+    titre: 'Oublier de mentionner les horaires décalés',
+    explication: 'Un stage en boutique implique : travail le samedi, parfois les dimanches en période de fêtes, horaires en rotation. Si vous n\'êtes pas disponible ces jours-là, dites-le honnêtement avant de signer. C\'est un critère bloquant.',
   },
 ]
 
-const motsCles = ['B2B', 'Salesforce', 'CRM', 'Excel', 'veille concurrentielle', 'LinkedIn', 'autonome', 'rigoureux', 'devis', 'tableau de bord', 'PME', 'commercial']
+const motsCles = ['conseiller de vente', 'haut de gamme', 'CRM', 'merchandising', 'fidélisation', 'vente additionnelle', 'chiffre d\'affaires', 'présentation', 'service client', 'Paris', 'prêt-à-porter']
 
 const categorieStyle: Record<string, string> = {
   contexte: 'bg-blue-500/20 text-blue-200 border-blue-400/30',
