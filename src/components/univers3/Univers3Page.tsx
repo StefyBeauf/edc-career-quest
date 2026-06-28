@@ -33,8 +33,19 @@ export default async function Univers3Page({ group }: Props) {
   return (
     <div
       className="min-h-screen text-white relative overflow-hidden"
-      style={{ background: 'linear-gradient(180deg, #050a1a 0%, #0a1628 60%, #0d1f3c 100%)' }}
+      style={{ background: '#050a1a' }}
     >
+      {/* Photo de fond */}
+      <div className="absolute inset-0" style={{
+        backgroundImage: 'url("/hero-univers3.jpg")',
+        backgroundSize: 'cover',
+        backgroundPosition: 'center 20%',
+      }} />
+      {/* Voile spatial sombre */}
+      <div className="absolute inset-0" style={{
+        background: 'linear-gradient(170deg, rgba(2,5,15,0.5) 0%, rgba(5,10,25,0.65) 35%, rgba(3,7,18,0.88) 65%, #050a1a 90%)',
+      }} />
+
       {/* Étoiles CSS */}
       <div className="absolute inset-0 pointer-events-none" aria-hidden="true">
         {[
