@@ -53,6 +53,12 @@ function shuffle<T>(arr: T[]): T[] {
   return [...arr].sort(() => Math.random() - 0.5)
 }
 
+const badgeCouleur: Record<string, { bg: string; text: string; border: string; label: string }> = {
+  BtoB: { bg: '#1a2744', text: '#93c5fd', border: 'rgba(59,130,246,0.3)', label: 'PROFESSIONNEL' },
+  BtoC: { bg: '#1a2744', text: '#67e8f9', border: 'rgba(6,182,212,0.3)', label: 'GRAND PUBLIC' },
+  BtoBtoC: { bg: '#1a2744', text: '#c4b5fd', border: 'rgba(139,92,246,0.3)', label: 'HYBRIDE' },
+}
+
 export default function CP1_MondeEntreprise() {
   const [exemplesAffiches, setExemplesAffiches] = useState<Entreprise[]>([])
   const [conseil, setConseil] = useState('')
@@ -97,139 +103,270 @@ export default function CP1_MondeEntreprise() {
     setScore(0)
   }
 
-  const badgeCouleur: Record<string, string> = {
-    BtoB: 'bg-blue-500/20 text-blue-200 border-blue-500/30',
-    BtoC: 'bg-sky-500/20 text-sky-200 border-sky-500/30',
-    BtoBtoC: 'bg-indigo-500/20 text-indigo-200 border-indigo-500/30',
-  }
-
   return (
-    <div className="space-y-8">
-      <div className="rounded-2xl bg-white/5 border border-white/10 p-6">
-        <h2 className="text-xl font-bold text-white mb-1">Le monde de l&apos;entreprise</h2>
-        <p className="text-sky-200 text-sm">Comprends la différence BtoB / BtoC avant ton stage</p>
+    <div className="space-y-6">
+
+      {/* Header section */}
+      <div
+        className="rounded-2xl p-6"
+        style={{
+          background: 'rgba(255,255,255,0.04)',
+          border: '1px solid rgba(201,168,76,0.2)',
+        }}
+      >
+        <p className="text-xs font-bold uppercase tracking-widest mb-1" style={{ color: '#c9a84c' }}>
+          Checkpoint 1 — Monde de l&apos;entreprise
+        </p>
+        <h2 className="text-xl font-black text-white uppercase tracking-wide">
+          Comprendre le terrain
+        </h2>
+        <p className="text-sm mt-1" style={{ color: 'rgba(245,240,232,0.5)' }}>
+          BtoB, BtoC, BtoBtoC — les modèles qui comptent avant ton stage
+        </p>
       </div>
 
-      <div className="rounded-2xl bg-gradient-to-r from-sky-500/10 to-indigo-500/10 border border-sky-400/20 p-5">
-        <p className="text-xs font-semibold text-sky-300 uppercase tracking-widest mb-3">Mini-cours</p>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div className="rounded-xl bg-blue-900/40 border border-blue-500/20 p-4">
-            <span className="text-xs font-bold text-blue-300 uppercase tracking-wider">BtoB</span>
-            <p className="text-white font-semibold mt-1">Business to Business</p>
-            <p className="text-sky-200 text-sm mt-2">Une entreprise vend à une autre entreprise. Cycle de vente long, plusieurs décisionnaires, relation sur la durée.</p>
-            <p className="text-blue-300 text-xs mt-2 italic">Ex : Airbus vend des avions à Air France</p>
-          </div>
-          <div className="rounded-xl bg-sky-900/40 border border-sky-500/20 p-4">
-            <span className="text-xs font-bold text-sky-300 uppercase tracking-wider">BtoC</span>
-            <p className="text-white font-semibold mt-1">Business to Consumer</p>
-            <p className="text-sky-200 text-sm mt-2">Une entreprise vend directement au grand public. Volume élevé, décision rapide, marketing de masse.</p>
-            <p className="text-sky-300 text-xs mt-2 italic">Ex : Zara vend ses vêtements en boutique</p>
-          </div>
-          <div className="rounded-xl bg-indigo-900/40 border border-indigo-500/20 p-4">
-            <span className="text-xs font-bold text-indigo-300 uppercase tracking-wider">BtoBtoC</span>
-            <p className="text-white font-semibold mt-1">Les deux à la fois</p>
-            <p className="text-sky-200 text-sm mt-2">L&apos;entreprise a des clients professionnels ET des particuliers. Stratégies différentes selon la cible.</p>
-            <p className="text-indigo-300 text-xs mt-2 italic">Ex : Orange — forfaits pro + particuliers</p>
-          </div>
+      {/* Mini-cours — style tampons de passeport */}
+      <div>
+        <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: '#c9a84c' }}>
+          Tampons de passeport
+        </p>
+        <div className="grid grid-cols-1 gap-3">
+          {[
+            {
+              type: 'BtoB',
+              full: 'Business to Business',
+              desc: 'Une entreprise vend à une autre entreprise. Cycle de vente long, plusieurs décisionnaires, relation sur la durée.',
+              ex: 'Airbus vend des avions à Air France',
+              color: '#3b82f6',
+            },
+            {
+              type: 'BtoC',
+              full: 'Business to Consumer',
+              desc: 'Une entreprise vend directement au grand public. Volume élevé, décision rapide, marketing de masse.',
+              ex: 'Zara vend ses vêtements en boutique',
+              color: '#06b6d4',
+            },
+            {
+              type: 'BtoBtoC',
+              full: 'Les deux à la fois',
+              desc: 'L\'entreprise a des clients professionnels ET des particuliers. Stratégies différentes selon la cible.',
+              ex: 'Orange — forfaits pro + particuliers',
+              color: '#8b5cf6',
+            },
+          ].map((item) => (
+            <div
+              key={item.type}
+              className="rounded-xl p-4 flex gap-4 items-start"
+              style={{
+                background: 'rgba(255,255,255,0.04)',
+                border: `1px solid rgba(${item.color === '#3b82f6' ? '59,130,246' : item.color === '#06b6d4' ? '6,182,212' : '139,92,246'},0.25)`,
+              }}
+            >
+              {/* Tampon circulaire */}
+              <div
+                className="w-14 h-14 rounded-full flex-shrink-0 flex flex-col items-center justify-center"
+                style={{
+                  border: `2px solid ${item.color}`,
+                  opacity: 0.9,
+                }}
+              >
+                <span className="text-xs font-black" style={{ color: item.color }}>
+                  {item.type}
+                </span>
+              </div>
+              <div className="flex-1">
+                <p className="font-bold text-white text-sm">{item.full}</p>
+                <p className="text-sm mt-1" style={{ color: 'rgba(245,240,232,0.6)' }}>{item.desc}</p>
+                <p className="text-xs mt-2 italic" style={{ color: item.color }}>Ex : {item.ex}</p>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
 
+      {/* Exemples d'entreprises */}
       <div>
-        <div className="flex items-center justify-between mb-4">
-          <p className="text-white font-semibold">Exemples d&apos;entreprises</p>
+        <div className="flex items-center justify-between mb-3 flex-wrap gap-2">
+          <p className="text-sm font-bold uppercase tracking-wider text-white">Destinations connues</p>
           <div className="flex gap-2 flex-wrap">
             {(['tous', 'BtoB', 'BtoC', 'BtoBtoC'] as const).map(f => (
               <button
                 key={f}
                 onClick={() => setFiltre(f)}
-                className={`px-3 py-1 rounded-full text-xs font-medium transition-all ${
-                  filtre === f
-                    ? 'bg-sky-500 text-white'
-                    : 'bg-white/10 text-sky-200 hover:bg-white/20'
-                }`}
+                className="px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wider transition-all"
+                style={{
+                  backgroundColor: filtre === f ? '#c9a84c' : 'rgba(255,255,255,0.06)',
+                  color: filtre === f ? '#0f1e3d' : 'rgba(201,168,76,0.7)',
+                  border: `1px solid ${filtre === f ? '#c9a84c' : 'rgba(201,168,76,0.2)'}`,
+                }}
               >
                 {f === 'tous' ? 'Tous' : f}
               </button>
             ))}
           </div>
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          {entreprisesFiltrees.map(e => (
-            <div key={e.nom} className="rounded-xl bg-white/5 border border-white/10 p-4 flex flex-col gap-1">
-              <div className="flex items-center justify-between">
-                <span className="text-white font-semibold">{e.nom}</span>
-                <span className={`text-xs px-2 py-0.5 rounded-full border font-medium ${badgeCouleur[e.type]}`}>{e.type}</span>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+          {entreprisesFiltrees.map(e => {
+            const style = badgeCouleur[e.type]
+            return (
+              <div
+                key={e.nom}
+                className="rounded-xl p-4 flex flex-col gap-1"
+                style={{
+                  background: 'rgba(255,255,255,0.04)',
+                  border: `1px solid ${style.border}`,
+                }}
+              >
+                <div className="flex items-center justify-between gap-2">
+                  <span className="text-white font-bold text-sm">{e.nom}</span>
+                  <span
+                    className="text-xs px-2 py-0.5 rounded-full font-bold uppercase tracking-wider flex-shrink-0"
+                    style={{ backgroundColor: style.bg, color: style.text, border: `1px solid ${style.border}` }}
+                  >
+                    {e.type}
+                  </span>
+                </div>
+                <span className="text-xs font-semibold uppercase tracking-wider" style={{ color: '#c9a84c', opacity: 0.7 }}>
+                  {e.secteur}
+                </span>
+                <p className="text-sm" style={{ color: 'rgba(245,240,232,0.6)' }}>{e.exemple}</p>
               </div>
-              <span className="text-sky-400 text-xs">{e.secteur}</span>
-              <p className="text-sky-200 text-sm">{e.exemple}</p>
-            </div>
-          ))}
+            )
+          })}
         </div>
         {entreprisesFiltrees.length === 0 && (
-          <p className="text-center text-sky-300 py-4">Aucune entreprise dans cette catégorie pour cet échantillon.</p>
+          <p className="text-center py-4" style={{ color: 'rgba(245,240,232,0.4)' }}>Aucune entreprise dans cette catégorie.</p>
         )}
       </div>
 
-      <div className="rounded-2xl bg-white/5 border border-white/10 p-6">
-        <p className="text-xs font-semibold text-sky-300 uppercase tracking-widest mb-4">Quiz — Sauras-tu identifier le modèle ?</p>
-        {!quizTermine ? (
-          <div>
-            <p className="text-xs text-sky-400 mb-2">Question {quizIndex + 1} / {quizQuestions.length}</p>
-            <p className="text-white font-medium mb-4">{question.question}</p>
-            <div className="space-y-2">
-              {question.options.map((opt, i) => {
-                let style = 'bg-white/5 border-white/10 text-sky-100 hover:bg-white/10'
-                if (reponseChoisie !== null) {
-                  if (i === question.reponse) style = 'bg-green-500/20 border-green-400/40 text-green-200'
-                  else if (i === reponseChoisie) style = 'bg-red-500/20 border-red-400/40 text-red-200'
-                }
-                return (
-                  <button
-                    key={i}
-                    onClick={() => choisirReponse(i)}
-                    className={`w-full text-left rounded-xl border px-4 py-3 text-sm transition-all ${style}`}
-                  >
-                    {opt}
-                  </button>
-                )
-              })}
-            </div>
-            {reponseChoisie !== null && (
-              <div className="mt-4 rounded-xl bg-sky-900/40 border border-sky-400/20 p-4">
-                <p className="text-sky-200 text-sm">{question.explication}</p>
-                <button
-                  onClick={questionSuivante}
-                  className="mt-3 px-4 py-2 rounded-lg bg-sky-500 hover:bg-sky-400 text-white text-sm font-medium transition-colors"
-                >
-                  {quizIndex < quizQuestions.length - 1 ? 'Question suivante' : 'Voir mon score'}
-                </button>
+      {/* Quiz — style destinations à choisir */}
+      <div
+        className="rounded-2xl overflow-hidden"
+        style={{
+          background: 'rgba(255,255,255,0.04)',
+          border: '1px solid rgba(201,168,76,0.2)',
+        }}
+      >
+        <div
+          className="px-5 py-3"
+          style={{ backgroundColor: 'rgba(201,168,76,0.1)', borderBottom: '1px solid rgba(201,168,76,0.15)' }}
+        >
+          <p className="text-xs font-bold uppercase tracking-widest" style={{ color: '#c9a84c' }}>
+            Quiz — Choisissez votre destination
+          </p>
+        </div>
+        <div className="p-5">
+          {!quizTermine ? (
+            <div>
+              <p className="text-xs mb-3" style={{ color: 'rgba(245,240,232,0.4)' }}>
+                Question {quizIndex + 1} / {quizQuestions.length}
+              </p>
+              <p className="text-white font-semibold mb-4 leading-relaxed">{question.question}</p>
+              <div className="space-y-2">
+                {question.options.map((opt, i) => {
+                  let bg = 'rgba(255,255,255,0.05)'
+                  let border = 'rgba(255,255,255,0.1)'
+                  let color = 'rgba(245,240,232,0.8)'
+                  if (reponseChoisie !== null) {
+                    if (i === question.reponse) {
+                      bg = 'rgba(52,211,153,0.1)'
+                      border = 'rgba(52,211,153,0.4)'
+                      color = '#6ee7b7'
+                    } else if (i === reponseChoisie) {
+                      bg = 'rgba(248,113,113,0.1)'
+                      border = 'rgba(248,113,113,0.4)'
+                      color = '#fca5a5'
+                    } else {
+                      color = 'rgba(245,240,232,0.3)'
+                    }
+                  }
+                  return (
+                    <button
+                      key={i}
+                      onClick={() => choisirReponse(i)}
+                      className="w-full text-left rounded-xl px-4 py-3 text-sm transition-all flex items-center gap-3"
+                      style={{ backgroundColor: bg, border: `1px solid ${border}`, color }}
+                    >
+                      <span
+                        className="flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold"
+                        style={{ backgroundColor: 'rgba(201,168,76,0.15)', color: '#c9a84c' }}
+                      >
+                        {String.fromCharCode(65 + i)}
+                      </span>
+                      {opt}
+                    </button>
+                  )
+                })}
               </div>
-            )}
-          </div>
-        ) : (
-          <div className="text-center space-y-4">
-            <p className="text-3xl font-bold text-white">{score} / {quizQuestions.length}</p>
-            <p className="text-sky-200">
-              {score === quizQuestions.length
-                ? 'Parfait ! Tu maîtrises les bases BtoB / BtoC.'
-                : score >= 3
-                ? 'Bien joué ! Quelques points à revoir.'
-                : 'Relis le mini-cours et retente ta chance.'}
-            </p>
-            <button
-              onClick={relancerQuiz}
-              className="px-5 py-2 rounded-lg bg-sky-500 hover:bg-sky-400 text-white text-sm font-medium transition-colors"
-            >
-              Rejouer
-            </button>
-          </div>
-        )}
+              {reponseChoisie !== null && (
+                <div
+                  className="mt-4 rounded-xl p-4"
+                  style={{ backgroundColor: 'rgba(15,30,61,0.6)', border: '1px solid rgba(201,168,76,0.2)' }}
+                >
+                  <p className="text-sm leading-relaxed" style={{ color: 'rgba(245,240,232,0.8)' }}>
+                    {question.explication}
+                  </p>
+                  <button
+                    onClick={questionSuivante}
+                    className="mt-3 px-5 py-2 rounded-xl font-bold text-sm uppercase tracking-wider transition-all"
+                    style={{ backgroundColor: '#c9a84c', color: '#0f1e3d' }}
+                  >
+                    {quizIndex < quizQuestions.length - 1 ? 'Question suivante →' : 'Voir mon score'}
+                  </button>
+                </div>
+              )}
+            </div>
+          ) : (
+            <div className="text-center space-y-4 py-4">
+              <p
+                className="text-5xl font-black"
+                style={{ color: '#e8c96a' }}
+              >
+                {score}<span className="text-2xl" style={{ color: 'rgba(232,201,106,0.5)' }}>/{quizQuestions.length}</span>
+              </p>
+              <p className="font-semibold" style={{ color: 'rgba(245,240,232,0.7)' }}>
+                {score === quizQuestions.length
+                  ? 'Parfait ! Tu maîtrises les bases BtoB / BtoC.'
+                  : score >= 3
+                  ? 'Bien joué ! Quelques points à revoir.'
+                  : 'Relis le mini-cours et retente ta chance.'}
+              </p>
+              <button
+                onClick={relancerQuiz}
+                className="px-6 py-2 rounded-xl font-bold text-sm uppercase tracking-wider transition-all"
+                style={{ backgroundColor: '#c9a84c', color: '#0f1e3d' }}
+              >
+                Rejouer
+              </button>
+            </div>
+          )}
+        </div>
       </div>
 
-      <div className="rounded-2xl bg-gradient-to-r from-indigo-500/10 to-sky-500/10 border border-indigo-400/20 p-5">
-        <p className="text-xs font-semibold text-indigo-300 uppercase tracking-widest mb-2">Conseil du jour</p>
-        <p className="text-sky-100">{conseil}</p>
+      {/* Conseil du commandant de bord */}
+      <div
+        className="rounded-2xl overflow-hidden"
+        style={{ border: '1px solid rgba(201,168,76,0.25)' }}
+      >
+        <div
+          className="px-5 py-3 flex items-center gap-2"
+          style={{ backgroundColor: '#0f1e3d' }}
+        >
+          <span style={{ color: '#c9a84c' }}>✈</span>
+          <p className="text-xs font-bold uppercase tracking-widest" style={{ color: '#c9a84c' }}>
+            Message du commandant de bord
+          </p>
+        </div>
+        <div
+          className="px-5 py-4"
+          style={{ background: 'rgba(15,30,61,0.6)' }}
+        >
+          <p className="text-sm leading-relaxed italic" style={{ color: 'rgba(245,240,232,0.8)' }}>
+            &ldquo;{conseil}&rdquo;
+          </p>
+        </div>
       </div>
+
     </div>
   )
 }

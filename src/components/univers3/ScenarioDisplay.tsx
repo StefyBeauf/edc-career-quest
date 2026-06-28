@@ -7,22 +7,56 @@ interface Props {
   scenario: SimulationScenario
 }
 
-function Accordion({ title, icon, children }: { title: string; icon: string; children: React.ReactNode }) {
+function ClassifiedPanel({
+  title,
+  icon,
+  children,
+  accentColor = 'rgba(100, 160, 255, 0.4)',
+}: {
+  title: string
+  icon: string
+  children: React.ReactNode
+  accentColor?: string
+}) {
   const [open, setOpen] = useState(false)
   return (
-    <div className="border border-violet-700/30 rounded-xl overflow-hidden">
+    <div
+      className="rounded-sm overflow-hidden"
+      style={{
+        background: 'rgba(5, 10, 26, 0.85)',
+        border: `1px solid ${accentColor}`,
+      }}
+    >
       <button
         onClick={() => setOpen(v => !v)}
-        className="w-full flex items-center justify-between px-4 py-3 bg-violet-950/40 hover:bg-violet-900/40 transition-colors"
+        className="w-full flex items-center justify-between px-4 py-3 transition-all duration-200"
+        style={{
+          background: open ? 'rgba(13, 31, 60, 0.9)' : 'rgba(10, 22, 40, 0.6)',
+        }}
       >
-        <span className="flex items-center gap-2 text-white font-medium text-sm">
+        <span
+          className="flex items-center gap-2 text-sm font-bold uppercase tracking-wider"
+          style={{ color: '#e8f0ff', fontFamily: 'monospace' }}
+        >
           <span>{icon}</span>
           {title}
         </span>
-        <span className="text-violet-400 text-xs">{open ? '▲' : '▼'}</span>
+        <span
+          className="text-xs font-black"
+          style={{ color: accentColor, fontFamily: 'monospace' }}
+        >
+          {open ? '[ — ]' : '[ + ]'}
+        </span>
       </button>
       {open && (
-        <div className="px-4 py-3 bg-violet-950/20 text-white/80 text-sm leading-relaxed">
+        <div
+          className="px-4 py-4 text-sm leading-relaxed"
+          style={{
+            color: 'rgba(232, 240, 255, 0.8)',
+            background: 'rgba(5, 10, 26, 0.6)',
+            backgroundImage: 'repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(255,255,255,0.01) 3px, rgba(255,255,255,0.01) 4px)',
+          }}
+        >
           {children}
         </div>
       )}
@@ -33,50 +67,150 @@ function Accordion({ title, icon, children }: { title: string; icon: string; chi
 export default function ScenarioDisplay({ scenario }: Props) {
   return (
     <div className="space-y-4">
-      <div className="bg-violet-950/60 border border-fuchsia-700/40 rounded-2xl p-5 shadow-lg">
-        <div className="flex items-center gap-2 mb-3">
-          <span className="text-xs font-bold uppercase tracking-widest text-fuchsia-400">Dossier confidentiel</span>
-          <div className="flex-1 h-px bg-fuchsia-700/30" />
-          <span className="text-xs text-fuchsia-400">classé secret</span>
-        </div>
-
-        <h2 className="text-xl font-black text-white mb-1">{scenario.title}</h2>
-        <p className="text-violet-200 text-sm mb-4">{scenario.context}</p>
-
-        <div className="grid grid-cols-2 gap-3 mb-4">
-          <div className="bg-violet-900/40 rounded-xl p-3">
-            <p className="text-violet-400 text-xs uppercase tracking-wider mb-1">Entreprise</p>
-            <p className="text-white font-semibold text-sm">{scenario.company}</p>
+      {/* Dossier principal — style CONFIDENTIEL */}
+      <div
+        className="rounded-sm p-5 space-y-4"
+        style={{
+          background: 'rgba(5, 10, 26, 0.92)',
+          border: '1px solid rgba(100, 160, 255, 0.4)',
+          boxShadow: '0 0 40px rgba(100, 160, 255, 0.1)',
+          backgroundImage: 'repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(255,255,255,0.008) 3px, rgba(255,255,255,0.008) 4px)',
+        }}
+      >
+        {/* Tampon CONFIDENTIEL */}
+        <div className="flex items-center justify-between">
+          <div
+            className="px-3 py-1 text-xs font-black uppercase tracking-widest border rotate-[-2deg]"
+            style={{
+              borderColor: '#dc2626',
+              color: '#dc2626',
+              background: 'rgba(220, 38, 38, 0.08)',
+              fontFamily: 'monospace',
+              letterSpacing: '0.3em',
+            }}
+          >
+            CONFIDENTIEL
           </div>
-          <div className="bg-violet-900/40 rounded-xl p-3">
-            <p className="text-violet-400 text-xs uppercase tracking-wider mb-1">Votre rôle</p>
-            <p className="text-white font-semibold text-sm">{scenario.role}</p>
+          <div
+            className="text-xs"
+            style={{ color: 'rgba(232, 240, 255, 0.3)', fontFamily: 'monospace' }}
+          >
+            DOSSIER #{String(Math.floor(Math.random() * 9000) + 1000).padStart(4, '0')}
           </div>
         </div>
 
-        <div className="bg-violet-900/30 border border-violet-600/30 rounded-xl p-4 mb-4">
-          <p className="text-violet-300 text-xs uppercase tracking-wider mb-1">Objectif</p>
-          <p className="text-white text-sm">{scenario.objective}</p>
+        {/* Ligne lumineuse */}
+        <div style={{ height: '1px', background: 'linear-gradient(90deg, transparent, rgba(100,160,255,0.5), transparent)' }} />
+
+        <h2
+          className="text-xl font-black uppercase"
+          style={{ color: '#e8f0ff', fontFamily: 'monospace', textShadow: '0 0 15px rgba(200,220,255,0.3)' }}
+        >
+          {scenario.title}
+        </h2>
+        <p className="text-sm leading-relaxed" style={{ color: 'rgba(232, 240, 255, 0.7)' }}>
+          {scenario.context}
+        </p>
+
+        {/* Modules entreprise / rôle */}
+        <div className="grid grid-cols-2 gap-3">
+          <div
+            className="rounded-sm p-3"
+            style={{
+              background: 'rgba(13, 31, 60, 0.8)',
+              border: '1px solid rgba(100, 160, 255, 0.2)',
+            }}
+          >
+            <p
+              className="text-xs uppercase tracking-widest mb-1"
+              style={{ color: 'rgba(232, 240, 255, 0.4)', fontFamily: 'monospace' }}
+            >
+              ENTREPRISE
+            </p>
+            <p className="font-bold text-sm" style={{ color: '#e8f0ff' }}>{scenario.company}</p>
+          </div>
+          <div
+            className="rounded-sm p-3"
+            style={{
+              background: 'rgba(13, 31, 60, 0.8)',
+              border: '1px solid rgba(100, 160, 255, 0.2)',
+            }}
+          >
+            <p
+              className="text-xs uppercase tracking-widest mb-1"
+              style={{ color: 'rgba(232, 240, 255, 0.4)', fontFamily: 'monospace' }}
+            >
+              VOTRE RÔLE
+            </p>
+            <p className="font-bold text-sm" style={{ color: '#e8f0ff' }}>{scenario.role}</p>
+          </div>
         </div>
 
-        <div className="mb-4">
-          <p className="text-violet-300 text-xs uppercase tracking-wider mb-2">Livrables attendus</p>
-          <ul className="space-y-1">
+        {/* Objectif */}
+        <div
+          className="rounded-sm p-4"
+          style={{
+            background: 'rgba(13, 31, 60, 0.6)',
+            border: '1px solid rgba(201, 168, 76, 0.3)',
+          }}
+        >
+          <p
+            className="text-xs uppercase tracking-widest mb-2"
+            style={{ color: '#c9a84c', fontFamily: 'monospace' }}
+          >
+            OBJECTIF DE MISSION
+          </p>
+          <p className="text-sm" style={{ color: 'rgba(232, 240, 255, 0.85)' }}>{scenario.objective}</p>
+        </div>
+
+        {/* Livrables */}
+        <div>
+          <p
+            className="text-xs uppercase tracking-widest mb-3"
+            style={{ color: 'rgba(232, 240, 255, 0.4)', fontFamily: 'monospace' }}
+          >
+            LIVRABLES ATTENDUS
+          </p>
+          <ul className="space-y-2">
             {scenario.deliverables.map((d, i) => (
-              <li key={i} className="flex items-start gap-2 text-sm text-white/80">
-                <span className="text-fuchsia-400 mt-0.5">→</span>
+              <li
+                key={i}
+                className="flex items-start gap-3 text-sm"
+                style={{ color: 'rgba(232, 240, 255, 0.8)' }}
+              >
+                <span
+                  style={{
+                    color: '#c9a84c',
+                    fontFamily: 'monospace',
+                    fontSize: '10px',
+                    marginTop: '3px',
+                    minWidth: '20px',
+                  }}
+                >
+                  [{String(i + 1).padStart(2, '0')}]
+                </span>
                 {d}
               </li>
             ))}
           </ul>
         </div>
 
-        <div className="mb-4">
-          <p className="text-violet-300 text-xs uppercase tracking-wider mb-2">Contraintes</p>
-          <ul className="space-y-1">
+        {/* Contraintes */}
+        <div>
+          <p
+            className="text-xs uppercase tracking-widest mb-3"
+            style={{ color: 'rgba(232, 240, 255, 0.4)', fontFamily: 'monospace' }}
+          >
+            CONTRAINTES OPÉRATIONNELLES
+          </p>
+          <ul className="space-y-2">
             {scenario.constraints.map((c, i) => (
-              <li key={i} className="flex items-start gap-2 text-sm text-amber-200/80">
-                <span className="text-amber-400 mt-0.5">⚠</span>
+              <li
+                key={i}
+                className="flex items-start gap-3 text-sm"
+                style={{ color: 'rgba(232, 200, 130, 0.85)' }}
+              >
+                <span style={{ color: '#e8a020', marginTop: '2px' }}>!</span>
                 {c}
               </li>
             ))}
@@ -84,22 +218,73 @@ export default function ScenarioDisplay({ scenario }: Props) {
         </div>
       </div>
 
+      {/* Personnages — fiches d'identité */}
       <div className="space-y-2">
-        <p className="text-violet-300 text-xs uppercase tracking-wider">Personnages clés</p>
+        <p
+          className="text-xs uppercase tracking-widest px-1"
+          style={{ color: 'rgba(232, 240, 255, 0.4)', fontFamily: 'monospace' }}
+        >
+          PERSONNEL IMPLIQUÉ
+        </p>
         {scenario.characters.map((char, i) => (
-          <Accordion key={i} title={`${char.name} — ${char.role}`} icon="👤">
-            <p><span className="text-violet-300">Trait principal : </span>{char.personality}</p>
-          </Accordion>
+          <ClassifiedPanel
+            key={i}
+            title={`${char.name} — ${char.role}`}
+            icon="[ID]"
+            accentColor="rgba(100, 160, 255, 0.35)"
+          >
+            <div className="flex gap-4">
+              <div
+                className="flex-shrink-0 w-12 h-12 rounded-sm flex items-center justify-center text-lg"
+                style={{
+                  background: 'rgba(13, 31, 60, 0.8)',
+                  border: '1px solid rgba(100, 160, 255, 0.3)',
+                }}
+              >
+                {char.name?.[0] ?? '?'}
+              </div>
+              <div className="flex-1">
+                <p
+                  className="text-xs uppercase tracking-widest mb-1"
+                  style={{ color: 'rgba(232, 240, 255, 0.4)', fontFamily: 'monospace' }}
+                >
+                  PROFIL COMPORTEMENTAL
+                </p>
+                <p>{char.personality}</p>
+              </div>
+            </div>
+          </ClassifiedPanel>
         ))}
       </div>
 
+      {/* Documents classifiés */}
       <div className="space-y-2">
-        <p className="text-violet-300 text-xs uppercase tracking-wider">Documents disponibles</p>
+        <p
+          className="text-xs uppercase tracking-widest px-1"
+          style={{ color: 'rgba(232, 240, 255, 0.4)', fontFamily: 'monospace' }}
+        >
+          DOCUMENTS CLASSIFIÉS
+        </p>
         {scenario.documents.map((doc, i) => (
-          <Accordion key={i} title={doc.name} icon="📄">
-            <p className="text-violet-300 mb-2 text-xs">{doc.description}</p>
-            <pre className="whitespace-pre-wrap font-sans text-white/70 text-xs">{doc.content}</pre>
-          </Accordion>
+          <ClassifiedPanel
+            key={i}
+            title={doc.name}
+            icon="[DOC]"
+            accentColor="rgba(201, 168, 76, 0.3)"
+          >
+            <p
+              className="mb-3 text-xs uppercase tracking-wider"
+              style={{ color: 'rgba(201, 168, 76, 0.7)', fontFamily: 'monospace' }}
+            >
+              {doc.description}
+            </p>
+            <pre
+              className="whitespace-pre-wrap text-xs leading-relaxed"
+              style={{ color: 'rgba(232, 240, 255, 0.7)', fontFamily: 'monospace' }}
+            >
+              {doc.content}
+            </pre>
+          </ClassifiedPanel>
         ))}
       </div>
     </div>

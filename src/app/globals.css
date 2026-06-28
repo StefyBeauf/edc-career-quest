@@ -132,6 +132,21 @@
   animation: fade-slide 0.3s ease-out both;
 }
 
+@keyframes card-slide {
+  from {
+    opacity: 0;
+    transform: translateX(24px) rotate(1.5deg);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0) rotate(0deg);
+  }
+}
+
+.animate-card-slide {
+  animation: card-slide 0.35s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;

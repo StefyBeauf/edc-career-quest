@@ -46,100 +46,239 @@ export default function CP5_Situations() {
 
   const options: ('A' | 'B' | 'C')[] = ['A', 'B', 'C']
 
-  function getOptionStyle(option: 'A' | 'B' | 'C') {
-    if (reponseChoisie === null) return 'bg-white/5 border-white/10 text-sky-100 hover:bg-white/10'
-    if (option === situationActuelle?.bonneOption) return 'bg-green-500/20 border-green-400/40 text-green-200'
-    if (option === reponseChoisie && option !== situationActuelle?.bonneOption) return 'bg-red-500/20 border-red-400/40 text-red-200'
-    return 'bg-white/5 border-white/10 text-sky-300 opacity-60'
+  function getOptionStyle(option: 'A' | 'B' | 'C'): React.CSSProperties {
+    if (reponseChoisie === null) {
+      return {
+        background: 'rgba(255,255,255,0.05)',
+        border: '1px solid rgba(255,255,255,0.1)',
+        color: 'rgba(245,240,232,0.85)',
+      }
+    }
+    if (option === situationActuelle?.bonneOption) {
+      return {
+        background: 'rgba(52,211,153,0.12)',
+        border: '1px solid rgba(52,211,153,0.4)',
+        color: '#6ee7b7',
+      }
+    }
+    if (option === reponseChoisie && option !== situationActuelle?.bonneOption) {
+      return {
+        background: 'rgba(248,113,113,0.12)',
+        border: '1px solid rgba(248,113,113,0.4)',
+        color: '#fca5a5',
+      }
+    }
+    return {
+      background: 'rgba(255,255,255,0.02)',
+      border: '1px solid rgba(255,255,255,0.05)',
+      color: 'rgba(245,240,232,0.3)',
+    }
   }
 
   const progression = Math.min(vues.length, situations.length)
 
   return (
-    <div className="space-y-8">
-      <div className="rounded-2xl bg-white/5 border border-white/10 p-6">
-        <h2 className="text-xl font-bold text-white mb-1">Situations professionnelles</h2>
-        <p className="text-sky-200 text-sm">Comment réagirais-tu dans ces situations de stage ?</p>
+    <div className="space-y-6">
+
+      {/* Header */}
+      <div
+        className="rounded-2xl p-6"
+        style={{
+          background: 'rgba(255,255,255,0.04)',
+          border: '1px solid rgba(201,168,76,0.2)',
+        }}
+      >
+        <p className="text-xs font-bold uppercase tracking-widest mb-1" style={{ color: '#c9a84c' }}>
+          Checkpoint 5 — Situations pro
+        </p>
+        <h2 className="text-xl font-black text-white uppercase tracking-wide">
+          Passer les contrôles
+        </h2>
+        <p className="text-sm mt-1" style={{ color: 'rgba(245,240,232,0.5)' }}>
+          Comment réagirais-tu dans ces situations de stage ?
+        </p>
       </div>
 
-      <div className="flex items-center gap-4 flex-wrap">
-        <div className="rounded-xl bg-white/5 border border-white/10 px-4 py-3 flex items-center gap-3">
-          <span className="text-sky-400 text-sm">Situations vues</span>
-          <span className="text-white font-bold">{progression} / {situations.length}</span>
-        </div>
-        <div className="flex-1 min-w-32">
-          <div className="w-full bg-white/10 rounded-full h-2">
-            <div
-              className="bg-gradient-to-r from-sky-400 to-indigo-400 h-2 rounded-full transition-all duration-500"
-              style={{ width: `${(progression / situations.length) * 100}%` }}
-            />
-          </div>
+      {/* Progression */}
+      <div
+        className="rounded-xl px-4 py-3 flex items-center gap-4"
+        style={{
+          background: 'rgba(255,255,255,0.04)',
+          border: '1px solid rgba(201,168,76,0.15)',
+        }}
+      >
+        <span className="text-sm" style={{ color: 'rgba(245,240,232,0.5)' }}>Situations vues</span>
+        <span className="font-black" style={{ color: '#e8c96a' }}>
+          {progression}
+          <span style={{ color: 'rgba(232,201,106,0.4)' }}>/{situations.length}</span>
+        </span>
+        <div className="flex-1 rounded-full h-1.5" style={{ backgroundColor: 'rgba(255,255,255,0.08)' }}>
+          <div
+            className="h-1.5 rounded-full transition-all duration-500"
+            style={{
+              width: `${(progression / situations.length) * 100}%`,
+              background: 'linear-gradient(90deg, #c9a84c, #e8c96a)',
+            }}
+          />
         </div>
       </div>
 
       {!demarree ? (
-        <div className="rounded-2xl bg-gradient-to-br from-sky-900/50 to-indigo-900/50 border border-sky-400/20 p-8 text-center space-y-4">
-          <p className="text-4xl">✈️</p>
-          <p className="text-white font-semibold text-lg">50 situations professionnelles t&apos;attendent</p>
-          <p className="text-sky-200 text-sm max-w-md mx-auto">
-            À chaque tirage, une situation inédite du monde du stage. Choisis ta réponse et découvre ce qu&apos;un professionnel ferait.
-          </p>
+        /* Écran de démarrage */
+        <div
+          className="rounded-2xl p-8 text-center space-y-5"
+          style={{
+            background: 'linear-gradient(135deg, rgba(15,30,61,0.8) 0%, rgba(26,39,68,0.8) 100%)',
+            border: '1px solid rgba(201,168,76,0.25)',
+          }}
+        >
+          <div
+            className="w-16 h-16 rounded-full mx-auto flex items-center justify-center text-3xl"
+            style={{ backgroundColor: 'rgba(201,168,76,0.1)', border: '1px solid rgba(201,168,76,0.25)' }}
+          >
+            ✈️
+          </div>
+          <div>
+            <p className="text-white font-black text-lg uppercase tracking-wide">
+              50 situations professionnelles
+            </p>
+            <p className="text-sm mt-2" style={{ color: 'rgba(245,240,232,0.5)' }}>
+              À chaque tirage, une situation inédite du monde du stage. Choisis ta réponse et découvre ce qu&apos;un professionnel ferait.
+            </p>
+          </div>
           <button
             onClick={piocherSituation}
-            className="mt-2 px-6 py-3 rounded-xl bg-sky-500 hover:bg-sky-400 text-white font-semibold transition-colors"
+            className="px-8 py-3 rounded-xl font-black text-sm uppercase tracking-widest transition-all"
+            style={{ backgroundColor: '#c9a84c', color: '#0f1e3d' }}
           >
             Tirer une situation
           </button>
         </div>
       ) : situationActuelle && (
         <div className="space-y-4">
-          <div className="rounded-2xl bg-gradient-to-br from-sky-900/40 to-indigo-900/40 border border-sky-400/20 p-6">
-            <p className="text-xs font-semibold text-sky-400 uppercase tracking-widest mb-3">Situation #{progression}</p>
-            <p className="text-white text-lg font-medium leading-relaxed">{situationActuelle.situation}</p>
+          {/* Situation — style incident en vol */}
+          <div
+            className="rounded-2xl overflow-hidden"
+            style={{
+              boxShadow: '0 4px 24px rgba(239,68,68,0.08)',
+            }}
+          >
+            <div
+              className="px-5 py-3 flex items-center gap-2"
+              style={{
+                background: 'linear-gradient(90deg, rgba(239,68,68,0.15), rgba(201,168,76,0.1))',
+                border: '1px solid rgba(239,68,68,0.2)',
+              }}
+            >
+              <span>⚠️</span>
+              <p className="text-xs font-bold uppercase tracking-widest" style={{ color: '#fca5a5' }}>
+                Incident en vol — Situation #{progression}
+              </p>
+            </div>
+            <div
+              className="px-5 py-5"
+              style={{
+                background: 'linear-gradient(135deg, rgba(26,39,68,0.95), rgba(15,30,61,0.95))',
+                border: '1px solid rgba(239,68,68,0.15)',
+                borderTop: 'none',
+              }}
+            >
+              <p className="text-white text-base font-semibold leading-relaxed">
+                {situationActuelle.situation}
+              </p>
+            </div>
           </div>
 
-          <div className="space-y-3">
+          {/* Options — style protocoles de sécurité */}
+          <div className="space-y-2">
+            <p className="text-xs font-bold uppercase tracking-widest px-1" style={{ color: 'rgba(201,168,76,0.6)' }}>
+              Protocoles disponibles
+            </p>
             {options.map(opt => (
               <button
                 key={opt}
                 onClick={() => choisirReponse(opt)}
-                className={`w-full text-left rounded-xl border px-5 py-4 transition-all ${getOptionStyle(opt)}`}
+                className="w-full text-left rounded-xl px-5 py-4 transition-all"
+                style={getOptionStyle(opt)}
               >
-                <div className="flex gap-3">
-                  <span className="flex-shrink-0 w-7 h-7 rounded-full bg-white/10 flex items-center justify-center text-xs font-bold">
+                <div className="flex gap-3 items-start">
+                  <span
+                    className="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center text-xs font-black"
+                    style={{
+                      backgroundColor: 'rgba(201,168,76,0.12)',
+                      border: '1px solid rgba(201,168,76,0.25)',
+                      color: '#c9a84c',
+                    }}
+                  >
                     {opt}
                   </span>
-                  <span className="text-sm leading-relaxed">{getOption(opt)}</span>
+                  <span className="text-sm leading-relaxed pt-1">{getOption(opt)}</span>
                 </div>
               </button>
             ))}
           </div>
 
+          {/* Feedback — style rapport de l'équipage */}
           {reponseChoisie && (
             <div className="space-y-3">
-              {options.map(opt => (
+              <div
+                className="rounded-2xl overflow-hidden"
+                style={{ border: '1px solid rgba(201,168,76,0.2)' }}
+              >
                 <div
-                  key={opt}
-                  className={`rounded-xl border p-4 ${
-                    opt === situationActuelle.bonneOption
-                      ? 'bg-green-900/20 border-green-400/30'
-                      : 'bg-white/3 border-white/5'
-                  }`}
+                  className="px-5 py-3 flex items-center gap-2"
+                  style={{ backgroundColor: '#0f1e3d', borderBottom: '1px solid rgba(201,168,76,0.15)' }}
                 >
-                  <div className="flex items-center gap-2 mb-1">
-                    <span className={`text-xs font-bold ${opt === situationActuelle.bonneOption ? 'text-green-300' : 'text-sky-400'}`}>
-                      Option {opt} {opt === situationActuelle.bonneOption ? '— Meilleure réponse' : ''}
-                    </span>
-                  </div>
-                  <p className="text-sky-100 text-sm leading-relaxed">{getFeedback(opt)}</p>
+                  <span style={{ color: '#c9a84c' }}>📋</span>
+                  <p className="text-xs font-bold uppercase tracking-widest" style={{ color: '#c9a84c' }}>
+                    Rapport de l&apos;équipage
+                  </p>
                 </div>
-              ))}
+                <div className="p-5 space-y-3" style={{ background: 'rgba(255,255,255,0.03)' }}>
+                  {options.map(opt => (
+                    <div
+                      key={opt}
+                      className="rounded-xl p-4"
+                      style={{
+                        background: opt === situationActuelle.bonneOption
+                          ? 'rgba(52,211,153,0.08)'
+                          : 'rgba(255,255,255,0.02)',
+                        border: `1px solid ${opt === situationActuelle.bonneOption ? 'rgba(52,211,153,0.3)' : 'rgba(255,255,255,0.06)'}`,
+                      }}
+                    >
+                      <div className="flex items-center gap-2 mb-2">
+                        <span
+                          className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-black"
+                          style={{
+                            backgroundColor: opt === situationActuelle.bonneOption ? 'rgba(52,211,153,0.2)' : 'rgba(255,255,255,0.05)',
+                            color: opt === situationActuelle.bonneOption ? '#6ee7b7' : 'rgba(245,240,232,0.3)',
+                          }}
+                        >
+                          {opt}
+                        </span>
+                        {opt === situationActuelle.bonneOption && (
+                          <span className="text-xs font-bold uppercase tracking-wider" style={{ color: '#6ee7b7' }}>
+                            Meilleure réponse
+                          </span>
+                        )}
+                      </div>
+                      <p
+                        className="text-sm leading-relaxed"
+                        style={{ color: opt === situationActuelle.bonneOption ? 'rgba(245,240,232,0.9)' : 'rgba(245,240,232,0.4)' }}
+                      >
+                        {getFeedback(opt)}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              </div>
 
               <button
                 onClick={piocherSituation}
-                className="w-full py-3 rounded-xl bg-sky-500 hover:bg-sky-400 text-white font-semibold transition-colors"
+                className="w-full py-3 rounded-xl font-black text-sm uppercase tracking-widest transition-all"
+                style={{ backgroundColor: '#c9a84c', color: '#0f1e3d' }}
               >
-                Situation suivante
+                Situation suivante →
               </button>
             </div>
           )}
@@ -147,9 +286,19 @@ export default function CP5_Situations() {
       )}
 
       {vues.length >= situations.length && (
-        <div className="rounded-2xl bg-green-900/20 border border-green-400/30 p-6 text-center">
-          <p className="text-green-300 font-semibold text-lg">Toutes les situations ont été vues !</p>
-          <p className="text-sky-200 text-sm mt-2">Le cycle recommence avec de nouveaux tirages.</p>
+        <div
+          className="rounded-2xl p-6 text-center"
+          style={{
+            background: 'rgba(52,211,153,0.06)',
+            border: '1px solid rgba(52,211,153,0.25)',
+          }}
+        >
+          <p className="font-black uppercase tracking-wider" style={{ color: '#6ee7b7' }}>
+            ✓ Toutes les situations ont été vues !
+          </p>
+          <p className="text-sm mt-2" style={{ color: 'rgba(245,240,232,0.4)' }}>
+            Le cycle recommence avec de nouveaux tirages.
+          </p>
         </div>
       )}
     </div>

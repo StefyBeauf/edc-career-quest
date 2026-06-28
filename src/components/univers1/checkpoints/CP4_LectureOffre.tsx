@@ -115,7 +115,7 @@ export default function CP4_LectureOffre() {
     if (!motsClesActifs) return text
     let parts: React.ReactNode[] = [text]
     motsCles.forEach(mot => {
-      parts = parts.flatMap(part => {
+      parts = parts.flatMap((part): React.ReactNode[] => {
         if (typeof part !== 'string') return [part]
         const regex = new RegExp(`(${mot})`, 'gi')
         const splits = part.split(regex)

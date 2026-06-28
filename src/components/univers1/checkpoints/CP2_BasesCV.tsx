@@ -62,123 +62,250 @@ export default function CP2_BasesCV() {
   const score = checkList.filter(Boolean).length
 
   return (
-    <div className="space-y-8">
-      <div className="rounded-2xl bg-white/5 border border-white/10 p-6">
-        <h2 className="text-xl font-bold text-white mb-1">Les bases du CV</h2>
-        <p className="text-sky-200 text-sm">Ce qui fait la différence entre un CV ignoré et un CV lu</p>
+    <div className="space-y-6">
+
+      {/* Header */}
+      <div
+        className="rounded-2xl p-6"
+        style={{
+          background: 'rgba(255,255,255,0.04)',
+          border: '1px solid rgba(201,168,76,0.2)',
+        }}
+      >
+        <p className="text-xs font-bold uppercase tracking-widest mb-1" style={{ color: '#c9a84c' }}>
+          Checkpoint 2 — Les bases du CV
+        </p>
+        <h2 className="text-xl font-black text-white uppercase tracking-wide">
+          Préparer ses bagages
+        </h2>
+        <p className="text-sm mt-1" style={{ color: 'rgba(245,240,232,0.5)' }}>
+          Ce qui fait la différence entre un CV ignoré et un CV lu
+        </p>
       </div>
 
-      <div className="rounded-2xl bg-white/5 border border-white/10 p-6">
-        <p className="text-xs font-semibold text-sky-300 uppercase tracking-widest mb-4">Bon réflexe / Mauvais réflexe</p>
-        <div className="flex gap-2 mb-6">
-          <button
-            onClick={() => setToggle('mauvais')}
-            className={`flex-1 py-2 rounded-lg text-sm font-medium transition-all ${
-              toggle === 'mauvais' ? 'bg-red-500/30 border border-red-400/40 text-red-200' : 'bg-white/5 border border-white/10 text-sky-300'
-            }`}
-          >
-            Mauvais réflexe
-          </button>
-          <button
-            onClick={() => setToggle('bon')}
-            className={`flex-1 py-2 rounded-lg text-sm font-medium transition-all ${
-              toggle === 'bon' ? 'bg-green-500/30 border border-green-400/40 text-green-200' : 'bg-white/5 border border-white/10 text-sky-300'
-            }`}
-          >
-            Bon réflexe
-          </button>
+      {/* Bon / Mauvais réflexe — style déclaration douanière */}
+      <div
+        className="rounded-2xl overflow-hidden"
+        style={{ border: '1px solid rgba(201,168,76,0.2)' }}
+      >
+        <div
+          className="px-5 py-3 flex items-center gap-2"
+          style={{ backgroundColor: '#0f1e3d', borderBottom: '1px solid rgba(201,168,76,0.15)' }}
+        >
+          <span style={{ color: '#c9a84c' }}>🛂</span>
+          <p className="text-xs font-bold uppercase tracking-widest" style={{ color: '#c9a84c' }}>
+            Déclaration douanière — CV
+          </p>
         </div>
-        <div className="space-y-3">
-          {bonMauvais.map((item, i) => (
-            <div key={i} className={`rounded-xl border p-4 transition-all ${
-              toggle === 'mauvais'
-                ? 'bg-red-900/20 border-red-400/20'
-                : 'bg-green-900/20 border-green-400/20'
-            }`}>
-              <p className={`font-medium text-sm ${toggle === 'mauvais' ? 'text-red-200' : 'text-green-200'}`}>
-                {toggle === 'mauvais' ? `❌ "${item.mauvais}"` : `✓ "${item.bon}"`}
-              </p>
-              <p className="text-sky-200 text-xs mt-2">{item.explication}</p>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      <div className="rounded-2xl bg-white/5 border border-white/10 p-6">
-        <p className="text-xs font-semibold text-sky-300 uppercase tracking-widest mb-4">10 conseils essentiels</p>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          {conseilsCV.map((conseil, i) => (
-            <div key={i} className="flex gap-3 rounded-xl bg-sky-900/20 border border-sky-400/20 p-3">
-              <span className="flex-shrink-0 w-7 h-7 rounded-full bg-sky-500/30 flex items-center justify-center text-sky-300 text-xs font-bold">
-                {i + 1}
-              </span>
-              <p className="text-sky-100 text-sm leading-relaxed">{conseil}</p>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      <div className="rounded-2xl bg-white/5 border border-white/10 p-6">
-        <div className="flex items-center justify-between mb-4">
-          <p className="text-xs font-semibold text-sky-300 uppercase tracking-widest">Checklist CV interactive</p>
-          <span className="text-sm font-bold text-white">{score} / {checklistItems.length}</span>
-        </div>
-        <div className="w-full bg-white/10 rounded-full h-2 mb-5">
-          <div
-            className="bg-gradient-to-r from-sky-400 to-indigo-400 h-2 rounded-full transition-all duration-300"
-            style={{ width: `${(score / checklistItems.length) * 100}%` }}
-          />
-        </div>
-        <div className="space-y-2">
-          {checklistItems.map((item, i) => (
+        <div className="p-5" style={{ background: 'rgba(255,255,255,0.03)' }}>
+          <div className="flex gap-2 mb-5">
             <button
-              key={i}
-              onClick={() => toggleCheck(i)}
-              className={`w-full flex items-center gap-3 rounded-xl border px-4 py-3 text-left transition-all ${
-                checkList[i]
-                  ? 'bg-green-500/10 border-green-400/30 text-green-200'
-                  : 'bg-white/5 border-white/10 text-sky-200 hover:bg-white/10'
-              }`}
+              onClick={() => setToggle('mauvais')}
+              className="flex-1 py-2.5 rounded-xl text-sm font-bold uppercase tracking-wider transition-all"
+              style={{
+                backgroundColor: toggle === 'mauvais' ? 'rgba(239,68,68,0.15)' : 'rgba(255,255,255,0.04)',
+                border: `1px solid ${toggle === 'mauvais' ? 'rgba(239,68,68,0.4)' : 'rgba(255,255,255,0.1)'}`,
+                color: toggle === 'mauvais' ? '#fca5a5' : 'rgba(245,240,232,0.4)',
+              }}
             >
-              <span className={`flex-shrink-0 w-5 h-5 rounded border-2 flex items-center justify-center transition-all ${
-                checkList[i] ? 'bg-green-500 border-green-500' : 'border-white/30'
-              }`}>
-                {checkList[i] && <span className="text-white text-xs">✓</span>}
-              </span>
-              <span className="text-sm">{item}</span>
+              ✗ À déclarer
             </button>
-          ))}
-        </div>
-        {score === checklistItems.length && (
-          <div className="mt-4 rounded-xl bg-green-500/10 border border-green-400/30 p-4 text-center">
-            <p className="text-green-300 font-semibold">Ton CV est prêt à décoller !</p>
+            <button
+              onClick={() => setToggle('bon')}
+              className="flex-1 py-2.5 rounded-xl text-sm font-bold uppercase tracking-wider transition-all"
+              style={{
+                backgroundColor: toggle === 'bon' ? 'rgba(52,211,153,0.15)' : 'rgba(255,255,255,0.04)',
+                border: `1px solid ${toggle === 'bon' ? 'rgba(52,211,153,0.4)' : 'rgba(255,255,255,0.1)'}`,
+                color: toggle === 'bon' ? '#6ee7b7' : 'rgba(245,240,232,0.4)',
+              }}
+            >
+              ✓ Autorisé
+            </button>
           </div>
-        )}
+          <div className="space-y-3">
+            {bonMauvais.map((item, i) => (
+              <div
+                key={i}
+                className="rounded-xl p-4 transition-all"
+                style={{
+                  background: toggle === 'mauvais' ? 'rgba(239,68,68,0.07)' : 'rgba(52,211,153,0.07)',
+                  border: `1px solid ${toggle === 'mauvais' ? 'rgba(239,68,68,0.2)' : 'rgba(52,211,153,0.2)'}`,
+                }}
+              >
+                <p
+                  className="font-semibold text-sm leading-relaxed"
+                  style={{ color: toggle === 'mauvais' ? '#fca5a5' : '#6ee7b7' }}
+                >
+                  {toggle === 'mauvais' ? `✗ "${item.mauvais}"` : `✓ "${item.bon}"`}
+                </p>
+                <p className="text-xs mt-2" style={{ color: 'rgba(245,240,232,0.5)' }}>{item.explication}</p>
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
 
-      <div className="rounded-2xl bg-white/5 border border-white/10 p-6">
-        <p className="text-xs font-semibold text-sky-300 uppercase tracking-widest mb-4">Dans la tête du recruteur</p>
-        <p className="text-sky-200 text-sm mb-4">Tape sur une astuce pour la découvrir.</p>
-        <div className="space-y-3">
-          {astuceRecruteur.map((astuce, i) => (
-            <button
-              key={i}
-              onClick={() => toggleAstuce(i)}
-              className="w-full rounded-xl border border-white/10 overflow-hidden text-left transition-all"
+      {/* Conseils — style liste de bagages */}
+      <div
+        className="rounded-2xl overflow-hidden"
+        style={{ border: '1px solid rgba(201,168,76,0.2)' }}
+      >
+        <div
+          className="px-5 py-3 flex items-center gap-2"
+          style={{ backgroundColor: '#0f1e3d', borderBottom: '1px solid rgba(201,168,76,0.15)' }}
+        >
+          <span style={{ color: '#c9a84c' }}>🧳</span>
+          <p className="text-xs font-bold uppercase tracking-widest" style={{ color: '#c9a84c' }}>
+            Contenu des bagages — 10 conseils essentiels
+          </p>
+        </div>
+        <div className="p-5" style={{ background: 'rgba(255,255,255,0.03)' }}>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            {conseilsCV.map((conseil, i) => (
+              <div
+                key={i}
+                className="flex gap-3 rounded-xl p-3"
+                style={{
+                  background: 'rgba(201,168,76,0.05)',
+                  border: '1px solid rgba(201,168,76,0.15)',
+                }}
+              >
+                <span
+                  className="flex-shrink-0 w-7 h-7 rounded-full flex items-center justify-center text-xs font-black"
+                  style={{ backgroundColor: 'rgba(201,168,76,0.15)', color: '#c9a84c' }}
+                >
+                  {i + 1}
+                </span>
+                <p className="text-sm leading-relaxed" style={{ color: 'rgba(245,240,232,0.8)' }}>{conseil}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Checklist interactive */}
+      <div
+        className="rounded-2xl overflow-hidden"
+        style={{ border: '1px solid rgba(201,168,76,0.2)' }}
+      >
+        <div
+          className="px-5 py-3 flex items-center justify-between"
+          style={{ backgroundColor: '#0f1e3d', borderBottom: '1px solid rgba(201,168,76,0.15)' }}
+        >
+          <div className="flex items-center gap-2">
+            <span style={{ color: '#c9a84c' }}>✅</span>
+            <p className="text-xs font-bold uppercase tracking-widest" style={{ color: '#c9a84c' }}>
+              Liste de bagages à valider
+            </p>
+          </div>
+          <span className="font-black" style={{ color: '#e8c96a' }}>
+            {score}<span style={{ color: 'rgba(232,201,106,0.4)' }}>/{checklistItems.length}</span>
+          </span>
+        </div>
+        <div className="p-5" style={{ background: 'rgba(255,255,255,0.03)' }}>
+          {/* Barre de progression dorée */}
+          <div className="w-full rounded-full h-2 mb-5" style={{ backgroundColor: 'rgba(255,255,255,0.08)' }}>
+            <div
+              className="h-2 rounded-full transition-all duration-300"
+              style={{
+                width: `${(score / checklistItems.length) * 100}%`,
+                background: 'linear-gradient(90deg, #c9a84c, #e8c96a)',
+              }}
+            />
+          </div>
+          <div className="space-y-2">
+            {checklistItems.map((item, i) => (
+              <button
+                key={i}
+                onClick={() => toggleCheck(i)}
+                className="w-full flex items-center gap-3 rounded-xl px-4 py-3 text-left transition-all"
+                style={{
+                  background: checkList[i] ? 'rgba(201,168,76,0.1)' : 'rgba(255,255,255,0.03)',
+                  border: `1px solid ${checkList[i] ? 'rgba(201,168,76,0.3)' : 'rgba(255,255,255,0.08)'}`,
+                }}
+              >
+                <span
+                  className="flex-shrink-0 w-5 h-5 rounded flex items-center justify-center transition-all"
+                  style={{
+                    backgroundColor: checkList[i] ? '#c9a84c' : 'transparent',
+                    border: `2px solid ${checkList[i] ? '#c9a84c' : 'rgba(255,255,255,0.2)'}`,
+                  }}
+                >
+                  {checkList[i] && <span className="text-xs font-black" style={{ color: '#0f1e3d' }}>✓</span>}
+                </span>
+                <span
+                  className="text-sm"
+                  style={{ color: checkList[i] ? '#e8c96a' : 'rgba(245,240,232,0.6)' }}
+                >
+                  {item}
+                </span>
+              </button>
+            ))}
+          </div>
+          {score === checklistItems.length && (
+            <div
+              className="mt-4 rounded-xl p-4 text-center"
+              style={{
+                background: 'rgba(201,168,76,0.1)',
+                border: '1px solid rgba(201,168,76,0.3)',
+              }}
             >
-              <div className={`px-4 py-3 transition-colors ${astucesOuvertes[i] ? 'bg-indigo-900/40' : 'bg-white/5 hover:bg-white/10'}`}>
-                <div className="flex items-center justify-between">
-                  <span className="text-sky-200 text-sm font-medium">Astuce recruteur #{i + 1}</span>
-                  <span className="text-indigo-300 text-lg">{astucesOuvertes[i] ? '−' : '+'}</span>
+              <p className="font-black uppercase tracking-wider" style={{ color: '#e8c96a' }}>
+                ✈ Ton CV est prêt à décoller !
+              </p>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Dans la tête du recruteur — style agent d'embarquement */}
+      <div
+        className="rounded-2xl overflow-hidden"
+        style={{ border: '1px solid rgba(201,168,76,0.2)' }}
+      >
+        <div
+          className="px-5 py-3 flex items-center gap-2"
+          style={{ backgroundColor: '#0f1e3d', borderBottom: '1px solid rgba(201,168,76,0.15)' }}
+        >
+          <span style={{ color: '#c9a84c' }}>🎫</span>
+          <p className="text-xs font-bold uppercase tracking-widest" style={{ color: '#c9a84c' }}>
+            Conseils de l&apos;agent d&apos;embarquement
+          </p>
+        </div>
+        <div className="p-5" style={{ background: 'rgba(255,255,255,0.03)' }}>
+          <p className="text-xs mb-4" style={{ color: 'rgba(245,240,232,0.4)' }}>
+            Tape sur une astuce pour la découvrir.
+          </p>
+          <div className="space-y-2">
+            {astuceRecruteur.map((astuce, i) => (
+              <button
+                key={i}
+                onClick={() => toggleAstuce(i)}
+                className="w-full rounded-xl text-left transition-all overflow-hidden"
+                style={{
+                  background: astucesOuvertes[i] ? 'rgba(201,168,76,0.08)' : 'rgba(255,255,255,0.03)',
+                  border: `1px solid ${astucesOuvertes[i] ? 'rgba(201,168,76,0.3)' : 'rgba(255,255,255,0.08)'}`,
+                }}
+              >
+                <div className="px-4 py-3 flex items-center justify-between">
+                  <span className="text-sm font-semibold" style={{ color: astucesOuvertes[i] ? '#e8c96a' : 'rgba(245,240,232,0.6)' }}>
+                    Astuce #{i + 1}
+                  </span>
+                  <span style={{ color: '#c9a84c' }}>{astucesOuvertes[i] ? '−' : '+'}</span>
                 </div>
                 {astucesOuvertes[i] && (
-                  <p className="text-white text-sm mt-2 leading-relaxed">"{astuce}"</p>
+                  <div className="px-4 pb-4">
+                    <p className="text-sm leading-relaxed italic" style={{ color: 'rgba(245,240,232,0.8)' }}>
+                      &ldquo;{astuce}&rdquo;
+                    </p>
+                  </div>
                 )}
-              </div>
-            </button>
-          ))}
+              </button>
+            ))}
+          </div>
         </div>
       </div>
+
     </div>
   )
 }
