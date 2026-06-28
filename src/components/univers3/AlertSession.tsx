@@ -10,7 +10,7 @@ interface Alert {
 
 interface Props {
   specialization: string
-  alertType: 'alerte_m2' | 'alerte_m6'
+  alertType: string
   sessionMinutes: number
   startLabel: string
   startDesc: string
