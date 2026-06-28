@@ -14,9 +14,9 @@ export default async function Univers2Page({ group }: Props) {
         <div
           className="absolute inset-0"
           style={{
-            backgroundImage: 'url("https://images.unsplash.com/photo-1488085061387-422e29b40080?w=900&q=85&auto=format&fit=crop")',
+            backgroundImage: 'url("/hero-univers2.jpg")',
             backgroundSize: 'cover',
-            backgroundPosition: 'center 40%',
+            backgroundPosition: 'center 35%',
           }}
         />
 
