@@ -137,97 +137,83 @@ export default function CardDeck({ missionNumber }: CardDeckProps) {
 
   const activeConfig = CARD_TYPES.find(t => t.type === activeType)!
 
-  return (
-    <div className="flex flex-col gap-5">
-      {/* Label section */}
-      <p
-        className="text-xs font-bold uppercase tracking-widest"
-        style={{ color: 'rgba(201,168,76,0.6)' }}
-      >
-        Catégories d&apos;équipement
-      </p>
+  // Si aucune carte affichée : montrer le choix de catégorie
+  if (!currentCard) {
+    return (
+      <div className="flex flex-col gap-4">
+        <div className="text-center mb-2">
+          <p className="text-sm font-bold" style={{ color: '#e8d4a0' }}>Quelle carte souhaitez-vous explorer ?</p>
+          <p className="text-xs mt-1" style={{ color: 'rgba(232,212,160,0.5)' }}>Choisissez une catégorie</p>
+        </div>
 
-      {/* Onglets catégories */}
-      <div className="grid grid-cols-2 gap-2">
-        {CARD_TYPES.map(({ type, icon, label, sublabel, activeStyle, inactiveStyle }) => {
+        <div className="grid grid-cols-2 gap-3">
+          {CARD_TYPES.map(({ type, icon, label, sublabel, activeStyle }) => (
+            <button
+              key={type}
+              onClick={() => handleTypeChange(type)}
+              className="flex flex-col items-center gap-2 px-3 py-5 rounded-2xl text-center transition-all active:scale-95"
+              style={{
+                background: 'rgba(255,255,255,0.04)',
+                border: `1.5px solid ${activeStyle.border}`,
+                boxShadow: `0 4px 20px ${activeStyle.border}22`,
+              }}
+            >
+              <span className="text-3xl">{icon}</span>
+              <div>
+                <p className="text-sm font-black uppercase tracking-wide" style={{ color: activeStyle.color }}>{label}</p>
+                <p className="text-xs mt-0.5" style={{ color: 'rgba(255,255,255,0.35)' }}>{sublabel}</p>
+              </div>
+            </button>
+          ))}
+        </div>
+      </div>
+    )
+  }
+
+  return (
+    <div className="flex flex-col gap-4">
+      {/* Catégories — petites en haut quand une carte est affichée */}
+      <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-none">
+        {CARD_TYPES.map(({ type, icon, label, activeStyle, inactiveStyle }) => {
           const isActive = activeType === type
-          const style = isActive ? activeStyle : inactiveStyle
+          const s = isActive ? activeStyle : inactiveStyle
           return (
             <button
               key={type}
               onClick={() => handleTypeChange(type)}
-              className="flex flex-col items-start gap-0.5 px-3 py-3 rounded-xl text-left transition-all"
-              style={{
-                background: style.background,
-                border: `1px solid ${style.border}`,
-              }}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold uppercase tracking-wide whitespace-nowrap transition-all flex-shrink-0"
+              style={{ background: s.background, border: `1px solid ${s.border}`, color: s.color }}
             >
-              <div className="flex items-center gap-2 w-full">
-                <span className="text-lg">{icon}</span>
-                <span
-                  className="text-xs font-bold uppercase tracking-wide flex-1"
-                  style={{ color: style.color }}
-                >
-                  {label}
-                </span>
-                {seenCounts[type] > 0 && (
-                  <span
-                    className="text-xs px-1.5 py-0.5 rounded-full font-semibold"
-                    style={{ background: 'rgba(255,255,255,0.08)', color: 'rgba(255,255,255,0.5)' }}
-                  >
-                    {seenCounts[type]}
-                  </span>
-                )}
-              </div>
-              <span className="text-xs" style={{ color: 'rgba(255,255,255,0.35)', paddingLeft: '2px' }}>
-                {sublabel}
-              </span>
+              <span>{icon}</span>
+              <span>{label}</span>
+              {seenCounts[type] > 0 && <span className="opacity-60">·{seenCounts[type]}</span>}
             </button>
           )
         })}
       </div>
 
-      {/* Zone de carte */}
-      <div key={cardKey} className="w-full">
-        {currentCard ? (
-          <CardDisplay card={currentCard} />
-        ) : (
-          <button
-            className="flex flex-col items-center justify-center w-full rounded-2xl transition-all"
-            style={{
-              minHeight: '200px',
-              background: 'rgba(255,255,255,0.03)',
-              border: `2px dashed ${activeConfig.activeStyle.border}`,
-            }}
-            onClick={() => drawCard(activeType, seenIds[activeType])}
-          >
-            <span className="text-4xl mb-3">🎒</span>
-            <span className="text-sm font-semibold" style={{ color: activeConfig.activeStyle.color }}>
-              Piocher dans le sac à dos
-            </span>
-            <span className="text-xs mt-1" style={{ color: 'rgba(255,255,255,0.3)' }}>
-              Carte {activeConfig.label}
-            </span>
-          </button>
-        )}
+      {/* Carte affichée */}
+      <div key={cardKey}>
+        <CardDisplay card={currentCard} />
       </div>
 
-      {/* Bouton autre carte */}
-      {currentCard && (
+      {/* Actions */}
+      <div className="flex gap-3">
         <button
           onClick={handleAnotherCard}
-          className="w-full py-3.5 rounded-xl font-bold text-sm transition-all flex items-center justify-center gap-2"
-          style={{
-            background: 'rgba(201,168,76,0.12)',
-            border: '1px solid rgba(201,168,76,0.35)',
-            color: '#c9a84c',
-          }}
+          className="flex-1 py-3.5 rounded-xl font-bold text-sm transition-all active:scale-95 flex items-center justify-center gap-2"
+          style={{ background: 'rgba(201,168,76,0.12)', border: '1px solid rgba(201,168,76,0.35)', color: '#c9a84c' }}
         >
-          <span>🎒</span>
-          <span>Piocher une autre carte</span>
-          <span style={{ opacity: 0.5 }}>→</span>
+          Autre carte →
         </button>
-      )}
+        <button
+          onClick={() => { setCurrentCard(null); setActiveType('conseil') }}
+          className="py-3.5 px-4 rounded-xl font-bold text-sm transition-all active:scale-95"
+          style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.1)', color: 'rgba(255,255,255,0.5)' }}
+        >
+          Changer
+        </button>
+      </div>
     </div>
   )
 }
