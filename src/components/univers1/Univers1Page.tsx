@@ -59,22 +59,23 @@ export default function Univers1Page({ group }: Props) {
   return (
     <div className="min-h-screen flex flex-col" style={{ background: '#0a1628' }}>
 
-      {/* ═══ HERO — style couverture passeport ═══ */}
+      {/* ═══ HERO — vraie photo passeport ═══ */}
       <div className="relative overflow-hidden flex-shrink-0" style={{ minHeight: '56vh' }}>
 
-        {/* Carte du monde en watermark */}
-        <svg viewBox="0 0 800 400" className="absolute inset-0 w-full h-full opacity-[0.06]" preserveAspectRatio="xMidYMid slice">
-          <ellipse cx="400" cy="200" rx="380" ry="180" fill="none" stroke="#c9a84c" strokeWidth="1"/>
-          <line x1="20" y1="200" x2="780" y2="200" stroke="#c9a84c" strokeWidth="0.5"/>
-          <line x1="400" y1="20" x2="400" y2="380" stroke="#c9a84c" strokeWidth="0.5"/>
-          <ellipse cx="400" cy="200" rx="380" ry="90" fill="none" stroke="#c9a84c" strokeWidth="0.5"/>
-          <ellipse cx="400" cy="200" rx="190" ry="180" fill="none" stroke="#c9a84c" strokeWidth="0.5"/>
-          {[60,120,180,240,300,360].map(y => <line key={y} x1="20" y1={y} x2="780" y2={y} stroke="#c9a84c" strokeWidth="0.3"/>)}
-          {[100,200,300,500,600,700].map(x => <line key={x} x1={x} y1="20" x2={x} y2="380" stroke="#c9a84c" strokeWidth="0.3"/>)}
-        </svg>
+        {/* Photo de fond */}
+        <div className="absolute inset-0" style={{
+          backgroundImage: 'url("/hero-univers1.jpg")',
+          backgroundSize: 'cover',
+          backgroundPosition: 'center 30%',
+        }} />
 
-        {/* Avion tracé pointillé */}
-        <div className="absolute top-8 left-12 opacity-20">
+        {/* Voile sombre pour lisibilité */}
+        <div className="absolute inset-0" style={{
+          background: 'linear-gradient(170deg, rgba(5,10,25,0.45) 0%, rgba(10,22,40,0.65) 40%, rgba(5,10,20,0.92) 75%, #0a1628 100%)',
+        }} />
+
+        {/* Placeholder avion SVG — supprimé, remplacé par photo */}
+        <div className="hidden">
           <svg viewBox="0 0 200 80" className="w-40">
             <path d="M10,60 Q60,10 190,20" fill="none" stroke="#c9a84c" strokeWidth="1.5" strokeDasharray="6,4"/>
             <text x="185" y="18" fontSize="14" fill="#c9a84c">✈</text>
