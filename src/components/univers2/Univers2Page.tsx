@@ -1,125 +1,87 @@
 import type { Group } from '@/types'
 import Univers2Shell from './Univers2Shell'
 
-interface Props {
-  group: Group
-}
+interface Props { group: Group }
 
 export default async function Univers2Page({ group }: Props) {
   return (
-    <div
-      className="min-h-screen text-white"
-      style={{
-        background: 'linear-gradient(160deg, #0d1f2d 0%, #1a2744 30%, #1a4a3a 70%, #0d1f2d 100%)',
-      }}
-    >
-      {/* Texture overlay — lignes topographiques */}
-      <div
-        className="fixed inset-0 pointer-events-none opacity-[0.04]"
-        style={{
-          backgroundImage: `repeating-linear-gradient(
-            0deg,
-            transparent,
-            transparent 28px,
-            #c9a84c 28px,
-            #c9a84c 29px
-          ), repeating-linear-gradient(
-            90deg,
-            transparent,
-            transparent 28px,
-            #c9a84c 28px,
-            #c9a84c 29px
-          )`,
-        }}
-      />
+    <div className="min-h-screen" style={{ background: '#1a1a0e' }}>
 
-      {/* Bannière immersive */}
-      <header className="relative px-4 pt-safe-top pb-6 pt-6 overflow-hidden">
-        {/* Halo doré en haut */}
-        <div
-          className="absolute -top-20 left-1/2 -translate-x-1/2 w-96 h-40 rounded-full opacity-20 blur-3xl pointer-events-none"
-          style={{ background: '#c9a84c' }}
-        />
+      {/* HERO — poster plein écran style affiche aventure */}
+      <div className="relative overflow-hidden" style={{ minHeight: '55vh' }}>
 
-        {/* Badge groupe */}
-        <div className="flex items-center justify-between mb-5">
-          <span
-            className="text-xs font-bold uppercase tracking-widest px-3 py-1 rounded-full border"
-            style={{ color: '#c9a84c', borderColor: 'rgba(201,168,76,0.4)', background: 'rgba(201,168,76,0.08)' }}
-          >
-            Univers 2 — Expédition
-          </span>
-          <span
-            className="text-xs px-3 py-1 rounded-full font-semibold"
-            style={{ background: 'rgba(255,255,255,0.08)', color: 'rgba(255,255,255,0.7)' }}
-          >
-            {group.name}
-          </span>
+        {/* Fond dégradé simulant ciel/montagne */}
+        <div className="absolute inset-0" style={{
+          background: 'linear-gradient(180deg, #7eb8d4 0%, #4a90b8 15%, #2a6a8a 30%, #1a4a3a 55%, #0d2a1a 75%, #1a1a0e 100%)',
+        }} />
+
+        {/* Silhouette montagne SVG */}
+        <div className="absolute bottom-0 left-0 right-0">
+          <svg viewBox="0 0 400 200" preserveAspectRatio="none" className="w-full h-40">
+            <path d="M0,200 L0,120 L60,60 L100,90 L150,20 L200,80 L250,40 L300,100 L340,50 L400,90 L400,200 Z" fill="#0d2a1a" opacity="0.9"/>
+            <path d="M0,200 L0,150 L80,100 L130,130 L180,80 L230,120 L280,85 L330,120 L400,95 L400,200 Z" fill="#0a1f14" opacity="0.95"/>
+            <path d="M0,200 L0,170 L100,130 L160,155 L220,120 L280,150 L350,125 L400,145 L400,200 Z" fill="#091a10"/>
+          </svg>
         </div>
 
-        {/* Titre principal style affiche */}
-        <div className="text-center mb-5">
-          <p
-            className="text-xs font-bold uppercase tracking-[0.3em] mb-2"
-            style={{ color: 'rgba(201,168,76,0.7)' }}
-          >
-            Semestre {group.active_mission !== undefined ? `— Mission ${group.active_mission}` : ''}
-          </p>
-          <h1
-            className="text-3xl font-black leading-none uppercase mb-1"
-            style={{ letterSpacing: '-0.01em', textShadow: '0 2px 20px rgba(201,168,76,0.3)' }}
-          >
-            L&apos;Expédition
+        {/* Soleil levant */}
+        <div className="absolute top-8 right-12 w-20 h-20 rounded-full opacity-40" style={{
+          background: 'radial-gradient(circle, #ffdd88 0%, #ff9944 40%, transparent 70%)',
+          filter: 'blur(4px)',
+        }} />
+
+        {/* Boussole déco */}
+        <div className="absolute top-6 left-6 opacity-25">
+          <svg viewBox="0 0 60 60" className="w-12 h-12">
+            <circle cx="30" cy="30" r="28" stroke="#c9a84c" strokeWidth="1.5" fill="none"/>
+            <polygon points="30,8 33,30 30,52 27,30" fill="#c9a84c" opacity="0.8"/>
+            <polygon points="8,30 30,27 52,30 30,33" fill="#888" opacity="0.6"/>
+            <text x="30" y="6" textAnchor="middle" fill="#c9a84c" fontSize="6" fontWeight="bold">N</text>
+          </svg>
+        </div>
+
+        {/* Contenu hero */}
+        <div className="relative z-10 px-6 pt-10 pb-4">
+          <div className="flex items-center justify-between mb-4">
+            <span className="text-xs font-black uppercase tracking-widest px-3 py-1 rounded-full" style={{ background: 'rgba(201,168,76,0.9)', color: '#0d2a1a' }}>
+              🧭 Sémestre {group.active_mission <= 3 ? '1' : '2'}
+            </span>
+            <span className="text-xs font-bold px-2 py-1 rounded-full" style={{ background: 'rgba(0,0,0,0.4)', color: 'rgba(255,255,255,0.8)' }}>
+              {group.name}
+            </span>
+          </div>
+
+          <h1 className="font-black uppercase leading-none" style={{ fontSize: '2.6rem', color: '#ffffff', textShadow: '0 2px 20px rgba(0,0,0,0.5)' }}>
+            L&apos;EXPÉDITION
           </h1>
-          <h2
-            className="text-xl font-bold"
-            style={{ color: '#c9a84c', letterSpacing: '0.05em' }}
-          >
-            Professionnelle
+          <h2 className="font-black uppercase" style={{ fontSize: '2.2rem', color: '#c9a84c', textShadow: '0 0 30px rgba(201,168,76,0.5)', letterSpacing: '0.05em' }}>
+            COMMENCE
           </h2>
-        </div>
 
-        {/* Citation carnet de voyage */}
-        <div
-          className="mx-auto max-w-sm rounded-xl px-5 py-4 border-l-4 relative"
-          style={{
-            background: 'rgba(26,74,58,0.35)',
-            borderLeftColor: '#c9a84c',
-            backdropFilter: 'blur(8px)',
-          }}
-        >
-          <span
-            className="absolute top-2 left-4 text-3xl font-serif opacity-30 leading-none"
-            style={{ color: '#c9a84c' }}
-          >
-            &ldquo;
-          </span>
-          <p className="text-sm italic leading-relaxed pl-4" style={{ color: 'rgba(255,255,255,0.85)' }}>
-            Le chemin ne se voit pas d&apos;en bas. Il se découvre pas à pas.
-          </p>
-          <p className="text-xs mt-2 pl-4 font-semibold" style={{ color: 'rgba(201,168,76,0.7)' }}>
-            — Carnet de l&apos;explorateur
-          </p>
-        </div>
+          {/* Citation */}
+          <div className="mt-5 rounded-xl p-4" style={{ background: 'rgba(0,0,0,0.4)', backdropFilter: 'blur(8px)', border: '1px solid rgba(201,168,76,0.2)' }}>
+            <p className="text-sm italic leading-relaxed" style={{ color: 'rgba(255,255,255,0.9)' }}>
+              <span className="text-2xl leading-none mr-1" style={{ color: '#c9a84c', fontFamily: 'serif' }}>&ldquo;</span>
+              Votre équipement est prêt. Il est maintenant temps de quitter le camp de base et d&apos;avancer sur le terrain.
+              <span className="text-2xl leading-none ml-1" style={{ color: '#c9a84c', fontFamily: 'serif' }}>&rdquo;</span>
+            </p>
+          </div>
 
-        {/* Badge Mission active */}
-        <div className="flex justify-center mt-4">
-          <div
-            className="flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold uppercase tracking-widest"
-            style={{
-              background: 'rgba(201,168,76,0.15)',
-              border: '1px solid rgba(201,168,76,0.5)',
-              color: '#c9a84c',
-              boxShadow: '0 0 16px rgba(201,168,76,0.2)',
-            }}
-          >
-            <span className="w-2 h-2 rounded-full bg-current animate-pulse" />
-            Mission active
+          {/* CTA badge */}
+          <div className="mt-4 flex items-center gap-3">
+            <div className="flex items-center gap-2 px-4 py-2 rounded-full text-xs font-black uppercase tracking-widest" style={{ background: '#c9a84c', color: '#0d2a1a' }}>
+              <span className="w-2 h-2 rounded-full bg-current animate-pulse" />
+              L&apos;aventure continue !
+            </div>
+            <div className="flex items-center gap-1 px-3 py-2 rounded-full text-xs font-bold" style={{ background: 'rgba(255,255,255,0.1)', color: 'rgba(255,255,255,0.7)' }}>
+              ⛺ Camp de base
+            </div>
           </div>
         </div>
-      </header>
+      </div>
 
-      <main>
+      {/* CONTENU MISSIONS */}
+      <main style={{ background: '#1a1a0e' }}>
         <Univers2Shell group={group} />
       </main>
     </div>

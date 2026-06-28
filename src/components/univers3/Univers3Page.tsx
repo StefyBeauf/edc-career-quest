@@ -92,43 +92,59 @@ export default async function Univers3Page({ group }: Props) {
         </svg>
       </div>
 
-      {/* Header style hologramme */}
-      <div className="relative z-10 text-center pt-6 pb-2 px-4">
-        <div
-          className="inline-block px-6 py-1 mb-2 border rounded-sm text-xs tracking-widest uppercase"
-          style={{
-            borderColor: '#c9a84c',
-            color: '#c9a84c',
-            background: 'rgba(201, 168, 76, 0.08)',
-            fontFamily: 'monospace',
-          }}
-        >
-          CLASSIFIÉ — NIVEAU ALPHA
+      {/* HERO spatial — calqué sur le template */}
+      <div className="relative z-10 px-4 pt-8 pb-6">
+
+        {/* Étoile boussole déco (coin haut gauche comme le template) */}
+        <div className="absolute top-4 left-4 opacity-40">
+          <svg viewBox="0 0 50 50" className="w-10 h-10">
+            <polygon points="25,2 27,23 25,48 23,23" fill="#c9a84c"/>
+            <polygon points="2,25 23,23 48,25 23,27" fill="#c9a84c" opacity="0.6"/>
+            <circle cx="25" cy="25" r="3" fill="#c9a84c"/>
+          </svg>
         </div>
-        <h1
-          className="text-3xl font-black uppercase tracking-widest animate-pulse"
-          style={{
-            color: '#e8f0ff',
-            textShadow: '0 0 20px rgba(200, 220, 255, 0.5), 0 0 40px rgba(100, 160, 255, 0.3)',
-            fontFamily: 'monospace',
-            animationDuration: '3s',
-          }}
-        >
-          MISSION HORIZON
-        </h1>
-        <p
-          className="text-xs mt-1 tracking-widest"
-          style={{ color: '#c9a84c', fontFamily: 'monospace' }}
-        >
-          UNIVERS 3 — SIMULATION PROFESSIONNELLE
+
+        {/* Vaisseau déco (coin haut droit comme le template) */}
+        <div className="absolute top-5 right-4 opacity-35 text-3xl" style={{ transform: 'rotate(-20deg)' }}>
+          🚀
+        </div>
+
+        {/* Badges */}
+        <div className="flex justify-center gap-2 mb-5 mt-2">
+          <span className="text-xs font-black uppercase tracking-widest px-3 py-1 rounded" style={{ background: 'rgba(201,168,76,0.15)', color: '#c9a84c', border: '1px solid rgba(201,168,76,0.3)', fontFamily: 'monospace' }}>
+            DOSSIER CONFIDENTIEL
+          </span>
+        </div>
+
+        {/* Titre principal */}
+        <div className="text-center mb-4">
+          <h1 className="font-black uppercase leading-none mb-1" style={{ fontSize: '2.8rem', color: '#e8f0ff', fontFamily: 'monospace', textShadow: '0 0 30px rgba(150,200,255,0.4)', letterSpacing: '0.05em' }}>
+            MISSION
+          </h1>
+          <h2 className="font-black uppercase" style={{ fontSize: '2.2rem', color: '#c9a84c', fontFamily: 'monospace', textShadow: '0 0 20px rgba(201,168,76,0.5)', letterSpacing: '0.1em' }}>
+            HORIZON
+          </h2>
+        </div>
+
+        {/* Ligne de données style HUD */}
+        <div className="flex justify-center gap-4 mb-4 flex-wrap">
+          {[
+            { label: 'MISSION', value: `M-0${group.active_mission}` },
+            { label: 'SECTEUR', value: group.specialization?.toUpperCase() ?? 'B3' },
+            { label: 'STATUT', value: 'ACTIF' },
+          ].map(item => (
+            <div key={item.label} className="text-center px-3 py-2 rounded" style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)' }}>
+              <p className="text-xs" style={{ color: 'rgba(200,220,255,0.4)', fontFamily: 'monospace' }}>{item.label}</p>
+              <p className="text-sm font-black" style={{ color: '#c9a84c', fontFamily: 'monospace' }}>{item.value}</p>
+            </div>
+          ))}
+        </div>
+
+        {/* Info groupe */}
+        <p className="text-center text-xs" style={{ color: 'rgba(200,220,255,0.4)', fontFamily: 'monospace' }}>
+          AGENT : {group.name.toUpperCase()}
         </p>
       </div>
-
-      <UniverseHeader
-        group={group}
-        missionTitle={mission?.title}
-        missionNumber={group.active_mission}
-      />
 
       <main className="relative z-10 px-4 pb-16">
         {!activeSimulation ? (

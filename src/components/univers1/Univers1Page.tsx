@@ -1,282 +1,184 @@
-import { createClient } from '@/lib/supabase/server'
-import { Group, Mission, Content } from '@/types'
+'use client'
+import { useEffect, useState } from 'react'
+import type { Group, Mission } from '@/types'
 import CP1_MondeEntreprise from '@/components/univers1/checkpoints/CP1_MondeEntreprise'
 import CP2_BasesCV from '@/components/univers1/checkpoints/CP2_BasesCV'
 import CP3_RedactionCV from '@/components/univers1/checkpoints/CP3_RedactionCV'
 import CP4_LectureOffre from '@/components/univers1/checkpoints/CP4_LectureOffre'
 import CP5_Situations from '@/components/univers1/checkpoints/CP5_Situations'
 import CP6_RoueEntretiens from '@/components/univers1/checkpoints/CP6_RoueEntretiens'
+import { createClient } from '@/lib/supabase/client'
 
-interface Props {
-  group: Group
-}
+interface Props { group: Group }
 
-const checkpoints = [
-  { numero: 1, titre: 'Découvrir le monde professionnel', icon: '🌐' },
-  { numero: 2, titre: 'Préparer ses bagages', icon: '🧳' },
-  { numero: 3, titre: 'Valider son embarquement', icon: '🎫' },
-  { numero: 4, titre: 'Choisir son itinéraire', icon: '🗺️' },
-  { numero: 5, titre: 'Passer les contrôles', icon: '🪪' },
-  { numero: 6, titre: 'Décollage', icon: '✈️' },
+const CHECKPOINTS = [
+  { n: 1, titre: 'Découvrir le monde professionnel', desc: 'Comprendre les entreprises et les marchés BtoB / BtoC.', icon: '🌐' },
+  { n: 2, titre: 'Préparer ses bagages', desc: 'Construire son premier CV et valoriser ses compétences.', icon: '🧳' },
+  { n: 3, titre: 'Valider son embarquement', desc: 'Rédiger une candidature (CV + lettre de motivation) adaptée.', icon: '🎫' },
+  { n: 4, titre: 'Choisir son itinéraire', desc: 'Rechercher les offres de stage et sélectionner les bonnes opportunités.', icon: '🗺️' },
+  { n: 5, titre: 'Passer les contrôles', desc: 'Découvrir les codes professionnels et préparer son entretien.', icon: '🪪' },
+  { n: 6, titre: 'Décollage', desc: 'Simulation d\'entretien et questions les plus fréquentes.', icon: '✈️' },
 ]
 
-function CheckpointNav({ missionNumero }: { missionNumero: number }) {
-  return (
-    <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-none">
-      {checkpoints.map((cp, index) => {
-        const etat = cp.numero < missionNumero ? 'fait' : cp.numero === missionNumero ? 'actif' : 'verrouille'
-        const isLast = index === checkpoints.length - 1
-        return (
-          <div key={cp.numero} className="flex items-center gap-1 flex-shrink-0">
-            <div className="flex flex-col items-center gap-1">
-              <div
-                className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold transition-all relative ${
-                  etat === 'actif'
-                    ? 'ring-2 ring-offset-2'
-                    : ''
-                }`}
-                style={{
-                  backgroundColor: etat === 'fait' ? '#c9a84c' : etat === 'actif' ? '#e8c96a' : '#1a2744',
-                  color: etat === 'verrouille' ? '#4a5568' : '#0f1e3d',
-                  boxShadow: etat === 'actif' ? '0 0 16px rgba(232,201,106,0.5)' : 'none',
-                  border: etat === 'verrouille' ? '1px solid rgba(255,255,255,0.1)' : 'none',
-                }}
-              >
-                {etat === 'fait' ? '✓' : etat === 'verrouille' ? '🔒' : cp.icon}
-              </div>
-              <span
-                className="text-xs font-semibold uppercase tracking-wider"
-                style={{ color: etat === 'actif' ? '#e8c96a' : etat === 'fait' ? '#c9a84c' : '#4a5568', fontSize: '9px' }}
-              >
-                CP{cp.numero}
-              </span>
-            </div>
-            {!isLast && (
-              <div
-                className="w-4 h-px flex-shrink-0 mt-1"
-                style={{ backgroundColor: cp.numero < missionNumero ? '#c9a84c' : 'rgba(255,255,255,0.1)' }}
-              />
-            )}
+export default function Univers1Page({ group }: Props) {
+  const [mission, setMission] = useState<Mission | null>(null)
+  const [vue, setVue] = useState<'splash' | 'contenu'>('splash')
+  const [visible, setVisible] = useState(false)
+  const actif = group.active_mission
+
+  useEffect(() => {
+    const supabase = createClient()
+    supabase.from('missions').select('*').eq('universe', 'passeport-stage').eq('number', actif).single()
+      .then(({ data }) => setMission(data as Mission))
+    setTimeout(() => setVisible(true), 100)
+  }, [actif])
+
+  if (vue === 'contenu') {
+    return (
+      <div className="min-h-screen" style={{ background: 'linear-gradient(180deg, #0f1e3d 0%, #1a2744 100%)' }}>
+        <div className="sticky top-0 z-50 px-4 py-3 flex items-center gap-3" style={{ background: 'rgba(15,30,61,0.95)', backdropFilter: 'blur(12px)', borderBottom: '1px solid rgba(201,168,76,0.2)' }}>
+          <button onClick={() => setVue('splash')} className="w-8 h-8 rounded-full flex items-center justify-center text-sm" style={{ background: 'rgba(201,168,76,0.15)', color: '#c9a84c' }}>←</button>
+          <div>
+            <p className="text-xs font-bold uppercase tracking-widest" style={{ color: '#c9a84c' }}>Checkpoint {actif} / 6</p>
+            <p className="text-sm font-bold text-white">{CHECKPOINTS[actif - 1]?.titre}</p>
           </div>
-        )
-      })}
-    </div>
-  )
-}
-
-export default async function Univers1Page({ group }: Props) {
-  const supabase = await createClient()
-
-  const { data: missionData } = await supabase
-    .from('missions')
-    .select('*')
-    .eq('universe', 'passeport-stage')
-    .eq('number', group.active_mission)
-    .single()
-
-  const mission = missionData as Mission | null
-
-  let contenus: Content[] = []
-  if (mission) {
-    const { data: contenusData } = await supabase
-      .from('contents')
-      .select('*')
-      .eq('mission_id', mission.id)
-
-    contenus = (contenusData as Content[]) ?? []
+        </div>
+        <div className="px-4 py-6">
+          {actif === 1 && <CP1_MondeEntreprise />}
+          {actif === 2 && <CP2_BasesCV />}
+          {actif === 3 && <CP3_RedactionCV />}
+          {actif === 4 && <CP4_LectureOffre />}
+          {actif === 5 && <CP5_Situations />}
+          {actif === 6 && <CP6_RoueEntretiens />}
+        </div>
+      </div>
+    )
   }
 
-  const missionNumero = group.active_mission
-  const cpActif = checkpoints.find(cp => cp.numero === missionNumero)
-
   return (
-    <div
-      className="min-h-screen"
-      style={{
-        background: 'radial-gradient(ellipse at 30% 10%, rgba(201,168,76,0.08) 0%, transparent 60%), linear-gradient(180deg, #0f1e3d 0%, #1a2744 60%, #0f1e3d 100%)',
-      }}
-    >
-      {/* World map subtle overlay */}
-      <div
-        className="fixed inset-0 opacity-3 pointer-events-none"
-        style={{
-          backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='200' viewBox='0 0 400 200'%3E%3Ccircle cx='200' cy='100' r='80' fill='none' stroke='%23c9a84c' stroke-width='0.5'/%3E%3Ccircle cx='200' cy='100' r='50' fill='none' stroke='%23c9a84c' stroke-width='0.5'/%3E%3Cline x1='120' y1='100' x2='280' y2='100' stroke='%23c9a84c' stroke-width='0.3'/%3E%3Cline x1='200' y1='20' x2='200' y2='180' stroke='%23c9a84c' stroke-width='0.3'/%3E%3C/svg%3E")`,
-          backgroundSize: '600px 300px',
-          opacity: 0.04,
-        }}
-      />
+    <div className="min-h-screen flex flex-col" style={{ background: '#f0e6cc' }}>
 
-      <div className="max-w-2xl mx-auto px-4 py-6 space-y-6 relative">
+      {/* HERO — style template */}
+      <div className="relative overflow-hidden" style={{ background: 'linear-gradient(180deg, #0f1e3d 0%, #1a2744 85%, #f0e6cc 100%)', paddingBottom: '40px' }}>
 
-        {/* Header passeport */}
-        <div className="text-center space-y-3 pt-4">
-          <div className="flex items-center justify-center gap-2 mb-1">
-            <div
-              className="w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold"
-              style={{ backgroundColor: '#c9a84c', color: '#0f1e3d' }}
-            >
-              ✈
-            </div>
-            <span
-              className="text-xs font-bold uppercase tracking-widest"
-              style={{ color: '#c9a84c' }}
-            >
-              EDC Career Quest
-            </span>
-          </div>
-          <h1
-            className="text-3xl font-black uppercase tracking-widest"
-            style={{ color: '#e8c96a', letterSpacing: '0.15em' }}
-          >
-            Votre Itinéraire
+        {/* Globe watermark */}
+        <div className="absolute inset-0 flex items-center justify-center opacity-5 pointer-events-none">
+          <svg viewBox="0 0 300 300" className="w-80 h-80" fill="none">
+            <circle cx="150" cy="150" r="120" stroke="#c9a84c" strokeWidth="1"/>
+            <circle cx="150" cy="150" r="80" stroke="#c9a84c" strokeWidth="0.8"/>
+            <circle cx="150" cy="150" r="40" stroke="#c9a84c" strokeWidth="0.6"/>
+            <ellipse cx="150" cy="150" rx="120" ry="50" stroke="#c9a84c" strokeWidth="0.6"/>
+            <ellipse cx="150" cy="150" rx="120" ry="20" stroke="#c9a84c" strokeWidth="0.4"/>
+            <line x1="30" y1="150" x2="270" y2="150" stroke="#c9a84c" strokeWidth="0.6"/>
+            <line x1="150" y1="30" x2="150" y2="270" stroke="#c9a84c" strokeWidth="0.6"/>
+          </svg>
+        </div>
+
+        {/* Avion déco */}
+        <div className="absolute top-6 right-6 opacity-30 text-4xl" style={{ transform: 'rotate(15deg)' }}>✈️</div>
+
+        <div className={`relative text-center px-6 pt-10 pb-2 transition-all duration-700 ${visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
+          <p className="text-xs font-black uppercase tracking-widest mb-3" style={{ color: '#c9a84c', letterSpacing: '0.3em' }}>
+            ✈ EDC Career Quest · {group.name}
+          </p>
+          <h1 className="font-black uppercase leading-none mb-2" style={{ fontSize: '2.8rem', color: '#f0e6cc', letterSpacing: '0.08em', textShadow: '0 0 40px rgba(201,168,76,0.3)' }}>
+            VOTRE<br />
+            <span style={{ color: '#c9a84c' }}>ITINÉRAIRE</span>
           </h1>
-          <p
-            className="text-xs font-semibold uppercase tracking-widest"
-            style={{ color: 'rgba(201,168,76,0.6)' }}
-          >
-            6 CHECKPOINTS · 1 DESTINATION : VOTRE PREMIER STAGE
-          </p>
-          <p className="text-sm" style={{ color: 'rgba(245,240,232,0.5)' }}>
-            {group.name}
-          </p>
-        </div>
-
-        {/* Navigation checkpoints */}
-        <div
-          className="rounded-2xl px-5 py-4"
-          style={{
-            background: 'rgba(255,255,255,0.03)',
-            border: '1px solid rgba(201,168,76,0.15)',
-          }}
-        >
-          <CheckpointNav missionNumero={missionNumero} />
-        </div>
-
-        {/* Boarding pass — mission active */}
-        {cpActif && (
-          <div
-            className="rounded-2xl overflow-hidden"
-            style={{
-              background: 'linear-gradient(135deg, #f5f0e8 0%, #ede6d6 100%)',
-              boxShadow: '0 8px 32px rgba(0,0,0,0.4)',
-            }}
-          >
-            {/* En-tête boarding pass */}
-            <div
-              className="px-5 py-3 flex items-center justify-between"
-              style={{ backgroundColor: '#0f1e3d' }}
-            >
-              <div>
-                <p className="text-xs font-bold uppercase tracking-widest" style={{ color: '#c9a84c' }}>
-                  Boarding Pass
-                </p>
-                <p className="text-xs" style={{ color: 'rgba(255,255,255,0.4)' }}>
-                  VOL EDC-{String(missionNumero).padStart(2, '0')} · PASSEPORT STAGE
-                </p>
-              </div>
-              <div
-                className="w-9 h-9 rounded-full flex items-center justify-center text-xl"
-                style={{ backgroundColor: 'rgba(201,168,76,0.15)' }}
-              >
-                {cpActif.icon}
-              </div>
-            </div>
-
-            {/* Corps boarding pass */}
-            <div className="px-5 py-4 flex gap-4 items-center">
-              <div className="flex-1">
-                <p className="text-xs font-semibold uppercase tracking-wider" style={{ color: '#6b5a3a' }}>
-                  Checkpoint {missionNumero} / 6
-                </p>
-                <p className="text-lg font-black uppercase" style={{ color: '#0f1e3d', letterSpacing: '0.03em' }}>
-                  {cpActif.titre}
-                </p>
-              </div>
-              <div
-                className="w-12 h-12 rounded-full flex items-center justify-center font-black text-xl flex-shrink-0"
-                style={{ backgroundColor: '#0f1e3d', color: '#e8c96a' }}
-              >
-                {missionNumero}
-              </div>
-            </div>
-
-            {/* Ligne pointillée */}
-            <div className="flex items-center px-3">
-              <div
-                className="w-4 h-4 rounded-full flex-shrink-0"
-                style={{ backgroundColor: '#0f1e3d', marginLeft: '-20px' }}
-              />
-              <div
-                className="flex-1 border-t-2 border-dashed mx-1"
-                style={{ borderColor: 'rgba(107,90,58,0.3)' }}
-              />
-              <div
-                className="w-4 h-4 rounded-full flex-shrink-0"
-                style={{ backgroundColor: '#0f1e3d', marginRight: '-20px' }}
-              />
-            </div>
-
-            {/* Pied boarding pass */}
-            {mission && (
-              <div className="px-5 py-4">
-                <p className="text-xs font-semibold uppercase tracking-wider mb-1" style={{ color: '#6b5a3a' }}>
-                  Mission en cours
-                </p>
-                <p className="font-bold" style={{ color: '#0f1e3d' }}>{mission.title}</p>
-                {mission.description && (
-                  <p className="text-sm mt-1" style={{ color: '#6b5a3a' }}>{mission.description}</p>
-                )}
-              </div>
-            )}
+          <div className="flex items-center justify-center gap-2 mt-3">
+            <div className="h-px flex-1" style={{ background: 'rgba(201,168,76,0.3)' }} />
+            <p className="text-xs font-bold uppercase tracking-widest px-2" style={{ color: 'rgba(201,168,76,0.7)' }}>
+              6 checkpoints · 1 destination
+            </p>
+            <div className="h-px flex-1" style={{ background: 'rgba(201,168,76,0.3)' }} />
           </div>
-        )}
+        </div>
+      </div>
 
-        {/* Contenus de la mission */}
-        {contenus.length > 0 && (
-          <div className="space-y-3">
-            {contenus.map(contenu => (
-              <div
-                key={contenu.id}
-                className="rounded-xl px-4 py-3"
+      {/* CHECKPOINTS — style infographie */}
+      <div className="flex-1 px-4 py-6 space-y-3" style={{ background: '#f0e6cc' }}>
+        <p className="text-center text-xs font-bold uppercase tracking-widest mb-4" style={{ color: '#6b5a3a' }}>
+          DESTINATION : VOTRE PREMIER STAGE 📍
+        </p>
+
+        {CHECKPOINTS.map((cp, idx) => {
+          const etat = cp.n < actif ? 'fait' : cp.n === actif ? 'actif' : 'verrouille'
+          const isActif = etat === 'actif'
+          const isFait = etat === 'fait'
+
+          return (
+            <div key={cp.n} className="relative">
+              {/* Ligne verticale de connexion */}
+              {idx < CHECKPOINTS.length - 1 && (
+                <div className="absolute left-7 top-full w-px h-3 z-10" style={{ background: isFait ? '#c9a84c' : 'rgba(107,90,58,0.2)' }} />
+              )}
+
+              <button
+                onClick={() => isActif && setVue('contenu')}
+                disabled={!isActif}
+                className="w-full flex items-center gap-4 rounded-2xl p-4 text-left transition-all duration-200"
                 style={{
-                  background: 'rgba(255,255,255,0.04)',
-                  border: '1px solid rgba(201,168,76,0.15)',
+                  background: isActif
+                    ? 'linear-gradient(135deg, #0f1e3d 0%, #1a2744 100%)'
+                    : isFait
+                    ? 'rgba(201,168,76,0.12)'
+                    : 'rgba(107,90,58,0.06)',
+                  border: isActif
+                    ? '2px solid #c9a84c'
+                    : isFait
+                    ? '1px solid rgba(201,168,76,0.3)'
+                    : '1px solid rgba(107,90,58,0.15)',
+                  boxShadow: isActif ? '0 8px 32px rgba(201,168,76,0.2)' : 'none',
+                  transform: isActif ? 'scale(1.01)' : 'scale(1)',
                 }}
               >
-                <span
-                  className="text-xs font-bold uppercase tracking-widest"
-                  style={{ color: '#c9a84c' }}
+                {/* Cercle numéro */}
+                <div
+                  className="w-12 h-12 rounded-full flex items-center justify-center text-xl flex-shrink-0 font-black"
+                  style={{
+                    background: isActif ? '#c9a84c' : isFait ? 'rgba(201,168,76,0.8)' : 'rgba(107,90,58,0.15)',
+                    boxShadow: isActif ? '0 0 20px rgba(201,168,76,0.5)' : 'none',
+                    color: isActif || isFait ? '#0f1e3d' : '#9a8a6a',
+                  }}
                 >
-                  {contenu.type}
-                </span>
-                <p className="text-sm mt-1" style={{ color: '#f5f0e8' }}>{contenu.content}</p>
-                {contenu.feedback && (
-                  <p className="text-xs mt-2 italic" style={{ color: 'rgba(201,168,76,0.6)' }}>{contenu.feedback}</p>
-                )}
-              </div>
-            ))}
-          </div>
-        )}
+                  {isFait ? '✓' : etat === 'verrouille' ? '🔒' : cp.icon}
+                </div>
 
-        {/* Composant checkpoint */}
-        <div>
-          {missionNumero === 1 && <CP1_MondeEntreprise />}
-          {missionNumero === 2 && <CP2_BasesCV />}
-          {missionNumero === 3 && <CP3_RedactionCV />}
-          {missionNumero === 4 && <CP4_LectureOffre />}
-          {missionNumero === 5 && <CP5_Situations />}
-          {missionNumero === 6 && <CP6_RoueEntretiens />}
-          {(missionNumero < 1 || missionNumero > 6) && (
-            <div
-              className="rounded-2xl p-8 text-center"
-              style={{
-                background: 'rgba(255,255,255,0.03)',
-                border: '1px solid rgba(255,255,255,0.08)',
-              }}
-            >
-              <p style={{ color: 'rgba(245,240,232,0.5)' }}>Ce checkpoint n&apos;est pas encore disponible.</p>
+                {/* Texte */}
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2 mb-0.5">
+                    <p className="text-xs font-black uppercase tracking-widest" style={{ color: isActif ? '#c9a84c' : isFait ? '#9a7a3a' : '#9a8a6a' }}>
+                      CHECKPOINT {cp.n}
+                    </p>
+                    {isActif && (
+                      <span className="text-xs font-bold px-2 py-0.5 rounded-full" style={{ background: '#c9a84c', color: '#0f1e3d' }}>
+                        EN COURS
+                      </span>
+                    )}
+                  </div>
+                  <p className="font-bold text-sm leading-tight" style={{ color: isActif ? '#f0e6cc' : isFait ? '#3a2a1a' : '#9a8a6a' }}>
+                    {cp.titre}
+                  </p>
+                  {(isActif || isFait) && (
+                    <p className="text-xs mt-0.5 leading-relaxed" style={{ color: isActif ? 'rgba(240,230,204,0.7)' : 'rgba(58,42,26,0.6)' }}>
+                      {cp.desc}
+                    </p>
+                  )}
+                </div>
+
+                {isActif && (
+                  <div className="text-xl flex-shrink-0" style={{ color: '#c9a84c' }}>›</div>
+                )}
+              </button>
             </div>
-          )}
+          )
+        })}
+
+        {/* Destination finale */}
+        <div className="rounded-2xl p-4 text-center mt-4" style={{ background: '#0f1e3d', border: '1px solid rgba(201,168,76,0.2)' }}>
+          <p className="text-xs font-black uppercase tracking-widest" style={{ color: 'rgba(201,168,76,0.6)' }}>Destination finale</p>
+          <p className="font-black text-lg uppercase mt-1" style={{ color: '#c9a84c' }}>📍 VOTRE PREMIER STAGE</p>
+          {mission && <p className="text-xs mt-1" style={{ color: 'rgba(240,230,204,0.5)' }}>{mission.description}</p>}
         </div>
       </div>
     </div>
