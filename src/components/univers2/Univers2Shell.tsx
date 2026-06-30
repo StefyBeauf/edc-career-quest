@@ -4,11 +4,6 @@ import { useState } from 'react'
 import type { Group, Track } from '@/types'
 import { getMissionsForTrack } from '@/lib/content/univers2'
 import MissionSelector from './MissionSelector'
-import MissionSelectorGrid from './MissionSelectorGrid'
-import MissionSelectorStepper from './MissionSelectorStepper'
-import MissionSelectorTabs from './MissionSelectorTabs'
-import MissionSelectorCompact from './MissionSelectorCompact'
-import MissionSelectorWheel from './MissionSelectorWheel'
 import CardDeck from './CardDeck'
 import MissionLocked from '@/components/shared/MissionLocked'
 import Mission1Boussole from './Mission1Boussole'
@@ -22,47 +17,29 @@ interface Univers2ShellProps {
   group: Group
 }
 
-// Une mise en page de navigation différente pour chaque épisode — pas systématiquement la frise "jalons"
-const SELECTOR_LABELS: Record<number, string> = {
-  1: 'Jalons de l\'expédition',
-  2: 'Votre progression',
-  3: 'Étapes du parcours',
-  4: 'Dossiers à explorer',
-  5: 'Avancement',
-  6: 'Roue des missions',
-}
-
 export default function Univers2Shell({ group }: Univers2ShellProps) {
   const track = (group.track ?? 'bachelor2') as Track
   const missions = getMissionsForTrack(track)
   const [selectedMission, setSelectedMission] = useState(group.active_mission)
 
   const isLocked = selectedMission > group.active_mission
-  const episode = group.active_mission
-
-  const selectorProps = {
-    missions,
-    activeMission: group.active_mission,
-    selectedMission,
-    onSelect: setSelectedMission,
-  }
 
   return (
     <div className="flex flex-col gap-6 px-4 pb-12 max-w-xl mx-auto w-full">
-      {/* Section navigation — mise en page différente selon l'épisode */}
+      {/* Section navigation — repère stable et identique pour toutes les missions */}
       <section>
         <p
           className="text-xs font-bold uppercase tracking-widest mb-4"
           style={{ color: 'rgba(201,168,76,0.6)' }}
         >
-          {SELECTOR_LABELS[episode] ?? 'Navigation'}
+          Jalons de l&apos;expédition
         </p>
-        {episode === 1 && <MissionSelector {...selectorProps} />}
-        {episode === 2 && <MissionSelectorStepper {...selectorProps} />}
-        {episode === 3 && <MissionSelectorTabs {...selectorProps} />}
-        {episode === 4 && <MissionSelectorGrid {...selectorProps} />}
-        {episode === 5 && <MissionSelectorCompact {...selectorProps} />}
-        {episode === 6 && <MissionSelectorWheel {...selectorProps} />}
+        <MissionSelector
+          missions={missions}
+          activeMission={group.active_mission}
+          selectedMission={selectedMission}
+          onSelect={setSelectedMission}
+        />
       </section>
 
       {/* Séparateur style corde */}
