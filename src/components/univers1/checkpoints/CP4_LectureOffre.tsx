@@ -241,6 +241,132 @@ export default function CP4_LectureOffre() {
           ))}
         </div>
       </div>
+
+      <QuizOffre />
+    </div>
+  )
+}
+
+const quizQuestions = [
+  {
+    question: 'Dans l\'offre, "Anglais conversationnel apprécié" signifie :',
+    options: [
+      'C\'est un critère bloquant, sans anglais inutile de postuler',
+      'C\'est un plus, mais ce n\'est pas éliminatoire',
+      'Il faut un niveau bilingue obligatoire',
+    ],
+    bonne: 1,
+    explication: '"Apprécié" = un plus qui valorise la candidature, mais ce n\'est jamais un filtre d\'entrée contrairement à "requis" ou "indispensable".',
+  },
+  {
+    question: 'Quel élément de l\'offre est un critère bloquant pour postuler ?',
+    options: [
+      'Ne pas connaître la marque avant l\'entretien',
+      'Ne pas être disponible le samedi',
+      'Ne pas savoir utiliser un CRM',
+    ],
+    bonne: 1,
+    explication: 'Le travail en boutique implique des horaires décalés (samedi, dimanches en période de fêtes). Si vous n\'êtes pas disponible, c\'est rédhibitoire — contrairement à la connaissance d\'un CRM, qui peut s\'apprendre.',
+  },
+  {
+    question: 'Qu\'est-ce que la "vente additionnelle" mentionnée dans le décryptage ?',
+    options: [
+      'Vendre uniquement les articles en promotion',
+      'Proposer un article complémentaire à l\'achat principal du client',
+      'Augmenter les prix en fin de saison',
+    ],
+    bonne: 1,
+    explication: 'C\'est une compétence clé du conseiller de vente : proposer une ceinture ou des chaussures avec une veste, par exemple. En parler en entretien montre que vous connaissez le métier.',
+  },
+  {
+    question: 'Avant un entretien pour ce poste, la meilleure préparation est de :',
+    options: [
+      'Apprendre par cœur une présentation générique de soi',
+      'Visiter la boutique et comprendre le positionnement de la marque',
+      'Préparer uniquement des questions sur le salaire',
+    ],
+    bonne: 1,
+    explication: 'Pour un poste en boutique haut de gamme, ne pas connaître l\'enseigne se voit immédiatement. Le recruteur attend que vous ayez visité le lieu et comprenne le positionnement prix.',
+  },
+  {
+    question: 'Dans votre candidature, quel mot-clé de l\'offre est le plus important à reprendre ?',
+    options: [
+      'Un mot générique comme "motivé" ou "dynamique"',
+      'Un terme précis de l\'offre comme "conseiller de vente" ou "merchandising"',
+      'Le nom de votre établissement scolaire',
+    ],
+    bonne: 1,
+    explication: 'Reprendre les mots-clés exacts de l\'offre (conseiller de vente, merchandising, fidélisation) montre que vous avez ciblé votre candidature. Un recruteur expérimenté repère un CV générique en 5 secondes.',
+  },
+]
+
+function QuizOffre() {
+  const [reponses, setReponses] = useState<(number | null)[]>(Array(quizQuestions.length).fill(null))
+  const [valide, setValide] = useState(false)
+
+  function choisir(qIndex: number, oIndex: number) {
+    if (valide) return
+    setReponses(prev => prev.map((v, i) => i === qIndex ? oIndex : v))
+  }
+
+  const score = reponses.reduce((acc: number, r, i) => acc + (r === quizQuestions[i].bonne ? 1 : 0), 0)
+  const toutesRepondues = reponses.every(r => r !== null)
+
+  return (
+    <div className="rounded-2xl bg-white/5 border border-white/10 p-6">
+      <p className="text-xs font-semibold text-sky-300 uppercase tracking-widest mb-1">Quiz — As-tu bien compris ?</p>
+      <p className="text-sky-200 text-sm mb-4">Vérifie ta compréhension de l&apos;analyse d&apos;une offre de stage.</p>
+
+      <div className="space-y-5">
+        {quizQuestions.map((q, qi) => (
+          <div key={qi} className="space-y-2">
+            <p className="text-white text-sm font-medium">{qi + 1}. {q.question}</p>
+            <div className="space-y-2">
+              {q.options.map((opt, oi) => {
+                const estChoisie = reponses[qi] === oi
+                const estBonne = oi === q.bonne
+                let style = 'bg-white/5 border-white/10 text-sky-100 hover:bg-white/10'
+                if (valide) {
+                  if (estBonne) style = 'bg-green-500/15 border-green-400/40 text-green-200'
+                  else if (estChoisie) style = 'bg-red-500/15 border-red-400/40 text-red-200'
+                  else style = 'bg-white/5 border-white/5 text-sky-100/40'
+                } else if (estChoisie) {
+                  style = 'bg-sky-500/15 border-sky-400/40 text-white'
+                }
+                return (
+                  <button
+                    key={oi}
+                    onClick={() => choisir(qi, oi)}
+                    className={`w-full text-left rounded-xl border px-4 py-2.5 text-sm transition-all ${style}`}
+                  >
+                    {opt}
+                  </button>
+                )
+              })}
+            </div>
+            {valide && (
+              <p className="text-sky-300 text-xs mt-1 leading-relaxed">{q.explication}</p>
+            )}
+          </div>
+        ))}
+      </div>
+
+      {!valide ? (
+        <button
+          onClick={() => setValide(true)}
+          disabled={!toutesRepondues}
+          className="w-full mt-5 py-3 rounded-xl font-semibold text-sm transition-all disabled:opacity-40 disabled:cursor-not-allowed bg-sky-500 text-white hover:bg-sky-400"
+        >
+          Valider mes réponses
+        </button>
+      ) : (
+        <div className="mt-5 rounded-xl bg-white/5 border border-white/10 p-4 text-center">
+          <p className="text-white font-bold text-lg">{score} / {quizQuestions.length}</p>
+          <p className="text-sky-300 text-sm mt-1">
+            {score === quizQuestions.length ? 'Parfait, tu maîtrises la lecture d\'offre !' : score >= 3 ? 'Bonne compréhension, relis les explications ci-dessus.' : 'Relis le décryptage de l\'offre puis retente le quiz.'}
+          </p>
+        </div>
+      )}
     </div>
   )
 }

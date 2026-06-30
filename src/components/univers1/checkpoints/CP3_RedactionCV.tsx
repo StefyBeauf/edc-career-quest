@@ -69,7 +69,6 @@ const titreMap: Record<string, string> = {
 
 export default function CP3_RedactionCV() {
   const [checkList, setCheckList] = useState<boolean[]>(Array(checklistEnvoi.length).fill(false))
-  const [notes, setNotes] = useState('')
   const [exemplesOuverts, setExemplesOuverts] = useState<boolean[]>(Array(formulationsCV.length).fill(false))
 
   function toggleCheck(i: number) {
@@ -128,18 +127,6 @@ export default function CP3_RedactionCV() {
             </button>
           ))}
         </div>
-      </div>
-
-      <div className="rounded-2xl bg-white/5 border border-white/10 p-6">
-        <p className="text-xs font-semibold text-sky-300 uppercase tracking-widest mb-3">Zone de travail personnel</p>
-        <p className="text-sky-200 text-sm mb-3">Note ici tes idées de formulations, tes expériences à valoriser, tes compétences clés.</p>
-        <textarea
-          value={notes}
-          onChange={e => setNotes(e.target.value)}
-          placeholder="Écris ici ce que tu pourrais mettre sur ton CV... Expériences, compétences, résultats dont tu es fier(e), centres d'intérêt pertinents..."
-          className="w-full min-h-40 rounded-xl bg-white/5 border border-white/10 text-sky-100 placeholder:text-sky-400/50 p-4 text-sm resize-y focus:outline-none focus:border-sky-400/50"
-        />
-        <p className="text-sky-400 text-xs mt-2">{notes.length} caractères saisis (ces notes ne sont pas sauvegardées)</p>
       </div>
 
       <div className="rounded-2xl bg-white/5 border border-white/10 p-6">

@@ -4,17 +4,20 @@ import Univers2Shell from './Univers2Shell'
 interface Props { group: Group }
 
 export default async function Univers2Page({ group }: Props) {
+  const secondSemestre = group.track === 'pge2' && group.active_mission >= 4
+  const heroImage = secondSemestre ? '/hero-univers4.jpg' : '/hero-univers2.jpg'
+
   return (
     <div className="min-h-screen" style={{ background: '#0f0a04' }}>
 
       {/* ═══ HERO plein écran — vraie photo ═══ */}
       <div className="relative overflow-hidden" style={{ minHeight: '100svh' }}>
 
-        {/* Photo réelle d'exploration (Unsplash — licence gratuite) */}
+        {/* Photo réelle */}
         <div
           className="absolute inset-0"
           style={{
-            backgroundImage: 'url("/hero-univers2.jpg")',
+            backgroundImage: `url("${heroImage}")`,
             backgroundSize: 'cover',
             backgroundPosition: 'center 35%',
           }}
@@ -59,7 +62,7 @@ export default async function Univers2Page({ group }: Props) {
 
             {/* Catégorie */}
             <p className="text-xs font-black uppercase tracking-[0.32em] mb-3" style={{ color: 'rgba(201,168,76,0.75)' }}>
-              Expédition Professionnelle
+              {secondSemestre ? 'Le Dossier de l\'Enquête' : 'Expédition Professionnelle'}
             </p>
 
             {/* Grand titre */}
@@ -73,10 +76,7 @@ export default async function Univers2Page({ group }: Props) {
               textShadow: '0 2px 30px rgba(0,0,0,0.8)',
               marginBottom: '1.2rem',
             }}>
-              L&apos;HEURE<br />
-              <span style={{ color: '#f5c842', textShadow: '0 0 50px rgba(245,200,66,0.45)' }}>
-                D&apos;EXPLORER
-              </span>
+              {secondSemestre ? <>L&apos;ENQUÊTE<br /><span style={{ color: '#f5c842', textShadow: '0 0 50px rgba(245,200,66,0.45)' }}>CONTINUE</span></> : <>L&apos;HEURE<br /><span style={{ color: '#f5c842', textShadow: '0 0 50px rgba(245,200,66,0.45)' }}>D&apos;EXPLORER</span></>}
             </h1>
 
             {/* Séparateur */}

@@ -6,6 +6,12 @@ import { getMissionsForTrack } from '@/lib/content/univers2'
 import MissionSelector from './MissionSelector'
 import CardDeck from './CardDeck'
 import MissionLocked from '@/components/shared/MissionLocked'
+import Mission1Boussole from './Mission1Boussole'
+import Mission2CarnetBord from './Mission2CarnetBord'
+import Mission3LongueVue from './Mission3LongueVue'
+import Dossier4Pistes from './Dossier4Pistes'
+import Dossier5Contacts from './Dossier5Contacts'
+import Dossier6Opportunite from './Dossier6Opportunite'
 
 interface Univers2ShellProps {
   group: Group
@@ -43,10 +49,22 @@ export default function Univers2Shell({ group }: Univers2ShellProps) {
         <div className="flex-1 h-px" style={{ background: 'rgba(201,168,76,0.2)' }} />
       </div>
 
-      {/* Section cartes */}
+      {/* Section contenu de mission */}
       <section>
         {isLocked ? (
           <MissionLocked group={group} />
+        ) : selectedMission === 1 ? (
+          <Mission1Boussole />
+        ) : selectedMission === 2 ? (
+          <Mission2CarnetBord />
+        ) : selectedMission === 3 ? (
+          <Mission3LongueVue />
+        ) : track === 'pge2' && selectedMission === 4 ? (
+          <Dossier4Pistes />
+        ) : track === 'pge2' && selectedMission === 5 ? (
+          <Dossier5Contacts />
+        ) : track === 'pge2' && selectedMission === 6 ? (
+          <Dossier6Opportunite />
         ) : (
           <CardDeck missionNumber={selectedMission} track={track} />
         )}
