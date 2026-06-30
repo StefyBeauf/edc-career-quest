@@ -1,108 +1,118 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
-import { personnesRencontre, lieuxRencontre, tempsRencontre, profilsMystere } from '@/lib/content/univers2-pge2-s2'
+import { useState } from 'react'
+import { interlocuteursPitch, contextesPitch, dureesPitch, dossiersConfidentielsPitch } from '@/lib/content/univers2-pge2-s2'
 
 function pick<T>(arr: T[]) { return arr[Math.floor(Math.random() * arr.length)] }
 
+interface Scenario { interlocuteur: string; contexte: string; duree: number }
+
 export default function Dossier5Contacts() {
-  const [rencontre, setRencontre] = useState<{ personne: string; lieu: string; temps: number } | null>(null)
-  const [mystere, setMystere] = useState<string | null>(null)
-  const [chrono, setChrono] = useState<number | null>(null)
-  const [running, setRunning] = useState(false)
-  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
+  const [scenario, setScenario] = useState<Scenario | null>(null)
+  const [pitch, setPitch] = useState('')
+  const [analyse, setAnalyse] = useState('')
+  const [loading, setLoading] = useState(false)
+  const [confidentiel, setConfidentiel] = useState<string | null>(null)
 
-  const nouvelleRencontre = () => {
-    setRencontre({ personne: pick(personnesRencontre), lieu: pick(lieuxRencontre), temps: pick(tempsRencontre) })
-    setChrono(null)
-    setRunning(false)
-    if (intervalRef.current) clearInterval(intervalRef.current)
+  const nouveauScenario = () => {
+    setScenario({ interlocuteur: pick(interlocuteursPitch), contexte: pick(contextesPitch), duree: pick(dureesPitch) })
+    setPitch('')
+    setAnalyse('')
+    setConfidentiel(null)
   }
 
-  const profilMystere = () => setMystere(pick(profilsMystere))
-
-  const lancerChrono = (secondes: number) => {
-    if (intervalRef.current) clearInterval(intervalRef.current)
-    setChrono(secondes)
-    setRunning(true)
-    intervalRef.current = setInterval(() => {
-      setChrono(prev => {
-        if (prev === null || prev <= 1) {
-          if (intervalRef.current) clearInterval(intervalRef.current)
-          setRunning(false)
-          return 0
-        }
-        return prev - 1
+  const analyser = async () => {
+    if (!scenario || !pitch.trim()) return
+    setLoading(true)
+    try {
+      const res = await fetch('/api/expedition/analyse', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ type: 'pitch', ...scenario, pitch }),
       })
-    }, 1000)
+      const data = await res.json() as { content?: string }
+      setAnalyse(data.content ?? '')
+    } finally { setLoading(false) }
   }
 
-  useEffect(() => () => { if (intervalRef.current) clearInterval(intervalRef.current) }, [])
+  const modeExpert = () => setConfidentiel(pick(dossiersConfidentielsPitch))
 
   return (
     <div className="space-y-5">
       <div className="rounded-2xl p-5" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(201,168,76,0.15)' }}>
         <p className="text-xs font-black uppercase tracking-widest mb-1" style={{ color: 'rgba(201,168,76,0.7)' }}>Dossier 5 — Les Contacts</p>
-        <h2 className="font-black text-white text-lg uppercase tracking-wide mb-2">Générateur de rencontres</h2>
-        <p className="text-sm" style={{ color: 'rgba(255,255,255,0.5)' }}>Une rencontre, un lieu, un temps imposé. Que dites-vous ?</p>
+        <h2 className="font-black text-white text-lg uppercase tracking-wide mb-2">Le Laboratoire de Pitch</h2>
+        <p className="text-sm" style={{ color: 'rgba(255,255,255,0.5)' }}>Adaptez votre pitch selon l&apos;interlocuteur. L&apos;IA analyse structure, adaptation, clarté et impact.</p>
       </div>
 
       <button
-        onClick={nouvelleRencontre}
+        onClick={nouveauScenario}
         className="w-full flex items-center justify-center gap-3 py-4 px-5 rounded-2xl font-black uppercase tracking-wide text-sm"
         style={{ background: 'rgba(201,168,76,0.15)', border: '1.5px solid rgba(201,168,76,0.45)', color: '#f5c842' }}
       >
-        <span className="text-xl">🎭</span><span>Nouvelle rencontre</span>
+        <span className="text-xl">🎭</span><span>Nouveau scénario</span>
       </button>
 
-      {rencontre && (
-        <div className="rounded-2xl p-5 space-y-4" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(201,168,76,0.25)' }}>
-          <div className="grid grid-cols-2 gap-2 text-center">
-            <div className="rounded-xl p-3" style={{ background: 'rgba(201,168,76,0.08)' }}>
+      {scenario && (
+        <>
+          <div className="rounded-2xl p-4 grid grid-cols-3 gap-2 text-center" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(201,168,76,0.2)' }}>
+            <div>
               <p className="text-xs uppercase tracking-wide" style={{ color: 'rgba(201,168,76,0.5)' }}>Interlocuteur</p>
-              <p className="font-bold text-white text-sm mt-1">{rencontre.personne}</p>
+              <p className="font-bold text-white text-sm mt-1">{scenario.interlocuteur}</p>
             </div>
-            <div className="rounded-xl p-3" style={{ background: 'rgba(201,168,76,0.08)' }}>
-              <p className="text-xs uppercase tracking-wide" style={{ color: 'rgba(201,168,76,0.5)' }}>Lieu</p>
-              <p className="font-bold text-white text-sm mt-1">{rencontre.lieu}</p>
+            <div>
+              <p className="text-xs uppercase tracking-wide" style={{ color: 'rgba(201,168,76,0.5)' }}>Contexte</p>
+              <p className="font-bold text-white text-sm mt-1">{scenario.contexte}</p>
+            </div>
+            <div>
+              <p className="text-xs uppercase tracking-wide" style={{ color: 'rgba(201,168,76,0.5)' }}>Durée</p>
+              <p className="font-bold text-white text-sm mt-1">{scenario.duree}s</p>
             </div>
           </div>
-          <p className="text-center font-semibold text-white">Que dites-vous ?</p>
 
-          {/* Pitch chrono */}
-          <div className="space-y-2 pt-3" style={{ borderTop: '1px solid rgba(201,168,76,0.15)' }}>
-            <p className="text-xs font-black uppercase tracking-widest text-center" style={{ color: 'rgba(201,168,76,0.5)' }}>⏱️ Pitch Chrono</p>
-            <div className="flex gap-2">
-              {tempsRencontre.map(t => (
-                <button
-                  key={t}
-                  onClick={() => lancerChrono(t)}
-                  className="flex-1 py-2 rounded-xl font-black text-sm"
-                  style={{ background: 'rgba(255,255,255,0.06)', color: 'rgba(255,255,255,0.6)', border: '1px solid rgba(255,255,255,0.1)' }}
-                >{t}s</button>
-              ))}
-            </div>
-            {chrono !== null && (
-              <div className="text-center py-3">
-                <p className="font-black" style={{ fontSize: '2.5rem', fontFamily: 'monospace', color: chrono <= 5 && running ? '#f87171' : '#f5c842' }}>{chrono}</p>
-                {!running && chrono === 0 && <p className="text-xs" style={{ color: 'rgba(255,255,255,0.4)' }}>Temps écoulé</p>}
-              </div>
-            )}
+          <div className="rounded-2xl p-4 space-y-3" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)' }}>
+            <p className="text-xs font-black uppercase tracking-widest" style={{ color: 'rgba(255,255,255,0.4)' }}>Votre pitch</p>
+            <textarea
+              value={pitch}
+              onChange={e => setPitch(e.target.value)}
+              placeholder="Rédigez votre pitch ici…"
+              rows={5}
+              className="w-full rounded-xl px-3 py-2 text-sm resize-y outline-none"
+              style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)', color: '#fff', caretColor: '#c9a84c' }}
+            />
+            <button
+              onClick={analyser}
+              disabled={loading || !pitch.trim()}
+              className="w-full py-3 rounded-xl font-black uppercase tracking-wide text-sm disabled:opacity-40"
+              style={{ background: '#c9a84c', color: '#050a1a' }}
+            >
+              {loading ? 'Analyse en cours…' : '🤖 Analyser mon pitch'}
+            </button>
           </div>
-        </div>
+        </>
       )}
 
-      <button
-        onClick={profilMystere}
-        className="w-full flex items-center justify-center gap-3 py-3 px-5 rounded-2xl font-black uppercase tracking-wide text-xs"
-        style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.12)', color: 'rgba(255,255,255,0.6)' }}
-      >
-        <span>🕵️</span><span>Profil Mystère</span>
-      </button>
-      {mystere && (
-        <div className="rounded-xl p-4 text-sm" style={{ background: 'rgba(239,68,68,0.06)', border: '1px solid rgba(239,68,68,0.18)', color: 'rgba(255,200,200,0.85)' }}>
-          Votre interlocuteur déteste <strong>{mystere}</strong>. Adaptez votre pitch en conséquence.
-        </div>
+      {analyse && (
+        <>
+          <div className="rounded-2xl p-4 whitespace-pre-line text-sm leading-relaxed" style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(201,168,76,0.2)', color: 'rgba(255,240,200,0.9)' }}>
+            {analyse}
+          </div>
+
+          {!confidentiel ? (
+            <button
+              onClick={modeExpert}
+              className="w-full flex items-center justify-center gap-3 py-3 px-5 rounded-2xl font-black uppercase tracking-wide text-xs"
+              style={{ background: 'rgba(120,80,200,0.12)', border: '1px solid rgba(150,110,220,0.4)', color: '#c4a8f0' }}
+            >
+              <span>🕵️</span><span>Mode Expert — Dossier confidentiel</span>
+            </button>
+          ) : (
+            <div className="rounded-2xl p-4" style={{ background: 'rgba(120,80,200,0.1)', border: '1px solid rgba(150,110,220,0.3)' }}>
+              <p className="text-xs font-black uppercase tracking-widest mb-2" style={{ color: '#c4a8f0' }}>🕵️ Dossier confidentiel</p>
+              <p className="text-sm leading-relaxed" style={{ color: 'rgba(255,240,200,0.85)' }}>{confidentiel}</p>
+            </div>
+          )}
+        </>
       )}
     </div>
   )

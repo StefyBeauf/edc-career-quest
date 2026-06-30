@@ -13,59 +13,64 @@ export const indicesDuJour: string[] = [
   'Suivre une entreprise sur LinkedIn avant de postuler peut être mentionné en entretien — cela montre l\'intérêt réel.',
 ]
 
-// ═══ DOSSIER 5 — LES CONTACTS ════════════════════════════════════════════
-export const personnesRencontre = ['Responsable RH', 'Directeur marketing', 'Alumni de l\'école', 'Manager opérationnel', 'Recruteur indépendant']
-export const lieuxRencontre = ['Forum entreprise', 'Salon professionnel', 'LinkedIn', 'Ascenseur', 'Événement networking']
-export const tempsRencontre = [30, 60, 90]
+// ═══ DOSSIER 5 — LES CONTACTS — Laboratoire de Pitch ═════════════════════
+export const interlocuteursPitch = ['Responsable RH', 'Manager opérationnel', 'Directeur général', 'Alumni de l\'école', 'Recruteur cabinet', 'Responsable opérationnel']
+export const contextesPitch = ['Forum entreprise', 'LinkedIn', 'Salon professionnel', 'Visioconférence', 'Appel téléphonique', 'Rencontre informelle']
+export const dureesPitch = [30, 60, 120]
 
-export const profilsMystere: string[] = [
-  'les présentations trop longues',
-  'les CV récités mot pour mot',
-  'les réponses vagues sans exemple concret',
-  'le manque de questions de la part du candidat',
-  'les candidats qui ne connaissent pas l\'entreprise',
-  'les formules toutes faites comme « je suis motivé et dynamique »',
-  'le jargon scolaire déconnecté du monde professionnel',
+export const dossiersConfidentielsPitch: string[] = [
+  'Votre interlocuteur est pressé et ne dispose que de 30 secondes. Comment adaptez-vous votre pitch ?',
+  'Votre interlocuteur vous coupe la parole après 10 secondes pour poser une question technique. Comment rebondissez-vous ?',
+  'Vous apprenez juste avant de parler que votre interlocuteur déteste les formules toutes faites comme « motivé et dynamique ». Réajustez votre pitch.',
+  'Votre interlocuteur ne connaît pas du tout votre école. Que devez-vous expliquer en plus ?',
+  'Votre interlocuteur est en réalité décisionnaire pour un poste différent de celui que vous visiez. Comment réorientez-vous votre discours ?',
 ]
 
-// ═══ DOSSIER 6 — L'OPPORTUNITÉ ═══════════════════════════════════════════
-export const situationsImprevus: string[] = [
-  'Vous recevez un refus après un entretien que vous pensiez avoir réussi.',
-  'Une entreprise ne répond plus depuis 3 semaines après un entretien positif.',
-  'Vous obtenez un entretien pour le poste de vos rêves dans 48h.',
-  'Une opportunité inattendue apparaît dans un secteur que vous n\'aviez pas envisagé.',
-  'Deux entretiens importants tombent le même jour, à la même heure.',
-  'Votre alternance idéale est à 1h30 de transport de chez vous.',
-  'On vous propose un poste, mais avec un salaire inférieur à ce que vous espériez.',
-  'Un recruteur vous recontacte 2 mois après votre candidature, pour un autre poste.',
-  'Vous devez choisir entre deux propositions reçues le même jour.',
-  'L\'entreprise qui vous a recruté annule finalement le poste avant votre arrivée.',
-]
-
-export interface DossierConfidentiel {
-  contexte: string
-  question: string
+// ═══ DOSSIER 6 — L'OPPORTUNITÉ — Simulateur de Stratégie ═════════════════
+export interface DossierStrategie {
+  titre: string
+  situation: string
+  contraintes: string[]
+  ressources: string[]
 }
 
-export const dossiersConfidentiels: DossierConfidentiel[] = [
+export const dossiersStrategie: DossierStrategie[] = [
   {
-    contexte: 'Vous avez envoyé 25 candidatures. Vous avez obtenu 3 entretiens. Une entreprise vous intéresse particulièrement mais ne répond plus depuis 10 jours.',
-    question: 'Quelle stratégie mettez-vous en place pour relancer sans paraître insistant(e) ?',
+    titre: 'Alternance RH',
+    situation: 'Début de recherche',
+    contraintes: ['Mobilité limitée à l\'Île-de-France', 'Peu de réseau professionnel', '2 mois restants avant la rentrée'],
+    ressources: ['Profil LinkedIn à jour', 'Une expérience de stage RH de 2 mois'],
   },
   {
-    contexte: 'Vous avez un entretien dans 3 jours pour un poste qui vous passionne, mais vous venez de recevoir une offre ferme d\'une autre entreprise, moins enthousiasmante, avec une réponse attendue sous 48h.',
-    question: 'Comment gérez-vous ce dilemme sans brûler aucune des deux pistes ?',
+    titre: 'Stage Marketing Digital',
+    situation: 'Recherche déjà entamée depuis 1 mois, sans retour positif',
+    contraintes: ['20 candidatures déjà envoyées sans réponse', 'Doit démarrer dans 6 semaines', 'Cible uniquement les grandes entreprises'],
+    ressources: ['Un projet personnel de création de contenu', 'Maîtrise de Canva et Meta Ads'],
   },
   {
-    contexte: 'Lors d\'un entretien, le recruteur vous annonce que le poste a en réalité changé de périmètre depuis la publication de l\'offre : moins de responsabilités que prévu.',
-    question: 'Quelles questions posez-vous pour décider si vous maintenez votre candidature ?',
+    titre: 'Premier emploi Finance',
+    situation: 'Sortie d\'école dans 3 mois, recherche à anticiper',
+    contraintes: ['Aucune expérience en entreprise hors stages courts', 'Marché très concurrentiel sur ce secteur', 'Salaire minimum requis pour des raisons personnelles'],
+    ressources: ['Certification Excel avancé', 'Un alumni travaillant dans un cabinet d\'audit'],
   },
   {
-    contexte: 'Vous avez signé une promesse d\'embauche, mais une opportunité bien plus intéressante se présente une semaine après, dans une entreprise que vous admirez depuis longtemps.',
-    question: 'Quelle décision prenez-vous, et comment gérez-vous l\'aspect éthique vis-à-vis du premier engagement ?',
+    titre: 'Alternance Commerce / Vente',
+    situation: 'Recherche en parallèle des cours, peu de temps disponible',
+    contraintes: ['Seulement 5h par semaine à consacrer à la recherche', 'Permis B non obtenu', 'Doit rester dans sa ville actuelle'],
+    ressources: ['Bon relationnel et expérience de vente en job étudiant', 'Réseau familial dans le commerce local'],
   },
-  {
-    contexte: 'Après plusieurs refus, vous commencez à douter de votre projet professionnel initial.',
-    question: 'Quelles questions vous posez-vous pour faire la part entre un ajustement de stratégie et une vraie remise en cause de votre projet ?',
-  },
+]
+
+export interface Rebondissement {
+  evenement: string
+}
+
+export const rebondissementsStrategie: string[] = [
+  'Vous recevez un refus de l\'entreprise sur laquelle reposait une grande partie de votre plan.',
+  'Une entreprise que vous n\'aviez pas ciblée vous contacte spontanément après avoir vu votre profil LinkedIn.',
+  'L\'alternance ou le poste que vous visiez en priorité vient d\'être pourvu par un autre candidat.',
+  'Un alumni de votre école accepte de vous mettre en relation avec un recruteur dans le secteur visé.',
+  'Le délai dont vous disposiez est soudainement réduit de moitié.',
+  'Une des entreprises ciblées annonce un gel des recrutements pour le trimestre.',
+  'Vous obtenez un entretien, mais à une date qui entre en conflit avec vos examens.',
 ]
