@@ -15,136 +15,101 @@ export default function MissionSelector({
   selectedMission,
   onSelect,
 }: MissionSelectorProps) {
+  const selected = missions.find(m => m.number === selectedMission)
+
   return (
-    <div className="relative flex flex-col gap-0">
-      {/* Ligne verticale du sentier */}
-      <div
-        className="absolute left-6 top-7 bottom-7 w-0.5 pointer-events-none"
-        style={{ background: 'linear-gradient(to bottom, rgba(201,168,76,0.5), rgba(26,74,58,0.3))' }}
-      />
+    <div className="space-y-4">
+      {/* Grille de numéros de mission */}
+      <div className="grid grid-cols-3 gap-2">
+        {missions.map(mission => {
+          const isUnlocked = mission.number <= activeMission
+          const isSelected = mission.number === selectedMission
+          const isCompleted = mission.number < activeMission
 
-      {missions.map((mission, idx) => {
-        const isUnlocked = mission.number <= activeMission
-        const isSelected = mission.number === selectedMission
-        const isLocked = !isUnlocked
-        const isCompleted = mission.number < activeMission
-
-        return (
-          <button
-            key={mission.number}
-            disabled={isLocked}
-            onClick={() => isUnlocked && onSelect(mission.number)}
-            className="relative flex items-start gap-4 py-3 text-left w-full transition-all"
-            style={{ paddingLeft: '0', cursor: isLocked ? 'not-allowed' : 'pointer' }}
-          >
-            {/* Cercle jalon */}
-            <div className="relative z-10 shrink-0 mt-0.5" style={{ width: '48px', display: 'flex', justifyContent: 'center' }}>
-              {isSelected ? (
-                /* Jalon actif : cercle doré pulsant */
-                <div className="relative">
-                  <div
-                    className="absolute inset-0 rounded-full animate-ping opacity-30"
-                    style={{ background: '#c9a84c', width: '28px', height: '28px' }}
-                  />
-                  <div
-                    className="relative w-7 h-7 rounded-full flex items-center justify-center text-xs font-black shadow-lg"
-                    style={{
-                      background: 'linear-gradient(135deg, #c9a84c, #e8c86a)',
-                      color: '#1a2744',
-                      boxShadow: '0 0 16px rgba(201,168,76,0.6)',
-                    }}
-                  >
-                    ★
-                  </div>
-                </div>
-              ) : isCompleted ? (
-                /* Jalon complété : drapeau vert */
-                <div
-                  className="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold"
-                  style={{
-                    background: 'rgba(26,74,58,0.8)',
-                    border: '2px solid rgba(201,168,76,0.6)',
-                    color: '#c9a84c',
-                  }}
-                >
-                  ✓
-                </div>
-              ) : isLocked ? (
-                /* Jalon verrouillé : cadenas dans le brouillard */
-                <div
-                  className="w-7 h-7 rounded-full flex items-center justify-center text-xs"
-                  style={{
-                    background: 'rgba(255,255,255,0.04)',
-                    border: '2px solid rgba(255,255,255,0.08)',
-                    color: 'rgba(255,255,255,0.25)',
-                  }}
-                >
-                  🔒
-                </div>
-              ) : (
-                /* Jalon disponible non sélectionné */
-                <div
-                  className="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold"
-                  style={{
-                    background: 'rgba(26,74,58,0.4)',
-                    border: '2px solid rgba(201,168,76,0.3)',
-                    color: 'rgba(201,168,76,0.7)',
-                  }}
-                >
-                  {idx + 1}
-                </div>
-              )}
-            </div>
-
-            {/* Contenu de la mission */}
-            <div
-              className="flex-1 rounded-xl px-4 py-3 transition-all"
+          return (
+            <button
+              key={mission.number}
+              disabled={!isUnlocked}
+              onClick={() => isUnlocked && onSelect(mission.number)}
+              className="relative flex flex-col items-center justify-center py-3 px-2 rounded-xl transition-all"
               style={{
                 background: isSelected
-                  ? 'rgba(201,168,76,0.1)'
-                  : isLocked
-                  ? 'rgba(255,255,255,0.02)'
-                  : 'rgba(26,74,58,0.25)',
+                  ? 'rgba(201,168,76,0.18)'
+                  : isUnlocked
+                  ? 'rgba(255,255,255,0.04)'
+                  : 'rgba(255,255,255,0.02)',
                 border: isSelected
-                  ? '1px solid rgba(201,168,76,0.4)'
-                  : isLocked
-                  ? '1px solid rgba(255,255,255,0.05)'
-                  : '1px solid rgba(26,74,58,0.5)',
-                opacity: isLocked ? 0.4 : 1,
+                  ? '1.5px solid rgba(201,168,76,0.55)'
+                  : isCompleted
+                  ? '1px solid rgba(201,168,76,0.25)'
+                  : isUnlocked
+                  ? '1px solid rgba(255,255,255,0.1)'
+                  : '1px solid rgba(255,255,255,0.04)',
+                cursor: isUnlocked ? 'pointer' : 'not-allowed',
+                opacity: isUnlocked ? 1 : 0.35,
               }}
             >
-              <div className="flex items-center justify-between mb-0.5">
+              {/* Icône état */}
+              <span className="text-base mb-1">
+                {isSelected ? '★' : isCompleted ? '✓' : !isUnlocked ? '🔒' : String(mission.number)}
+              </span>
+              {/* Étiquette courte */}
+              <span
+                className="text-center leading-tight"
+                style={{
+                  fontSize: '10px',
+                  fontWeight: 800,
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.04em',
+                  color: isSelected
+                    ? '#f5c842'
+                    : isCompleted
+                    ? 'rgba(201,168,76,0.65)'
+                    : isUnlocked
+                    ? 'rgba(255,255,255,0.45)'
+                    : 'rgba(255,255,255,0.2)',
+                  wordBreak: 'break-word',
+                }}
+              >
+                {mission.shortLabel ?? `Étape ${mission.number}`}
+              </span>
+            </button>
+          )
+        })}
+      </div>
+
+      {/* Détail de la mission sélectionnée */}
+      {selected && (
+        <div
+          className="rounded-xl p-4 space-y-1"
+          style={{
+            background: 'rgba(201,168,76,0.07)',
+            border: '1px solid rgba(201,168,76,0.2)',
+            borderLeft: '3px solid rgba(201,168,76,0.6)',
+          }}
+        >
+          <div className="flex items-center justify-between">
+            <span
+              className="text-xs font-black uppercase tracking-widest"
+              style={{ color: 'rgba(201,168,76,0.7)' }}
+            >
+              Étape {selected.number}
+              {selected.number < activeMission && (
                 <span
-                  className="text-xs font-bold uppercase tracking-widest"
-                  style={{ color: isSelected ? '#c9a84c' : 'rgba(201,168,76,0.5)' }}
+                  className="ml-2 text-xs font-semibold px-1.5 py-0.5 rounded-full"
+                  style={{ background: 'rgba(26,74,58,0.6)', color: 'rgba(201,168,76,0.8)' }}
                 >
-                  Étape {mission.number}
+                  Complétée
                 </span>
-                {isCompleted && (
-                  <span
-                    className="text-xs font-semibold px-2 py-0.5 rounded-full"
-                    style={{ background: 'rgba(26,74,58,0.6)', color: 'rgba(201,168,76,0.8)' }}
-                  >
-                    Complétée
-                  </span>
-                )}
-              </div>
-              <p
-                className="text-sm font-bold leading-tight"
-                style={{ color: isLocked ? 'rgba(255,255,255,0.3)' : 'white' }}
-              >
-                {mission.title}
-              </p>
-              <p
-                className="text-xs leading-relaxed mt-1 line-clamp-2"
-                style={{ color: isLocked ? 'rgba(255,255,255,0.15)' : 'rgba(255,255,255,0.55)' }}
-              >
-                {mission.description}
-              </p>
-            </div>
-          </button>
-        )
-      })}
+              )}
+            </span>
+          </div>
+          <p className="font-black text-white text-sm">{selected.title}</p>
+          <p className="text-xs leading-relaxed" style={{ color: 'rgba(255,255,255,0.5)' }}>
+            {selected.description}
+          </p>
+        </div>
+      )}
     </div>
   )
 }

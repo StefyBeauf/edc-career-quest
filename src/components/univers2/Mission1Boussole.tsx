@@ -44,6 +44,10 @@ export default function Mission1Boussole() {
       {vues.length >= questionsBoussole.length && (
         <p className="text-xs text-center" style={{ color: 'rgba(201,168,76,0.4)' }}>Toutes les questions ont été tirées — le cycle recommence.</p>
       )}
+
+      <div className="rounded-xl px-4 py-3 text-xs" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)', color: 'rgba(255,255,255,0.4)' }}>
+        Notez vos résultats de votre côté — vous en débattrez avec votre intervenant en fin de séance.
+      </div>
     </div>
   )
 }

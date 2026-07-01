@@ -73,7 +73,7 @@ function MissionHeader({ n, titre, objectif }: { n: number; titre: string; objec
 function M1({ spec }: { spec: string }) {
   return (
     <div className="space-y-5">
-      <MissionHeader n={1} titre="Définir ses coordonnées" objectif="Identifier ses forces, ses axes de progression et définir son cap professionnel." />
+      <MissionHeader n={1} titre="Définir ses coordonnées" objectif="Identifiez vos forces, vos axes de progression et définissez votre cap professionnel. Préparez-vous à argumenter vos choix." />
       <Generator label="Nouvelle question Horizon" icon="🎲" type="question_m1" spec={spec} hint="L'IA génère une question de réflexion adaptée à la spécialité." />
     </div>
   )
@@ -100,7 +100,7 @@ function M2({ spec }: { spec: string }) {
 
   return (
     <div className="space-y-5">
-      <MissionHeader n={2} titre="Garder le contrôle sous pression" objectif="Jeu immersif : les équipes reçoivent une mission réaliste. Elles ne savent pas que des alertes vont arriver." />
+      <MissionHeader n={2} titre="Garder le contrôle sous pression" objectif="Vous allez recevoir une mission professionnelle. Lisez-la attentivement, répartissez les rôles dans votre équipe et mobilisez-vous pour y répondre." />
 
       {/* Étape 1 — générer le briefing immersif */}
       {!sessionReady && (
@@ -123,15 +123,12 @@ function M2({ spec }: { spec: string }) {
                 </div>
                 <div className="p-4 whitespace-pre-line text-sm leading-relaxed" style={{ color: 'rgba(255,240,200,0.9)' }}>{briefing}</div>
               </div>
-              <div className="rounded-xl px-4 py-3 text-xs" style={{ background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.2)', color: 'rgba(248,113,113,0.7)' }}>
-                🔴 Les alertes seront injectées automatiquement toutes les 15-20 min. Les étudiants ne le savent pas.
-              </div>
               <button
                 onClick={() => setSessionReady(true)}
                 className="w-full py-4 rounded-2xl font-black uppercase tracking-widest text-sm"
                 style={{ background: '#c9a84c', color: '#050a1a', boxShadow: '0 4px 20px rgba(201,168,76,0.3)' }}
               >
-                ▶ Lancer la session — les alertes démarrent
+                ▶ Lancer la session
               </button>
             </>
           )}
@@ -151,7 +148,7 @@ function M2({ spec }: { spec: string }) {
             alertType="alerte_m2"
             sessionMinutes={90}
             startLabel="Session active"
-            startDesc="Les alertes s'injectent automatiquement. Les équipes ne s'y attendent pas."
+            startDesc="Session en cours. Gérez la mission et adaptez-vous aux événements."
           />
         </>
       )}
@@ -180,7 +177,7 @@ function M3({ spec }: { spec: string }) {
 
   return (
     <div className="space-y-5">
-      <MissionHeader n={3} titre="Synchroniser l'équipage" objectif="Escape game inter-équipes. Même histoire pour tous, mais chaque équipe ne reçoit que des fragments. Ils doivent se parler pour reconstituer l'ensemble." />
+      <MissionHeader n={3} titre="Synchroniser l'équipage" objectif="Chaque équipe reçoit des fragments d'une même histoire. Votre mission : communiquer avec les autres équipes et reconstituer l'ensemble avant les autres." />
 
       {/* Nombre d'équipes */}
       <div className="rounded-2xl p-4 space-y-3" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)' }}>
@@ -235,7 +232,7 @@ function M3({ spec }: { spec: string }) {
 function M4({ spec }: { spec: string }) {
   return (
     <div className="space-y-5">
-      <MissionHeader n={4} titre="Émettre un signal clair" objectif="Réfléchir à comment communiquer selon le destinataire, le canal et les enjeux. L'objectif est la réflexion, pas la production." />
+      <MissionHeader n={4} titre="Émettre un signal clair" objectif="Analysez la situation proposée. Vous ne rédigez pas de réponse — vous réfléchissez, argumentez et défendez votre analyse face au groupe." />
 
       <div className="rounded-xl px-4 py-3 text-xs" style={{ background: 'rgba(201,168,76,0.07)', border: '1px solid rgba(201,168,76,0.15)', color: 'rgba(201,168,76,0.7)' }}>
         💡 L'application génère une situation et des questions de réflexion. Les étudiants analysent, débattent — ils ne rédigent pas de réponse.
@@ -258,7 +255,7 @@ function M5({ spec }: { spec: string }) {
 
   return (
     <div className="space-y-5">
-      <MissionHeader n={5} titre="Piloter les priorités" objectif="Niveau Bac+3. L'application bombarde les équipes de 6 demandes simultanées. Elles doivent arbitrer, justifier, et s'adapter aux urgences." />
+      <MissionHeader n={5} titre="Piloter les priorités" objectif="Vous recevez 6 demandes simultanées. Priorisez-les, justifiez vos choix et soyez prêts à réajuster votre plan face aux imprévus." />
 
       {/* Durée */}
       <div className="rounded-2xl p-4 space-y-3" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)' }}>
@@ -292,7 +289,7 @@ function M5({ spec }: { spec: string }) {
         alertType="urgence_m5"
         sessionMinutes={duration}
         startLabel={`Session ${duration} minutes`}
-        startDesc={`Urgences injectées automatiquement pendant ${duration} min. Les équipes doivent réajuster leurs priorités en temps réel.`}
+        startDesc={`Session en cours. Gérez votre portefeuille de tâches et adaptez-vous à ce qui survient.`}
       />
     </div>
   )
@@ -319,7 +316,7 @@ function M6({ spec }: { spec: string }) {
 
   return (
     <div className="space-y-5">
-      <MissionHeader n={6} titre="Sauver Horizon" objectif="Mission finale. Les étudiants mobilisent toutes les compétences pour sauver la station Horizon. 90 minutes." />
+      <MissionHeader n={6} titre="Sauver Horizon" objectif="Mission finale. Mobilisez toutes vos compétences pour sauver la station Horizon. 90 minutes. Tout ce que vous avez appris compte." />
 
       {/* Étape 1 — générer le scénario */}
       {!sessionStarted && (
@@ -364,7 +361,7 @@ function M6({ spec }: { spec: string }) {
             alertType="alerte_m6"
             sessionMinutes={90}
             startLabel="Session Horizon"
-            startDesc="Les alertes de crise sont injectées automatiquement toutes les 15-20 minutes."
+            startDesc="Session en cours. Gérez la crise et prenez vos décisions en équipe."
           />
           <Divider />
           <Generator

@@ -11,6 +11,7 @@ export interface Univers2Card {
 export interface Univers2Mission {
   number: number
   title: string
+  shortLabel: string
   description: string
   availableFor: Track[]
 }
@@ -19,36 +20,42 @@ export const UNIVERS2_MISSIONS: Univers2Mission[] = [
   {
     number: 1,
     title: 'Régler sa boussole',
+    shortLabel: 'Boussole',
     description: 'Réfléchissez à vos compétences, vos qualités, vos motivations et votre projet.',
     availableFor: ['bachelor2', 'pge2'],
   },
   {
     number: 2,
     title: 'Ouvrir son carnet de bord',
+    shortLabel: 'Carnet',
     description: 'Comprenez le rôle de LinkedIn, la première impression, et ce qu\'un profil dit de nous.',
     availableFor: ['bachelor2', 'pge2'],
   },
   {
     number: 3,
     title: 'Régler sa longue-vue',
+    shortLabel: 'Longue-vue',
     description: "Optimisez votre profil LinkedIn et votre prise de parole professionnelle.",
     availableFor: ['bachelor2', 'pge2'],
   },
   {
     number: 4,
     title: 'Dossier 4 — Les Pistes',
+    shortLabel: 'Les Pistes',
     description: "Apprenez à dénicher les opportunités là où les autres ne cherchent pas.",
     availableFor: ['pge2'],
   },
   {
     number: 5,
     title: 'Dossier 5 — Les Contacts',
+    shortLabel: 'Les Contacts',
     description: 'Maîtrisez le pitch et la rencontre professionnelle improvisée.',
     availableFor: ['pge2'],
   },
   {
     number: 6,
     title: "Dossier 6 — L'Opportunité",
+    shortLabel: "L'Opportunité",
     description: "Apprenez à décider vite face aux imprévus de la recherche d'emploi.",
     availableFor: ['pge2'],
   },
