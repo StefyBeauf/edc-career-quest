@@ -4,6 +4,7 @@ import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import GroupControls from '@/components/admin/GroupControls'
 import QRCodeDisplay from '@/components/admin/QRCodeDisplay'
+import SchedulePlanning from '@/components/admin/SchedulePlanning'
 import type { Group } from '@/types'
 
 const UNIVERSE_LABELS: Record<string, string> = {
@@ -47,6 +48,12 @@ export default async function GroupePage({ params }: Props) {
     .eq('universe', group.universe)
     .eq('number', group.active_mission)
     .single()
+
+  // Nombre total de sessions pour ce groupe
+  const { count: totalMissions } = await supabase
+    .from('missions')
+    .select('*', { count: 'exact', head: true })
+    .eq('universe', group.universe)
 
   const qrDataUrl = await generateQRCode(slug)
   const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000'
@@ -117,10 +124,15 @@ export default async function GroupePage({ params }: Props) {
           <QRCodeDisplay dataUrl={qrDataUrl} url={groupUrl} groupName={group.name} />
         </div>
 
-        <div>
+        <div className="space-y-4">
           <GroupControls
             slug={group.slug}
             locked={group.locked}
+            activeMission={group.active_mission}
+          />
+          <SchedulePlanning
+            slug={group.slug}
+            totalMissions={totalMissions ?? 6}
             activeMission={group.active_mission}
           />
         </div>
