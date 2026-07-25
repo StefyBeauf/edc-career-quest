@@ -1428,6 +1428,134 @@ export const questionsEntretien: QuestionEntretien[] = [
   },
 ]
 
+// ════════════════════════════════════════════════
+// CP1 — Checkpoint 1 : Monde de l'entreprise
+// ════════════════════════════════════════════════
+
+// Exercice 1 : Quiz BtoB / BtoC
+export interface EntrepriseQuiz {
+  nom: string
+  secteur: string
+  reponse: 'BtoB' | 'BtoC' | 'Les deux'
+  explication: string
+}
+
+export const entreprisesQuiz: EntrepriseQuiz[] = [
+  {
+    nom: 'Salesforce',
+    secteur: 'Logiciel CRM',
+    reponse: 'BtoB',
+    explication: 'Salesforce vend ses logiciels aux équipes commerciales des entreprises. Aucun particulier n\'achète Salesforce pour son usage personnel.',
+  },
+  {
+    nom: 'Decathlon',
+    secteur: 'Sport & Distribution',
+    reponse: 'BtoC',
+    explication: 'Decathlon vend directement aux sportifs amateurs en magasin et en ligne. Ses clients sont des particuliers.',
+  },
+  {
+    nom: 'L\'Oréal',
+    secteur: 'Cosmétiques',
+    reponse: 'Les deux',
+    explication: 'L\'Oréal vend ses produits en supermarché au grand public (BtoC) ET ses gammes professionnelles aux coiffeurs et instituts (BtoB).',
+  },
+  {
+    nom: 'Air France',
+    secteur: 'Transport aérien',
+    reponse: 'Les deux',
+    explication: 'Air France vend des billets aux particuliers ET des contrats corporates aux entreprises pour les déplacements professionnels.',
+  },
+  {
+    nom: 'Manpower',
+    secteur: 'RH & Intérim',
+    reponse: 'BtoB',
+    explication: 'Manpower propose des profils à recruter aux entreprises clientes. Ce sont les entreprises qui paient, pas les candidats.',
+  },
+  {
+    nom: 'Back Market',
+    secteur: 'Reconditionnement',
+    reponse: 'BtoC',
+    explication: 'Back Market vend des appareils reconditionnés directement aux consommateurs finaux via sa marketplace. Le client, c\'est le particulier.',
+  },
+  {
+    nom: 'Doctolib',
+    secteur: 'Santé numérique',
+    reponse: 'Les deux',
+    explication: 'Doctolib vend ses abonnements aux médecins et cliniques (BtoB) et offre aux patients un accès gratuit pour prendre rendez-vous (BtoC).',
+  },
+  {
+    nom: 'Sodexo',
+    secteur: 'Services aux entreprises',
+    reponse: 'BtoB',
+    explication: 'Sodexo gère les restaurants d\'entreprise et les services aux salariés. Son client direct c\'est l\'entreprise, pas le salarié.',
+  },
+]
+
+// Exercice 2 : Métier mystère
+export interface MetierMystere {
+  indices: string[]
+  metier: string
+  autresAppellations: string[]
+  missions: string[]
+  competences: string[]
+  experiencesEtudiants: string[]
+}
+
+export const metierMystere: MetierMystere = {
+  indices: [
+    'Je passe ma journée à rencontrer des personnes, à écouter leurs besoins et à leur proposer des solutions adaptées.',
+    'Je travaille avec des objectifs chiffrés — un quota mensuel à atteindre. Ma performance se mesure en chiffre d\'affaires.',
+    'Mon bureau, c\'est souvent ma voiture ou le bureau d\'un client. Je gère mon agenda moi-même et j\'organise mes propres rendez-vous.',
+    'Je suis le lien entre l\'entreprise et ses clients. Si un client a un problème, je suis son premier point de contact.',
+  ],
+  metier: 'Commercial(e) / Chargé(e) de clientèle',
+  autresAppellations: ['Conseiller de vente', 'Business Developer', 'Account Manager', 'Attaché commercial'],
+  missions: [
+    'Prospecter de nouveaux clients et fidéliser les clients existants',
+    'Présenter et argumenter les offres de l\'entreprise',
+    'Négocier et conclure des contrats ou des ventes',
+    'Assurer le suivi client et la relation dans la durée',
+  ],
+  competences: [
+    'Sens de la communication et de l\'écoute active',
+    'Capacité à convaincre et à négocier',
+    'Résistance à l\'effort et aux refus',
+    'Organisation, autonomie et rigueur dans le suivi',
+  ],
+  experiencesEtudiants: [
+    'Tout job en vente ou accueil client, même court (caisse, boutique, restaurant)',
+    'Projets de groupe où vous avez dû convaincre et coordonner une équipe',
+    'Associations ou événements où vous avez géré une relation avec un public',
+    'Stage en contact avec des clients, quel que soit le secteur',
+  ],
+}
+
+// Exercice 3 : Destination entreprise (pool de 15)
+export interface EntrepriseDestination {
+  nom: string
+  secteur: string
+  modele: 'BtoB' | 'BtoC' | 'BtoBtoC'
+  description: string
+}
+
+export const entreprisesDestination: EntrepriseDestination[] = [
+  { nom: 'Decathlon', secteur: 'Sport & Distribution', modele: 'BtoC', description: 'Enseigne de sport mondialement connue, présente dans 60 pays avec plus de 1 700 magasins et 100 000 collaborateurs.' },
+  { nom: 'Sephora', secteur: 'Cosmétiques & Retail', modele: 'BtoC', description: 'Distributeur de cosmétiques multi-marques, filiale de LVMH, implanté dans 35 pays avec plus de 3 000 boutiques.' },
+  { nom: 'Salesforce', secteur: 'Logiciel CRM', modele: 'BtoB', description: 'Leader mondial des logiciels de gestion de la relation client (CRM), utilisé par des milliers d\'entreprises dans le monde.' },
+  { nom: 'Doctolib', secteur: 'Santé numérique', modele: 'BtoBtoC', description: 'Licorne française qui connecte patients et professionnels de santé. Plus de 80 millions de patients et 350 000 soignants utilisateurs.' },
+  { nom: 'Air France', secteur: 'Transport aérien', modele: 'BtoBtoC', description: 'Compagnie aérienne française desservant 200 destinations, avec une clientèle mixte de particuliers et de voyageurs d\'affaires.' },
+  { nom: 'Sodexo', secteur: 'Services aux entreprises', modele: 'BtoB', description: 'Groupe de services qui gère les restaurants d\'entreprise, le facility management et les avantages salariés dans 45 pays.' },
+  { nom: 'Back Market', secteur: 'Économie circulaire', modele: 'BtoC', description: 'Marketplace française de référence pour les appareils électroniques reconditionnés, présente dans 18 pays.' },
+  { nom: 'Manpower', secteur: 'RH & Emploi', modele: 'BtoB', description: 'Agence d\'emploi et d\'intérim mondiale, proposant des solutions de recrutement et de flexibilité aux entreprises de tous secteurs.' },
+  { nom: 'Accor', secteur: 'Hôtellerie', modele: 'BtoBtoC', description: 'Groupe hôtelier français avec 40+ marques (Ibis, Novotel, Pullman…), présent dans 110 pays, clientèle mixte loisirs et affaires.' },
+  { nom: 'Leroy Merlin', secteur: 'Bricolage & Distribution', modele: 'BtoBtoC', description: 'Enseigne de bricolage et d\'aménagement, filiale du groupe Adeo, avec des clients particuliers et des professionnels du bâtiment.' },
+  { nom: 'Apple', secteur: 'Technologie', modele: 'BtoBtoC', description: 'Géant technologique qui vend ses appareils au grand public et des solutions dédiées aux entreprises (Apple Business).' },
+  { nom: 'Carrefour', secteur: 'Grande distribution', modele: 'BtoC', description: 'Deuxième distributeur mondial, présent dans 30 pays avec 12 000 magasins et une clientèle de particuliers.' },
+  { nom: 'L\'Oréal', secteur: 'Cosmétiques', modele: 'BtoBtoC', description: 'N°1 mondial des cosmétiques, avec des divisions Grand Public (supermarchés) et Professionnelle (salons de coiffure).' },
+  { nom: 'JCDecaux', secteur: 'Publicité extérieure', modele: 'BtoB', description: 'Leader mondial de la communication extérieure (abribus, mobilier urbain, aéroports). Ses clients sont les annonceurs publicitaires.' },
+  { nom: 'Orange Business', secteur: 'Télécoms B2B', modele: 'BtoB', description: 'Branche d\'Orange dédiée aux entreprises : réseaux, cybersécurité et solutions numériques pour les grands comptes et PME.' },
+]
+
 export const formulationsCV = [
   { type: 'Compétence commerciale', exemple: 'Développé un portefeuille de 30 clients prospects via prospection téléphonique et email' },
   { type: 'Compétence organisationnelle', exemple: 'Coordonné la logistique d\'un événement de 200 personnes en autonomie' },
