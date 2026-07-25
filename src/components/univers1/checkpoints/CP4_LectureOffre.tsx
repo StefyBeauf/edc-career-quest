@@ -348,7 +348,7 @@ export default function CP4_LectureOffre() {
           <TourDeControleAppel
             appele={appele}
             onAppeler={() => setAppele(true)}
-            texteAttente="Votre équipage a choisi sa destination. L'intervenante va challenger la pertinence réelle de ce choix pour votre projet professionnel."
+            texteAttente="Votre équipage a choisi sa destination. Votre intervenante va challenger la pertinence réelle de ce choix pour votre projet professionnel."
           />
         </div>
       )}

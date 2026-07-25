@@ -374,7 +374,7 @@ export default function CP2_BasesCV() {
           <TourDeControleAppel
             appele={appele}
             onAppeler={() => setAppele(true)}
-            texteAttente="Votre équipage a préparé son CV. L'intervenante va valider sa cohérence globale, sa mise en page et sa pertinence pour le secteur visé."
+            texteAttente="Votre équipage a préparé son CV. Votre intervenante va valider sa cohérence globale, sa mise en page et sa pertinence pour le secteur visé."
           />
         </div>
       )}

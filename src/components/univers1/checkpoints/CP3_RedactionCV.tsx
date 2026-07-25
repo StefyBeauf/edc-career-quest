@@ -329,13 +329,13 @@ export default function CP3_RedactionCV() {
           </div>
 
           <ProductionLivrable>
-            La version finale du mail/lettre de candidature, et le retour de l&apos;intervenante noté par votre équipage.
+            La version finale du mail/lettre de candidature, et le retour de votre intervenante noté par votre équipage.
           </ProductionLivrable>
 
           <TourDeControleAppel
             appele={appele}
             onAppeler={() => setAppele(true)}
-            texteAttente="Votre équipage a préparé sa candidature. L'intervenante va valider sa cohérence globale et sa personnalisation pour l'offre visée."
+            texteAttente="Votre équipage a préparé sa candidature. Votre intervenante va valider sa cohérence globale et sa personnalisation pour l'offre visée."
           />
         </div>
       )}

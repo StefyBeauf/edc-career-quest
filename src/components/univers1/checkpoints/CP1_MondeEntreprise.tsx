@@ -460,7 +460,7 @@ export default function CP1_MondeEntreprise() {
               <p className="text-2xl">📡</p>
               <p className="font-black text-white">Tour de contrôle appelée !</p>
               <p className="text-sm leading-relaxed" style={{ color: 'rgba(245,240,232,0.75)' }}>
-                Votre équipage a préparé sa réponse. Appelez maintenant la tour de contrôle pour valider votre réflexion avec l&apos;intervenante.
+                Votre équipage a préparé sa réponse. Appelez maintenant la tour de contrôle pour valider votre réflexion avec votre intervenante.
               </p>
             </div>
           )}

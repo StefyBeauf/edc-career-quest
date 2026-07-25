@@ -1,48 +1,88 @@
 'use client'
 
 import { useState, useRef, useEffect, useCallback } from 'react'
-import { questionsEntretien, QuestionEntretien } from '@/lib/content/univers1'
 import ExerciseStepper from '../shared/ExerciseStepper'
 import ExerciseHeader from '../shared/ExerciseHeader'
 import ProductionLivrable from '../shared/ProductionLivrable'
 import TourDeControleAppel from '../shared/TourDeControleAppel'
 
-const categorieStyle: Record<QuestionEntretien['categorie'], { label: string; hex: string }> = {
-  motivations: { label: 'Motivations', hex: '#c9a84c' },
-  parcours: { label: 'Parcours', hex: '#60a5fa' },
-  competences: { label: 'Compétences', hex: '#a78bfa' },
-  comportementales: { label: 'Comportementales', hex: '#34d399' },
-  salaire: { label: 'Salaire & négo', hex: '#fbbf24' },
+// ─── Thèmes de préparation à la recherche de stage de fin de 1ère année ───
+type Theme = 'experiences' | 'formations' | 'disponibilite' | 'personnalite' | 'langues' | 'informatique'
+
+interface CarteTheme {
+  question: string
+  conseilReponse: string
+  aEviter: string
+  bonneAmorce: string
 }
 
-const CATS_EX1: QuestionEntretien['categorie'][] = ['motivations', 'parcours']
-const CATS_EX2: QuestionEntretien['categorie'][] = ['competences', 'comportementales', 'salaire']
-const CATS_EX3: QuestionEntretien['categorie'][] = ['comportementales', 'salaire']
-
-function melanger<T>(arr: T[]): T[] {
-  const copie = [...arr]
-  for (let i = copie.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1))
-    ;[copie[i], copie[j]] = [copie[j], copie[i]]
-  }
-  return copie
+const themeStyle: Record<Theme, { label: string; hex: string }> = {
+  experiences: { label: 'Expériences', hex: '#c9a84c' },
+  formations: { label: 'Formations', hex: '#60a5fa' },
+  disponibilite: { label: 'Disponibilité', hex: '#fbbf24' },
+  personnalite: { label: 'Personnalité', hex: '#34d399' },
+  langues: { label: 'Langues', hex: '#f472b6' },
+  informatique: { label: 'Informatique', hex: '#a78bfa' },
 }
 
-// ─── Roue canvas générique, filtrée par catégories ───
+const cartes: Record<Theme, CarteTheme[]> = {
+  experiences: [
+    { question: 'Quelle a été votre première expérience professionnelle marquante (job d\'été, stage, bénévolat) ?', conseilReponse: 'Racontez une expérience concrète avec un début, un défi et un apprentissage. La méthode STAR (Situation, Tâche, Action, Résultat) est idéale.', aEviter: 'Choisir une expérience banale ou en parler de façon trop vague, sans exemple précis.', bonneAmorce: 'Lors de mon expérience chez [X], j\'ai dû faire face à [situation] et voici ce que j\'ai appris…' },
+    { question: 'Vous n\'avez pas encore d\'expérience professionnelle longue : comment valorisez-vous vos jobs d\'été ou projets associatifs ?', conseilReponse: 'Même une expérience courte se valorise avec des missions concrètes et un résultat, plutôt qu\'une simple mention de dates.', aEviter: '« Je n\'ai pas vraiment d\'expérience » sans rien proposer d\'autre.', bonneAmorce: 'Même si mes expériences sont courtes, j\'ai pu développer [compétence] lors de…' },
+    { question: 'Avez-vous des expériences de travail en équipe à mettre en avant ?', conseilReponse: 'Donnez un exemple concret, expliquez votre rôle dans l\'équipe et le résultat obtenu.', aEviter: '« Oui, souvent » sans donner de détails ou d\'exemple précis.', bonneAmorce: 'Lors de [projet], nous étions [nombre] et mon rôle était de… ce qui a permis de…' },
+    { question: 'Parlez-moi d\'une réussite dont vous êtes fier(e).', conseilReponse: 'Utilisez la méthode STAR et montrez votre apport personnel, même dans un projet collectif.', aEviter: 'Choisir une réussite collective sans mettre en valeur votre rôle propre.', bonneAmorce: 'Un moment dont je suis fier(e) est lorsque j\'ai [action], ce qui a permis [résultat concret]…' },
+    { question: 'Quel a été votre plus grand défi académique jusqu\'ici ?', conseilReponse: 'Choisissez un défi réel, montrez comment vous l\'avez surmonté et ce que vous en avez retenu.', aEviter: 'Un défi trop banal ou présenté sans réflexion sur ce qu\'il vous a appris.', bonneAmorce: 'Le plus grand défi académique a été [situation]. Ce que j\'ai fait pour y faire face, c\'est…' },
+  ],
+  formations: [
+    { question: 'Pourquoi avez-vous choisi cette formation ?', conseilReponse: 'Expliquez votre parcours de façon logique et cohérente. Mettez en avant ce que la formation vous a apporté.', aEviter: '« Par défaut » ou parce que c\'était la formation la plus accessible.', bonneAmorce: 'J\'ai choisi cette formation car elle correspondait à mon projet de… et me permettait de développer…' },
+    { question: 'Qu\'avez-vous appris de concret dans votre formation qui sera utile pour ce stage ?', conseilReponse: 'Reliez une compétence précise du programme (cours, projet, méthode) à une mission probable du stage visé.', aEviter: 'Réciter le programme de la formation sans faire le lien avec le poste.', bonneAmorce: 'Ma formation m\'a permis de développer [compétence], que je pourrai mobiliser pour…' },
+    { question: 'Pourquoi avoir choisi votre école pour ce parcours ?', conseilReponse: 'Expliquez un choix cohérent avec votre projet (spécialisation, réputation, pédagogie), pas seulement la proximité.', aEviter: '« C\'était l\'école la plus proche » ou « je n\'ai pas eu d\'autre choix ».', bonneAmorce: 'J\'ai choisi cette école parce que son programme met l\'accent sur…' },
+    { question: 'En quoi votre première année de formation vous a-t-elle préparé(e) à un premier stage ?', conseilReponse: 'Citez 2 à 3 acquis concrets (méthode de travail, notions clés, travail en groupe) directement transférables en entreprise.', aEviter: 'Une réponse vague du type « j\'ai beaucoup appris » sans rien de concret.', bonneAmorce: 'Cette première année m\'a surtout appris à [compétence], ce qui sera utile pour…' },
+  ],
+  disponibilite: [
+    { question: 'Quelles sont vos disponibilités pour ce stage ?', conseilReponse: 'Indiquez des dates précises (début, fin, durée) cohérentes avec votre calendrier académique. Soyez au clair avant l\'entretien.', aEviter: 'Rester flou : « Je ne sais pas trop encore » sans avoir vérifié son calendrier de cours.', bonneAmorce: 'Je suis disponible du [date] au [date], ce qui correspond à la durée que vous recherchez.' },
+    { question: 'Le stage démarre en pleine période d\'examens partiels : comment l\'anticipez-vous ?', conseilReponse: 'Montrez que vous avez déjà réfléchi à l\'organisation possible (revoir le calendrier, en parler tôt avec l\'école ou l\'entreprise).', aEviter: 'Dire que ce ne sera « pas un problème » sans expliquer comment vous comptez vous organiser.', bonneAmorce: 'J\'ai vérifié mon calendrier d\'examens et je peux en parler avec mon école pour organiser…' },
+    { question: 'Pouvez-vous vous engager sur la durée complète du stage demandée ?', conseilReponse: 'Confirmez clairement votre engagement, ou soyez honnête tout de suite si une contrainte existe (ex. reprise des cours).', aEviter: 'Vous engager sans vérifier votre calendrier, au risque de devoir écourter le stage plus tard.', bonneAmorce: 'Oui, je peux m\'engager sur toute la durée prévue, mes cours reprenant seulement le [date].' },
+    { question: 'Êtes-vous disponible à temps plein ou avez-vous des contraintes (cours, alternance) à signaler ?', conseilReponse: 'Soyez transparent(e) dès l\'entretien sur toute contrainte de temps, plutôt que de la découvrir après signature.', aEviter: 'Cacher une contrainte connue pour ne pas « effrayer » le recruteur.', bonneAmorce: 'Je suis disponible à temps plein, à l\'exception de [contrainte], que je signale dès maintenant.' },
+  ],
+  personnalite: [
+    { question: 'Comment vous décrirait votre meilleur(e) ami(e) en 3 mots ?', conseilReponse: 'Choisissez des qualités cohérentes avec votre profil professionnel et soyez prêt(e) à les illustrer par un exemple.', aEviter: 'Des qualités trop superficielles (« sympa, cool, rigolo ») ou incohérentes avec le poste.', bonneAmorce: 'Il/elle dirait que je suis [mot 1], [mot 2] et [mot 3], ce qui se reflète dans [exemple concret]…' },
+    { question: 'Décrivez votre style de communication.', conseilReponse: 'Mentionnez des qualités comme l\'écoute, la clarté ou l\'adaptation au contexte, illustrées par un exemple.', aEviter: '« Je m\'adapte » sans aucun exemple concret pour l\'illustrer.', bonneAmorce: 'Je dirais que je suis [direct / à l\'écoute / structuré] dans ma communication. Par exemple, lors de…' },
+    { question: 'Comment réagissez-vous face à un changement inattendu ?', conseilReponse: 'Montrez que vous êtes adaptable sans paraître opportuniste : donnez un exemple vécu.', aEviter: '« Cela m\'angoisse » sans rien de constructif, ou prétendre être parfaitement zen en toutes circonstances.', bonneAmorce: 'Face à un changement inattendu comme [situation], j\'essaie d\'abord de… puis de…' },
+    { question: 'Comment réagissez-vous quand vous recevez une critique ?', conseilReponse: 'Montrez que vous écoutez, prenez du recul, et tirez des leçons de la critique reçue.', aEviter: '« Je ne prends pas bien la critique » ou « je suis très sensible » sans rien pour compenser.', bonneAmorce: 'Quand je reçois une critique, je prends d\'abord le temps d\'écouter sans réagir à chaud, puis je…' },
+    { question: 'Quels sont vos centres d\'intérêt en dehors des études ?', conseilReponse: 'Choisissez des activités qui reflètent des qualités transférables : leadership, créativité, discipline, esprit d\'équipe.', aEviter: '« Regarder des séries » sans plus de précision, ou ne pas savoir quoi répondre.', bonneAmorce: 'En dehors des études, je pratique [activité], qui m\'apprend [compétence] applicable aussi en entreprise.' },
+  ],
+  langues: [
+    { question: 'Quel est votre niveau dans les langues étrangères que vous parlez ?', conseilReponse: 'Indiquez un niveau réel et vérifiable (scolaire, courant, professionnel) plutôt qu\'une estimation optimiste.', aEviter: 'Annoncer un niveau bilingue sans pouvoir le confirmer si le recruteur bascule la conversation en anglais.', bonneAmorce: 'J\'ai un niveau [scolaire / courant / professionnel] en anglais, que j\'ai pu pratiquer lors de…' },
+    { question: 'Avez-vous déjà utilisé une langue étrangère dans un contexte professionnel ou académique ?', conseilReponse: 'Citez un exemple concret : cours en langue étrangère, échange, job avec clientèle internationale.', aEviter: 'Répondre non sans chercher une expérience proche (voyage, projet scolaire en langue étrangère…).', bonneAmorce: 'Oui, lors de [expérience], j\'ai dû échanger en [langue] pour…' },
+    { question: 'Comment continuez-vous à progresser dans une langue étrangère en dehors des cours ?', conseilReponse: 'Mentionnez des pratiques concrètes : séries en VO, podcasts, échanges linguistiques, lecture.', aEviter: '« Je ne fais rien de particulier » alors qu\'on vous demande de montrer votre motivation à progresser.', bonneAmorce: 'Je pratique régulièrement en [méthode concrète], ce qui m\'aide à progresser en dehors des cours.' },
+  ],
+  informatique: [
+    { question: 'Quelles sont vos compétences numériques ?', conseilReponse: 'Citez des outils maîtrisés (Excel, PowerPoint, CRM, outils de gestion…) en précisant votre niveau réel.', aEviter: '« Je maîtrise tous les outils » sans précision, ou mentir sur votre niveau réel.', bonneAmorce: 'Je suis à l\'aise avec [outil], que j\'utilise pour [usage], et j\'apprends actuellement…' },
+    { question: 'Maîtrisez-vous les outils bureautiques de base (Excel, PowerPoint) ? À quel niveau ?', conseilReponse: 'Donnez un niveau honnête et un exemple d\'usage concret (tableaux, présentation, mise en forme de données).', aEviter: 'Survendre son niveau Excel alors qu\'on ne maîtrise que les bases.', bonneAmorce: 'Je maîtrise les bases d\'Excel (tableaux, formules simples) et je progresse sur [fonction plus avancée].' },
+    { question: 'Avez-vous déjà utilisé des outils d\'intelligence artificielle dans vos études ? Lesquels et pour quoi faire ?', conseilReponse: 'Montrez un usage réfléchi et honnête : aide à la recherche, reformulation, brouillon — jamais un rendu final non vérifié.', aEviter: 'Prétendre ne jamais utiliser l\'IA, ou au contraire dire qu\'on lui délègue tout sans relecture.', bonneAmorce: 'J\'utilise [outil IA] pour [usage précis], en vérifiant et en adaptant toujours le résultat moi-même.' },
+    { question: 'Êtes-vous à l\'aise avec les chiffres et l\'analyse de données ?', conseilReponse: 'Soyez honnête sur votre niveau et donnez un exemple concret si vous êtes à l\'aise.', aEviter: '« Pas vraiment » sans montrer d\'envie d\'apprendre, ou surestimer ses compétences.', bonneAmorce: 'J\'ai déjà travaillé sur [type de données] avec [outil], ce qui m\'a permis de [résultat].' },
+  ],
+}
+
+const THEMES_EX1: Theme[] = ['experiences', 'formations', 'informatique']
+const THEMES_EX2: Theme[] = ['langues', 'disponibilite', 'personnalite']
+const THEMES_EX3: Theme[] = ['experiences', 'personnalite', 'disponibilite']
+
+// ─── Roue canvas, filtrée par thèmes ───
 function Roue({
-  categories, exclure, onResultat,
+  themes, onResultat,
 }: {
-  categories: QuestionEntretien['categorie'][]
-  exclure: number[]
-  onResultat: (q: QuestionEntretien) => void
+  themes: Theme[]
+  onResultat: (theme: Theme, carte: CarteTheme) => void
 }) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const [tourne, setTourne] = useState(false)
   const [angle, setAngle] = useState(0)
   const animRef = useRef<number | null>(null)
-  const secteurs = categories.length
+  const secteurs = themes.length
   const angleParSecteur = (2 * Math.PI) / secteurs
-  const secteurColors = categories.map(c => categorieStyle[c].hex)
+  const secteurColors = themes.map(t => themeStyle[t].hex)
 
   const drawWheel = useCallback((currentAngle: number) => {
     const canvas = canvasRef.current
@@ -87,7 +127,7 @@ function Roue({
       ctx.textAlign = 'right'
       ctx.fillStyle = '#0f1e3d'
       ctx.font = 'bold 11px system-ui'
-      ctx.fillText(categorieStyle[categories[i]].label, r - 10, 4)
+      ctx.fillText(themeStyle[themes[i]].label, r - 10, 4)
       ctx.restore()
     }
 
@@ -106,7 +146,7 @@ function Roue({
     ctx.textAlign = 'center'
     ctx.textBaseline = 'middle'
     ctx.fillText('N', cx, cy)
-  }, [secteurs, angleParSecteur, categories, secteurColors])
+  }, [secteurs, angleParSecteur, themes, secteurColors])
 
   useEffect(() => { drawWheel(angle) }, [angle, drawWheel])
   useEffect(() => () => { if (animRef.current) cancelAnimationFrame(animRef.current) }, [])
@@ -115,9 +155,9 @@ function Roue({
     if (tourne) return
     setTourne(true)
 
-    const pool = questionsEntretien.filter(q => categories.includes(q.categorie))
-    const dispo = pool.filter(q => !exclure.includes(q.id))
-    const tirage = (dispo.length > 0 ? dispo : pool)[Math.floor(Math.random() * (dispo.length > 0 ? dispo.length : pool.length))]
+    const theme = themes[Math.floor(Math.random() * themes.length)]
+    const pool = cartes[theme]
+    const carte = pool[Math.floor(Math.random() * pool.length)]
 
     const tours = 4 + Math.random() * 3
     const finalAngle = angle + tours * 2 * Math.PI
@@ -136,7 +176,7 @@ function Roue({
       } else {
         setAngle(finalAngle % (2 * Math.PI))
         setTourne(false)
-        onResultat(tirage)
+        onResultat(theme, carte)
       }
     }
     animRef.current = requestAnimationFrame(animate)
@@ -156,46 +196,48 @@ function Roue({
   )
 }
 
+function CarteResultat({ theme, carte }: { theme: Theme; carte: CarteTheme }) {
+  return (
+    <div className="rounded-2xl overflow-hidden">
+      <div className="px-5 py-4" style={{ backgroundColor: '#080f20', borderBottom: `2px solid ${themeStyle[theme].hex}` }}>
+        <p className="text-xs font-bold uppercase tracking-widest" style={{ color: themeStyle[theme].hex }}>{themeStyle[theme].label}</p>
+        <p className="text-base font-bold mt-1" style={{ color: '#f5f0e8' }}>{carte.question}</p>
+      </div>
+      <div className="divide-y" style={{ backgroundColor: 'rgba(15,30,61,0.95)', '--tw-divide-color': 'rgba(255,255,255,0.05)' } as React.CSSProperties}>
+        <div className="px-5 py-4">
+          <p className="text-xs font-bold uppercase tracking-widest mb-2" style={{ color: '#c9a84c' }}>✈ Conseil de réponse</p>
+          <p className="text-sm leading-relaxed" style={{ color: 'rgba(245,240,232,0.75)' }}>{carte.conseilReponse}</p>
+        </div>
+        <div className="px-5 py-4">
+          <p className="text-xs font-bold uppercase tracking-widest mb-2" style={{ color: '#fca5a5' }}>✗ À éviter</p>
+          <p className="text-sm leading-relaxed" style={{ color: 'rgba(245,240,232,0.75)' }}>{carte.aEviter}</p>
+        </div>
+        <div className="px-5 py-4">
+          <p className="text-xs font-bold uppercase tracking-widest mb-2" style={{ color: '#6ee7b7' }}>✓ Bonne amorce</p>
+          <p className="text-sm leading-relaxed italic" style={{ color: 'rgba(245,240,232,0.75)' }}>{carte.bonneAmorce}</p>
+        </div>
+      </div>
+    </div>
+  )
+}
+
 type StepDef = { n: 1 | 2 | 3; label: string; badge: '✅' | '🛫' }
 const STEPS: StepDef[] = [
-  { n: 1, label: 'Bonne amorce', badge: '✅' },
-  { n: 2, label: 'Repère le piège', badge: '✅' },
+  { n: 1, label: 'Mon profil stage', badge: '✅' },
+  { n: 2, label: 'Se présenter', badge: '✅' },
   { n: 3, label: 'Entretien à blanc', badge: '🛫' },
 ]
+
+const NB_TIRAGES_CDB = 3
 
 export default function CP6_RoueEntretiens() {
   const [etape, setEtape] = useState<1 | 2 | 3>(1)
 
-  // Exercice 1
-  const [q1, setQ1] = useState<QuestionEntretien | null>(null)
-  const [opts1, setOpts1] = useState<string[]>([])
-  const [choix1, setChoix1] = useState<string | null>(null)
-
-  // Exercice 2
-  const [q2, setQ2] = useState<QuestionEntretien | null>(null)
-  const [opts2, setOpts2] = useState<string[]>([])
-  const [choix2, setChoix2] = useState<string | null>(null)
-
-  // Exercice 3
-  const [q3, setQ3] = useState<QuestionEntretien | null>(null)
+  const [tirages1, setTirages1] = useState<{ theme: Theme; carte: CarteTheme }[]>([])
+  const [tirages2, setTirages2] = useState<{ theme: Theme; carte: CarteTheme }[]>([])
+  const [tirage3, setTirage3] = useState<{ theme: Theme; carte: CarteTheme } | null>(null)
   const [reponsePreparee, setReponsePreparee] = useState('')
   const [appele, setAppele] = useState(false)
-
-  function tirerOptions1(question: QuestionEntretien) {
-    const autres = questionsEntretien.filter(q => CATS_EX1.includes(q.categorie) && q.id !== question.id)
-    const distracteurs = melanger(autres).slice(0, 2).map(q => q.bonneAmorce)
-    setOpts1(melanger([question.bonneAmorce, ...distracteurs]))
-    setQ1(question)
-    setChoix1(null)
-  }
-
-  function tirerOptions2(question: QuestionEntretien) {
-    const autres = questionsEntretien.filter(q => CATS_EX2.includes(q.categorie) && q.id !== question.id)
-    const distracteurs = melanger(autres).slice(0, 2).map(q => q.bonneAmorce)
-    setOpts2(melanger([question.aEviter, ...distracteurs]))
-    setQ2(question)
-    setChoix2(null)
-  }
 
   return (
     <div className="space-y-5">
@@ -206,113 +248,81 @@ export default function CP6_RoueEntretiens() {
         </p>
         <h2 className="text-xl font-black text-white uppercase tracking-wide">Entretien de stage</h2>
         <p className="text-sm mt-1" style={{ color: 'rgba(245,240,232,0.5)' }}>
-          Tour de contrôle — dernière vérification avant décollage
+          Tour de contrôle — préparez votre recherche de stage de fin de 1ère année
         </p>
       </div>
 
       <ExerciseStepper etape={etape} steps={STEPS} />
 
-      {/* ═══ EXERCICE 1 — Roue express : la bonne amorce ═══ */}
+      {/* ═══ EXERCICE 1 — Mon profil stage (expériences, formations, informatique) ═══ */}
       {etape === 1 && (
         <div className="space-y-4">
           <ExerciseHeader
             numero={1}
-            titre="Roue express — la bonne amorce"
-            consigne="La roue tourne… quelle question tombera ? Choisissez la meilleure façon d'y répondre."
+            titre="Roue express — mon profil stage"
+            consigne="Faites tourner la roue 3 fois : expériences, formations, informatique."
             mode="cdb"
           />
 
-          {!q1 ? (
+          <div className="flex items-center justify-between px-1">
+            <p className="text-xs" style={{ color: 'rgba(245,240,232,0.4)' }}>Tirage {Math.min(tirages1.length + (tirages1.length < NB_TIRAGES_CDB ? 1 : 0), NB_TIRAGES_CDB)} sur {NB_TIRAGES_CDB}</p>
+            <div className="flex gap-1">
+              {Array.from({ length: NB_TIRAGES_CDB }).map((_, i) => (
+                <span key={i} className="w-2 h-2 rounded-full" style={{ background: i < tirages1.length ? '#c9a84c' : 'rgba(255,255,255,0.15)' }} />
+              ))}
+            </div>
+          </div>
+
+          {tirages1.length < NB_TIRAGES_CDB ? (
             <div className="rounded-2xl p-6" style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)' }}>
-              <Roue categories={CATS_EX1} exclure={[]} onResultat={tirerOptions1} />
+              <Roue themes={THEMES_EX1} onResultat={(theme, carte) => setTirages1(prev => [...prev, { theme, carte }])} />
             </div>
           ) : (
-            <div className="rounded-2xl overflow-hidden">
-              <div className="px-5 py-4" style={{ backgroundColor: '#080f20', borderBottom: `2px solid ${categorieStyle[q1.categorie].hex}` }}>
-                <p className="text-xs font-bold uppercase tracking-widest" style={{ color: categorieStyle[q1.categorie].hex }}>{categorieStyle[q1.categorie].label}</p>
-                <p className="text-base font-bold mt-1" style={{ color: '#f5f0e8' }}>{q1.question}</p>
-              </div>
-              <div className="p-5 space-y-2" style={{ backgroundColor: 'rgba(13,26,51,0.6)' }}>
-                {opts1.map((opt, i) => {
-                  const isCorrect = choix1 !== null && opt === q1.bonneAmorce
-                  const isWrong = choix1 === opt && opt !== q1.bonneAmorce
-                  let bg = 'rgba(255,255,255,0.05)', border = 'rgba(255,255,255,0.1)', textColor = 'rgba(245,240,232,0.8)'
-                  if (choix1 !== null) {
-                    if (isCorrect) { bg = 'rgba(46,204,113,0.12)'; border = 'rgba(46,204,113,0.5)'; textColor = '#2ecc71' }
-                    else if (isWrong) { bg = 'rgba(231,76,60,0.12)'; border = 'rgba(231,76,60,0.5)'; textColor = '#e74c3c' }
-                    else textColor = 'rgba(245,240,232,0.25)'
-                  }
-                  return (
-                    <button key={i} onClick={() => setChoix1(opt)} disabled={choix1 !== null} className="w-full text-left rounded-xl px-4 py-3 text-sm italic transition-all" style={{ background: bg, border: `1.5px solid ${border}`, color: textColor }}>
-                      &ldquo;{opt}&rdquo;
-                    </button>
-                  )
-                })}
-                {choix1 !== null && (
-                  <div className="space-y-3 pt-2">
-                    <p className="text-sm leading-relaxed" style={{ color: 'rgba(245,240,232,0.75)' }}>{q1.conseilReponse}</p>
-                    <ProductionLivrable>
-                      La meilleure amorce retenue, à personnaliser et répéter avant l&apos;entretien réel.
-                    </ProductionLivrable>
-                    <button onClick={() => setEtape(2)} className="w-full py-3 rounded-xl font-black uppercase tracking-wider" style={{ background: 'linear-gradient(135deg, #c9a84c, #e8d080)', color: '#0f1e3d' }}>
-                      Amorce validée — Exercice 2 →
-                    </button>
-                  </div>
-                )}
-              </div>
+            <div className="space-y-4">
+              {tirages1.map((t, i) => <CarteResultat key={i} theme={t.theme} carte={t.carte} />)}
+              <ProductionLivrable>
+                Les 3 conseils tirés (expériences, formations, informatique) et la meilleure amorce retenue pour chacun.
+              </ProductionLivrable>
+              <button onClick={() => setEtape(2)} className="w-full py-3 rounded-xl font-black uppercase tracking-wider" style={{ background: 'linear-gradient(135deg, #c9a84c, #e8d080)', color: '#0f1e3d' }}>
+                Profil préparé — Exercice 2 →
+              </button>
             </div>
           )}
         </div>
       )}
 
-      {/* ═══ EXERCICE 2 — Roue express : repère le piège ═══ */}
+      {/* ═══ EXERCICE 2 — Se présenter (langues, disponibilité, personnalité) ═══ */}
       {etape === 2 && (
         <div className="space-y-4">
           <ExerciseHeader
             numero={2}
-            titre="Roue express — repère le piège"
-            consigne="Une des 3 réponses est un piège classique en entretien. Sauras-tu la repérer ?"
+            titre="Roue express — se présenter"
+            consigne="Faites tourner la roue 3 fois : langues, disponibilité, personnalité."
             mode="cdb"
           />
 
-          {!q2 ? (
+          <div className="flex items-center justify-between px-1">
+            <p className="text-xs" style={{ color: 'rgba(245,240,232,0.4)' }}>Tirage {Math.min(tirages2.length + (tirages2.length < NB_TIRAGES_CDB ? 1 : 0), NB_TIRAGES_CDB)} sur {NB_TIRAGES_CDB}</p>
+            <div className="flex gap-1">
+              {Array.from({ length: NB_TIRAGES_CDB }).map((_, i) => (
+                <span key={i} className="w-2 h-2 rounded-full" style={{ background: i < tirages2.length ? '#c9a84c' : 'rgba(255,255,255,0.15)' }} />
+              ))}
+            </div>
+          </div>
+
+          {tirages2.length < NB_TIRAGES_CDB ? (
             <div className="rounded-2xl p-6" style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)' }}>
-              <Roue categories={CATS_EX2} exclure={q1 ? [q1.id] : []} onResultat={tirerOptions2} />
+              <Roue themes={THEMES_EX2} onResultat={(theme, carte) => setTirages2(prev => [...prev, { theme, carte }])} />
             </div>
           ) : (
-            <div className="rounded-2xl overflow-hidden">
-              <div className="px-5 py-4" style={{ backgroundColor: '#080f20', borderBottom: `2px solid ${categorieStyle[q2.categorie].hex}` }}>
-                <p className="text-xs font-bold uppercase tracking-widest" style={{ color: categorieStyle[q2.categorie].hex }}>{categorieStyle[q2.categorie].label}</p>
-                <p className="text-base font-bold mt-1" style={{ color: '#f5f0e8' }}>{q2.question}</p>
-              </div>
-              <div className="p-5 space-y-2" style={{ backgroundColor: 'rgba(13,26,51,0.6)' }}>
-                {opts2.map((opt, i) => {
-                  const isCorrect = choix2 !== null && opt === q2.aEviter
-                  const isWrong = choix2 === opt && opt !== q2.aEviter
-                  let bg = 'rgba(255,255,255,0.05)', border = 'rgba(255,255,255,0.1)', textColor = 'rgba(245,240,232,0.8)'
-                  if (choix2 !== null) {
-                    if (isCorrect) { bg = 'rgba(46,204,113,0.12)'; border = 'rgba(46,204,113,0.5)'; textColor = '#2ecc71' }
-                    else if (isWrong) { bg = 'rgba(231,76,60,0.12)'; border = 'rgba(231,76,60,0.5)'; textColor = '#e74c3c' }
-                    else textColor = 'rgba(245,240,232,0.25)'
-                  }
-                  return (
-                    <button key={i} onClick={() => setChoix2(opt)} disabled={choix2 !== null} className="w-full text-left rounded-xl px-4 py-3 text-sm italic transition-all" style={{ background: bg, border: `1.5px solid ${border}`, color: textColor }}>
-                      &ldquo;{opt}&rdquo;
-                    </button>
-                  )
-                })}
-                {choix2 !== null && (
-                  <div className="space-y-3 pt-2">
-                    <p className="text-sm leading-relaxed" style={{ color: 'rgba(245,240,232,0.75)' }}>Le piège à éviter était bien : &ldquo;{q2.aEviter}&rdquo;. Préférez plutôt : &ldquo;{q2.bonneAmorce}&rdquo;</p>
-                    <ProductionLivrable>
-                      Les pièges repérés, à ne surtout pas reproduire en entretien réel.
-                    </ProductionLivrable>
-                    <button onClick={() => setEtape(3)} className="w-full py-3 rounded-xl font-black uppercase tracking-wider" style={{ background: 'linear-gradient(135deg, #c9a84c, #e8d080)', color: '#0f1e3d' }}>
-                      Piège désamorcé — Exercice 3 →
-                    </button>
-                  </div>
-                )}
-              </div>
+            <div className="space-y-4">
+              {tirages2.map((t, i) => <CarteResultat key={i} theme={t.theme} carte={t.carte} />)}
+              <ProductionLivrable>
+                Les 3 conseils tirés (langues, disponibilité, personnalité) et la meilleure amorce retenue pour chacun.
+              </ProductionLivrable>
+              <button onClick={() => setEtape(3)} className="w-full py-3 rounded-xl font-black uppercase tracking-wider" style={{ background: 'linear-gradient(135deg, #c9a84c, #e8d080)', color: '#0f1e3d' }}>
+                Présentation prête — Exercice 3 →
+              </button>
             </div>
           )}
         </div>
@@ -328,18 +338,13 @@ export default function CP6_RoueEntretiens() {
             mode="tdc"
           />
 
-          {!q3 ? (
+          {!tirage3 ? (
             <div className="rounded-2xl p-6" style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)' }}>
-              <Roue categories={CATS_EX3} exclure={q2 ? [q2.id] : []} onResultat={setQ3} />
+              <Roue themes={THEMES_EX3} onResultat={(theme, carte) => setTirage3({ theme, carte })} />
             </div>
           ) : (
             <div className="space-y-4">
-              <div className="rounded-2xl overflow-hidden">
-                <div className="px-5 py-4" style={{ backgroundColor: '#080f20', borderBottom: `2px solid ${categorieStyle[q3.categorie].hex}` }}>
-                  <p className="text-xs font-bold uppercase tracking-widest" style={{ color: categorieStyle[q3.categorie].hex }}>{categorieStyle[q3.categorie].label}</p>
-                  <p className="text-base font-bold mt-1" style={{ color: '#f5f0e8' }}>{q3.question}</p>
-                </div>
-              </div>
+              <CarteResultat theme={tirage3.theme} carte={tirage3.carte} />
 
               <div className="rounded-xl p-4" style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)' }}>
                 <p className="text-xs font-bold uppercase tracking-widest mb-2" style={{ color: '#c9a84c' }}>Résumé de la réponse préparée par l&apos;étudiant(e)</p>
@@ -354,7 +359,7 @@ export default function CP6_RoueEntretiens() {
               <TourDeControleAppel
                 appele={appele}
                 onAppeler={() => setAppele(true)}
-                texteAttente="Votre équipage a préparé sa réponse. L'intervenante va donner un retour sur la posture, le ton et la crédibilité — le décollage final vous attend."
+                texteAttente="Votre équipage a préparé sa réponse. Votre intervenante va donner un retour sur la posture, le ton et la crédibilité — le décollage final vous attend."
               />
             </div>
           )}
