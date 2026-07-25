@@ -1,10 +1,8 @@
 'use client'
 
 import { useState, useRef, useEffect, useCallback } from 'react'
-import ExerciseStepper from '../shared/ExerciseStepper'
-import ExerciseHeader from '../shared/ExerciseHeader'
+import ModeBadge from '../shared/ModeBadge'
 import ProductionLivrable from '../shared/ProductionLivrable'
-import TourDeControleAppel from '../shared/TourDeControleAppel'
 
 // ─── Thèmes de préparation à la recherche de stage de fin de 1ère année ───
 type Theme = 'experiences' | 'formations' | 'disponibilite' | 'personnalite' | 'langues' | 'informatique'
@@ -24,6 +22,8 @@ const themeStyle: Record<Theme, { label: string; hex: string }> = {
   langues: { label: 'Langues', hex: '#f472b6' },
   informatique: { label: 'Informatique', hex: '#a78bfa' },
 }
+
+const TOUS_THEMES: Theme[] = ['experiences', 'formations', 'disponibilite', 'personnalite', 'langues', 'informatique']
 
 const cartes: Record<Theme, CarteTheme[]> = {
   experiences: [
@@ -65,24 +65,15 @@ const cartes: Record<Theme, CarteTheme[]> = {
   ],
 }
 
-const THEMES_EX1: Theme[] = ['experiences', 'formations', 'informatique']
-const THEMES_EX2: Theme[] = ['langues', 'disponibilite', 'personnalite']
-const THEMES_EX3: Theme[] = ['experiences', 'personnalite', 'disponibilite']
-
-// ─── Roue canvas, filtrée par thèmes ───
-function Roue({
-  themes, onResultat,
-}: {
-  themes: Theme[]
-  onResultat: (theme: Theme, carte: CarteTheme) => void
-}) {
+// ─── Roue canvas — 6 secteurs, un par thème ───
+function Roue({ onResultat }: { onResultat: (theme: Theme, carte: CarteTheme) => void }) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const [tourne, setTourne] = useState(false)
   const [angle, setAngle] = useState(0)
   const animRef = useRef<number | null>(null)
-  const secteurs = themes.length
+  const secteurs = TOUS_THEMES.length
   const angleParSecteur = (2 * Math.PI) / secteurs
-  const secteurColors = themes.map(t => themeStyle[t].hex)
+  const secteurColors = TOUS_THEMES.map(t => themeStyle[t].hex)
 
   const drawWheel = useCallback((currentAngle: number) => {
     const canvas = canvasRef.current
@@ -126,14 +117,14 @@ function Roue({
       ctx.rotate(start + angleParSecteur / 2)
       ctx.textAlign = 'right'
       ctx.fillStyle = '#0f1e3d'
-      ctx.font = 'bold 11px system-ui'
-      ctx.fillText(themeStyle[themes[i]].label, r - 10, 4)
+      ctx.font = 'bold 10px system-ui'
+      ctx.fillText(themeStyle[TOUS_THEMES[i]].label, r - 10, 4)
       ctx.restore()
     }
 
     ctx.beginPath()
-    ctx.arc(cx, cy, 22, 0, 2 * Math.PI)
-    const centerGrad = ctx.createRadialGradient(cx, cy, 0, cx, cy, 22)
+    ctx.arc(cx, cy, 24, 0, 2 * Math.PI)
+    const centerGrad = ctx.createRadialGradient(cx, cy, 0, cx, cy, 24)
     centerGrad.addColorStop(0, '#e8c96a')
     centerGrad.addColorStop(1, '#c9a84c')
     ctx.fillStyle = centerGrad
@@ -142,11 +133,11 @@ function Roue({
     ctx.lineWidth = 2
     ctx.stroke()
     ctx.fillStyle = '#0f1e3d'
-    ctx.font = 'bold 13px system-ui'
+    ctx.font = 'bold 14px system-ui'
     ctx.textAlign = 'center'
     ctx.textBaseline = 'middle'
     ctx.fillText('N', cx, cy)
-  }, [secteurs, angleParSecteur, themes, secteurColors])
+  }, [secteurs, angleParSecteur, secteurColors])
 
   useEffect(() => { drawWheel(angle) }, [angle, drawWheel])
   useEffect(() => () => { if (animRef.current) cancelAnimationFrame(animRef.current) }, [])
@@ -155,7 +146,7 @@ function Roue({
     if (tourne) return
     setTourne(true)
 
-    const theme = themes[Math.floor(Math.random() * themes.length)]
+    const theme = TOUS_THEMES[Math.floor(Math.random() * TOUS_THEMES.length)]
     const pool = cartes[theme]
     const carte = pool[Math.floor(Math.random() * pool.length)]
 
@@ -186,7 +177,7 @@ function Roue({
     <div className="flex flex-col items-center gap-5">
       <div className="relative">
         <div className="absolute top-1/2 -right-3 z-10" style={{ transform: 'translateY(-50%)', width: 0, height: 0, borderTop: '10px solid transparent', borderBottom: '10px solid transparent', borderRight: '20px solid #e8c96a', filter: 'drop-shadow(0 0 6px rgba(232,201,106,0.5))' }} />
-        <canvas ref={canvasRef} width={220} height={220} className="rounded-full" style={{ display: 'block', boxShadow: '0 0 40px rgba(201,168,76,0.15), 0 8px 32px rgba(0,0,0,0.4)' }} />
+        <canvas ref={canvasRef} width={260} height={260} className="rounded-full" style={{ display: 'block', boxShadow: '0 0 40px rgba(201,168,76,0.15), 0 8px 32px rgba(0,0,0,0.4)' }} />
       </div>
       <button onClick={lancer} disabled={tourne} className="px-8 py-3 rounded-xl font-black text-sm uppercase tracking-widest transition-all"
         style={{ backgroundColor: tourne ? 'rgba(201,168,76,0.3)' : '#c9a84c', color: tourne ? 'rgba(245,240,232,0.5)' : '#0f1e3d', cursor: tourne ? 'wait' : 'pointer' }}>
@@ -221,23 +212,10 @@ function CarteResultat({ theme, carte }: { theme: Theme; carte: CarteTheme }) {
   )
 }
 
-type StepDef = { n: 1 | 2 | 3; label: string; badge: '✅' | '🛫' }
-const STEPS: StepDef[] = [
-  { n: 1, label: 'Mon profil stage', badge: '✅' },
-  { n: 2, label: 'Se présenter', badge: '✅' },
-  { n: 3, label: 'Entretien à blanc', badge: '🛫' },
-]
-
-const NB_TIRAGES_CDB = 3
-
 export default function CP6_RoueEntretiens() {
-  const [etape, setEtape] = useState<1 | 2 | 3>(1)
+  const [tirages, setTirages] = useState<{ theme: Theme; carte: CarteTheme }[]>([])
 
-  const [tirages1, setTirages1] = useState<{ theme: Theme; carte: CarteTheme }[]>([])
-  const [tirages2, setTirages2] = useState<{ theme: Theme; carte: CarteTheme }[]>([])
-  const [tirage3, setTirage3] = useState<{ theme: Theme; carte: CarteTheme } | null>(null)
-  const [reponsePreparee, setReponsePreparee] = useState('')
-  const [appele, setAppele] = useState(false)
+  const dernierTirage = tirages[tirages.length - 1] ?? null
 
   return (
     <div className="space-y-5">
@@ -252,117 +230,26 @@ export default function CP6_RoueEntretiens() {
         </p>
       </div>
 
-      <ExerciseStepper etape={etape} steps={STEPS} />
-
-      {/* ═══ EXERCICE 1 — Mon profil stage (expériences, formations, informatique) ═══ */}
-      {etape === 1 && (
-        <div className="space-y-4">
-          <ExerciseHeader
-            numero={1}
-            titre="Roue express — mon profil stage"
-            consigne="Faites tourner la roue 3 fois : expériences, formations, informatique."
-            mode="cdb"
-          />
-
-          <div className="flex items-center justify-between px-1">
-            <p className="text-xs" style={{ color: 'rgba(245,240,232,0.4)' }}>Tirage {Math.min(tirages1.length + (tirages1.length < NB_TIRAGES_CDB ? 1 : 0), NB_TIRAGES_CDB)} sur {NB_TIRAGES_CDB}</p>
-            <div className="flex gap-1">
-              {Array.from({ length: NB_TIRAGES_CDB }).map((_, i) => (
-                <span key={i} className="w-2 h-2 rounded-full" style={{ background: i < tirages1.length ? '#c9a84c' : 'rgba(255,255,255,0.15)' }} />
-              ))}
-            </div>
-          </div>
-
-          {tirages1.length < NB_TIRAGES_CDB ? (
-            <div className="rounded-2xl p-6" style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)' }}>
-              <Roue themes={THEMES_EX1} onResultat={(theme, carte) => setTirages1(prev => [...prev, { theme, carte }])} />
-            </div>
-          ) : (
-            <div className="space-y-4">
-              {tirages1.map((t, i) => <CarteResultat key={i} theme={t.theme} carte={t.carte} />)}
-              <ProductionLivrable>
-                Les 3 conseils tirés (expériences, formations, informatique) et la meilleure amorce retenue pour chacun.
-              </ProductionLivrable>
-              <button onClick={() => setEtape(2)} className="w-full py-3 rounded-xl font-black uppercase tracking-wider" style={{ background: 'linear-gradient(135deg, #c9a84c, #e8d080)', color: '#0f1e3d' }}>
-                Profil préparé — Exercice 2 →
-              </button>
-            </div>
-          )}
+      <div className="flex items-start justify-between gap-3">
+        <div>
+          <h3 className="text-lg font-black text-white">Roue de l&apos;entretien</h3>
+          <p className="text-xs mt-0.5" style={{ color: 'rgba(245,240,232,0.45)' }}>
+            Faites tourner la roue en équipage : chaque secteur tiré révèle une question et son conseil de réponse.
+          </p>
         </div>
-      )}
+        <ModeBadge mode="cdb" />
+      </div>
 
-      {/* ═══ EXERCICE 2 — Se présenter (langues, disponibilité, personnalité) ═══ */}
-      {etape === 2 && (
+      <div className="rounded-2xl p-6" style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)' }}>
+        <Roue onResultat={(theme, carte) => setTirages(prev => [...prev, { theme, carte }])} />
+      </div>
+
+      {dernierTirage && (
         <div className="space-y-4">
-          <ExerciseHeader
-            numero={2}
-            titre="Roue express — se présenter"
-            consigne="Faites tourner la roue 3 fois : langues, disponibilité, personnalité."
-            mode="cdb"
-          />
-
-          <div className="flex items-center justify-between px-1">
-            <p className="text-xs" style={{ color: 'rgba(245,240,232,0.4)' }}>Tirage {Math.min(tirages2.length + (tirages2.length < NB_TIRAGES_CDB ? 1 : 0), NB_TIRAGES_CDB)} sur {NB_TIRAGES_CDB}</p>
-            <div className="flex gap-1">
-              {Array.from({ length: NB_TIRAGES_CDB }).map((_, i) => (
-                <span key={i} className="w-2 h-2 rounded-full" style={{ background: i < tirages2.length ? '#c9a84c' : 'rgba(255,255,255,0.15)' }} />
-              ))}
-            </div>
-          </div>
-
-          {tirages2.length < NB_TIRAGES_CDB ? (
-            <div className="rounded-2xl p-6" style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)' }}>
-              <Roue themes={THEMES_EX2} onResultat={(theme, carte) => setTirages2(prev => [...prev, { theme, carte }])} />
-            </div>
-          ) : (
-            <div className="space-y-4">
-              {tirages2.map((t, i) => <CarteResultat key={i} theme={t.theme} carte={t.carte} />)}
-              <ProductionLivrable>
-                Les 3 conseils tirés (langues, disponibilité, personnalité) et la meilleure amorce retenue pour chacun.
-              </ProductionLivrable>
-              <button onClick={() => setEtape(3)} className="w-full py-3 rounded-xl font-black uppercase tracking-wider" style={{ background: 'linear-gradient(135deg, #c9a84c, #e8d080)', color: '#0f1e3d' }}>
-                Présentation prête — Exercice 3 →
-              </button>
-            </div>
-          )}
-        </div>
-      )}
-
-      {/* ═══ EXERCICE 3 — Entretien à blanc ═══ */}
-      {etape === 3 && (
-        <div className="space-y-4">
-          <ExerciseHeader
-            numero={3}
-            titre="Entretien à blanc"
-            consigne="Dernier point de contrôle avant le décollage : l'entretien à blanc devant votre équipage."
-            mode="tdc"
-          />
-
-          {!tirage3 ? (
-            <div className="rounded-2xl p-6" style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)' }}>
-              <Roue themes={THEMES_EX3} onResultat={(theme, carte) => setTirage3({ theme, carte })} />
-            </div>
-          ) : (
-            <div className="space-y-4">
-              <CarteResultat theme={tirage3.theme} carte={tirage3.carte} />
-
-              <div className="rounded-xl p-4" style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)' }}>
-                <p className="text-xs font-bold uppercase tracking-widest mb-2" style={{ color: '#c9a84c' }}>Résumé de la réponse préparée par l&apos;étudiant(e)</p>
-                <textarea value={reponsePreparee} onChange={e => setReponsePreparee(e.target.value)} rows={4} placeholder="Un membre de l'équipage répond à voix haute, le reste du groupe résume ici…"
-                  className="w-full rounded-lg p-2.5 text-sm bg-transparent resize-none outline-none" style={{ color: 'rgba(245,240,232,0.85)', border: '1px solid rgba(201,168,76,0.2)' }} />
-              </div>
-
-              <ProductionLivrable>
-                La question choisie et le résumé écrit de la réponse préparée ci-dessus.
-              </ProductionLivrable>
-
-              <TourDeControleAppel
-                appele={appele}
-                onAppeler={() => setAppele(true)}
-                texteAttente="Votre équipage a préparé sa réponse. Votre intervenante va donner un retour sur la posture, le ton et la crédibilité — le décollage final vous attend."
-              />
-            </div>
-          )}
+          <CarteResultat theme={dernierTirage.theme} carte={dernierTirage.carte} />
+          <ProductionLivrable>
+            Les meilleures amorces retenues au fil de vos tirages ({tirages.length} au total), à personnaliser et répéter avant l&apos;entretien réel.
+          </ProductionLivrable>
         </div>
       )}
     </div>

@@ -1501,34 +1501,65 @@ export interface MetierMystere {
   experiencesEtudiants: string[]
 }
 
-export const metierMystere: MetierMystere = {
-  indices: [
-    'Je passe ma journée à rencontrer des personnes, à écouter leurs besoins et à leur proposer des solutions adaptées.',
-    'Je travaille avec des objectifs chiffrés — un quota mensuel à atteindre. Ma performance se mesure en chiffre d\'affaires.',
-    'Mon bureau, c\'est souvent ma voiture ou le bureau d\'un client. Je gère mon agenda moi-même et j\'organise mes propres rendez-vous.',
-    'Je suis le lien entre l\'entreprise et ses clients. Si un client a un problème, je suis son premier point de contact.',
-  ],
-  metier: 'Commercial(e) / Chargé(e) de clientèle',
-  autresAppellations: ['Conseiller de vente', 'Business Developer', 'Account Manager', 'Attaché commercial'],
-  missions: [
-    'Prospecter de nouveaux clients et fidéliser les clients existants',
-    'Présenter et argumenter les offres de l\'entreprise',
-    'Négocier et conclure des contrats ou des ventes',
-    'Assurer le suivi client et la relation dans la durée',
-  ],
-  competences: [
-    'Sens de la communication et de l\'écoute active',
-    'Capacité à convaincre et à négocier',
-    'Résistance à l\'effort et aux refus',
-    'Organisation, autonomie et rigueur dans le suivi',
-  ],
-  experiencesEtudiants: [
-    'Tout job en vente ou accueil client, même court (caisse, boutique, restaurant)',
-    'Projets de groupe où vous avez dû convaincre et coordonner une équipe',
-    'Associations ou événements où vous avez géré une relation avec un public',
-    'Stage en contact avec des clients, quel que soit le secteur',
-  ],
-}
+// Deux métiers mystère possibles, tirés au hasard à chaque partie
+export const metiersMystere: MetierMystere[] = [
+  {
+    indices: [
+      'Je passe ma journée à rencontrer des personnes, à écouter leurs besoins et à leur proposer des solutions adaptées.',
+      'Je travaille avec des objectifs chiffrés — un quota mensuel à atteindre. Ma performance se mesure en chiffre d\'affaires.',
+      'Mon bureau, c\'est souvent ma voiture ou le bureau d\'un client. Je gère mon agenda moi-même et j\'organise mes propres rendez-vous.',
+      'Je suis le lien entre l\'entreprise et ses clients. Si un client a un problème, je suis son premier point de contact.',
+    ],
+    metier: 'Commercial(e) / Chargé(e) de clientèle',
+    autresAppellations: ['Business Developer', 'Account Manager', 'Attaché commercial', 'Chargé d\'affaires'],
+    missions: [
+      'Prospecter de nouveaux clients et fidéliser les clients existants',
+      'Présenter et argumenter les offres de l\'entreprise',
+      'Négocier et conclure des contrats ou des ventes',
+      'Assurer le suivi client et la relation dans la durée',
+    ],
+    competences: [
+      'Sens de la communication et de l\'écoute active',
+      'Capacité à convaincre et à négocier',
+      'Résistance à l\'effort et aux refus',
+      'Organisation, autonomie et rigueur dans le suivi',
+    ],
+    experiencesEtudiants: [
+      'Tout job en vente ou accueil client, même court (caisse, boutique, restaurant)',
+      'Projets de groupe où vous avez dû convaincre et coordonner une équipe',
+      'Associations ou événements où vous avez géré une relation avec un public',
+      'Stage en contact avec des clients, quel que soit le secteur',
+    ],
+  },
+  {
+    indices: [
+      'Je passe mes journées dans un même lieu, à accueillir et conseiller les personnes qui poussent la porte.',
+      'Mon objectif n\'est pas seulement de vendre : c\'est que le client reparte satisfait et ait envie de revenir.',
+      'Je dois bien connaître chaque produit du magasin pour orienter chacun vers le bon choix.',
+      'Je participe aussi à la mise en valeur des produits, en rayon ou en vitrine.',
+    ],
+    metier: 'Conseiller(ère) de vente',
+    autresAppellations: ['Vendeur(se) en boutique', 'Assistant(e) de vente', 'Conseiller(ère) client en magasin'],
+    missions: [
+      'Accueillir et conseiller la clientèle en boutique',
+      'Identifier le besoin du client pour proposer le produit adapté',
+      'Réaliser les opérations d\'encaissement et de fidélisation',
+      'Participer à la mise en valeur des produits (merchandising, vitrines)',
+    ],
+    competences: [
+      'Sens du contact et de l\'écoute active',
+      'Bonne connaissance des produits vendus',
+      'Présentation soignée et professionnalisme',
+      'Capacité à gérer plusieurs clients en simultané',
+    ],
+    experiencesEtudiants: [
+      'Tout job en vente, en caisse ou à l\'accueil, même court',
+      'Stage ou job d\'été en boutique ou en grande distribution',
+      'Projets scolaires impliquant la présentation d\'un produit ou service',
+      'Expérience associative avec accueil de public',
+    ],
+  },
+]
 
 // Exercice 3 : Destination entreprise (pool de 15)
 export interface EntrepriseDestination {

@@ -1,7 +1,8 @@
 'use client'
 
 import { useState } from 'react'
-import { entreprisesQuiz, metierMystere, entreprisesDestination } from '@/lib/content/univers1'
+import { entreprisesQuiz, metiersMystere, entreprisesDestination, MetierMystere } from '@/lib/content/univers1'
+import ExerciseStepper from '../shared/ExerciseStepper'
 
 type ReponseQuiz = 'BtoB' | 'BtoC' | 'Les deux' | 'À vérifier'
 
@@ -35,7 +36,10 @@ export default function CP1_MondeEntreprise() {
   const [ex1Score, setEx1Score] = useState(0)
   const [ex1Termine, setEx1Termine] = useState(false)
 
-  // Exercice 2 — Métier mystère
+  // Exercice 2 — Métier mystère (tirage aléatoire entre Commercial et Conseiller de vente)
+  const [ex2Metier] = useState<MetierMystere>(() =>
+    metiersMystere[Math.floor(Math.random() * metiersMystere.length)]
+  )
   const [ex2IndicesReveles, setEx2IndicesReveles] = useState(1)
   const [ex2Revele, setEx2Revele] = useState(false)
 
@@ -79,30 +83,14 @@ export default function CP1_MondeEntreprise() {
       </div>
 
       {/* Navigateur d'étapes */}
-      <div className="flex gap-2">
-        {[
+      <ExerciseStepper
+        etape={etape}
+        steps={[
           { n: 1, label: 'Quiz BtoB/BtoC', badge: '✅' },
           { n: 2, label: 'Métier mystère', badge: '✅' },
           { n: 3, label: 'Destination', badge: '🛫' },
-        ].map((s) => {
-          const isActif = etape === s.n
-          const isFait = etape > s.n
-          return (
-            <div key={s.n} className="flex-1 rounded-xl p-3 text-center" style={{
-              background: isActif ? 'rgba(201,168,76,0.12)' : 'rgba(255,255,255,0.03)',
-              border: isActif ? '1.5px solid rgba(201,168,76,0.5)' : '1px solid rgba(255,255,255,0.07)',
-            }}>
-              <p className="text-base">{isFait ? '✓' : s.badge}</p>
-              <p className="text-xs font-bold mt-0.5" style={{ color: isActif ? '#c9a84c' : isFait ? 'rgba(201,168,76,0.6)' : 'rgba(255,255,255,0.3)' }}>
-                Ex. {s.n}
-              </p>
-              <p className="text-xs mt-0.5" style={{ color: isActif ? 'rgba(245,240,232,0.65)' : 'rgba(255,255,255,0.2)' }}>
-                {s.label}
-              </p>
-            </div>
-          )
-        })}
-      </div>
+        ]}
+      />
 
       {/* ═══════════════════════════════════
           EXERCICE 1 — Quiz BtoB / BtoC
@@ -260,7 +248,7 @@ export default function CP1_MondeEntreprise() {
 
           {/* Indices */}
           <div className="space-y-2.5">
-            {metierMystere.indices.map((indice, i) => {
+            {ex2Metier.indices.map((indice, i) => {
               const visible = i < ex2IndicesReveles
               return (
                 <div
@@ -300,7 +288,7 @@ export default function CP1_MondeEntreprise() {
           {/* Actions */}
           {!ex2Revele && (
             <div>
-              {ex2IndicesReveles < metierMystere.indices.length ? (
+              {ex2IndicesReveles < ex2Metier.indices.length ? (
                 <button
                   onClick={() => setEx2IndicesReveles(n => n + 1)}
                   className="w-full py-3 rounded-xl font-bold text-sm uppercase tracking-wider"
@@ -327,9 +315,9 @@ export default function CP1_MondeEntreprise() {
                 <p className="text-xs font-bold uppercase tracking-widest mb-1.5" style={{ color: '#2ecc71' }}>
                   Le métier mystère était…
                 </p>
-                <p className="text-2xl font-black text-white mb-1">{metierMystere.metier}</p>
+                <p className="text-2xl font-black text-white mb-1">{ex2Metier.metier}</p>
                 <p className="text-sm" style={{ color: 'rgba(245,240,232,0.5)' }}>
-                  Aussi appelé(e) : {metierMystere.autresAppellations.join(' · ')}
+                  Aussi appelé(e) : {ex2Metier.autresAppellations.join(' · ')}
                 </p>
               </div>
 
@@ -337,7 +325,7 @@ export default function CP1_MondeEntreprise() {
                 <div>
                   <p className="text-xs font-bold uppercase tracking-widest mb-2" style={{ color: '#c9a84c' }}>Missions principales</p>
                   <ul className="space-y-1.5">
-                    {metierMystere.missions.map((m, i) => (
+                    {ex2Metier.missions.map((m, i) => (
                       <li key={i} className="flex items-start gap-2 text-sm" style={{ color: 'rgba(245,240,232,0.75)' }}>
                         <span className="flex-shrink-0" style={{ color: '#c9a84c' }}>›</span>
                         {m}
@@ -348,7 +336,7 @@ export default function CP1_MondeEntreprise() {
                 <div>
                   <p className="text-xs font-bold uppercase tracking-widest mb-2" style={{ color: '#c9a84c' }}>Compétences valorisées</p>
                   <ul className="space-y-1.5">
-                    {metierMystere.competences.map((c, i) => (
+                    {ex2Metier.competences.map((c, i) => (
                       <li key={i} className="flex items-start gap-2 text-sm" style={{ color: 'rgba(245,240,232,0.75)' }}>
                         <span className="flex-shrink-0" style={{ color: '#c9a84c' }}>›</span>
                         {c}
@@ -359,7 +347,7 @@ export default function CP1_MondeEntreprise() {
                 <div>
                   <p className="text-xs font-bold uppercase tracking-widest mb-2" style={{ color: '#c9a84c' }}>Ce que votre parcours valorise</p>
                   <ul className="space-y-1.5">
-                    {metierMystere.experiencesEtudiants.map((e, i) => (
+                    {ex2Metier.experiencesEtudiants.map((e, i) => (
                       <li key={i} className="flex items-start gap-2 text-sm" style={{ color: 'rgba(245,240,232,0.75)' }}>
                         <span className="flex-shrink-0" style={{ color: '#c9a84c' }}>›</span>
                         {e}
