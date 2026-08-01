@@ -11,7 +11,7 @@ export async function POST(
 
     const { data: group, error: groupError } = await supabase
       .from('groups')
-      .select('id, universe, active_mission')
+      .select('id, slug, universe, track, active_mission')
       .eq('slug', slug)
       .single()
 
@@ -24,7 +24,14 @@ export async function POST(
       .select('*', { count: 'exact', head: true })
       .eq('universe', group.universe)
 
-    const maxMission = count ?? 1
+    const universeMax = count ?? 1
+    // L'Univers 2 (Expédition Professionnelle) réserve les cours 4-6 (univers détective) aux PGE2
+    // PGE1 Groupe A suit son propre parcours à 3 checkpoints, distinct des 6 checkpoints B1
+    const maxMission =
+      (group.universe === 'expedition-professionnelle' && group.track === 'bachelor2') ||
+      (group.universe === 'passeport-stage' && group.slug === 'pge1-groupe-a')
+        ? Math.min(3, universeMax)
+        : universeMax
     const nextMission = Math.min(group.active_mission + 1, maxMission)
 
     const { error } = await supabase

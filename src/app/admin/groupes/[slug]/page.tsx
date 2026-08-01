@@ -50,10 +50,18 @@ export default async function GroupePage({ params }: Props) {
     .single()
 
   // Nombre total de sessions pour ce groupe
-  const { count: totalMissions } = await supabase
+  const { count: universeMissionCount } = await supabase
     .from('missions')
     .select('*', { count: 'exact', head: true })
     .eq('universe', group.universe)
+
+  // L'Univers 2 (Expédition Professionnelle) réserve les cours 4-6 (univers détective) aux PGE2
+  // PGE1 Groupe A suit son propre parcours à 3 checkpoints, distinct des 6 checkpoints B1
+  const totalMissions =
+    (group.universe === 'expedition-professionnelle' && group.track === 'bachelor2') ||
+    (group.universe === 'passeport-stage' && group.slug === 'pge1-groupe-a')
+      ? Math.min(3, universeMissionCount ?? 1)
+      : universeMissionCount
 
   const qrDataUrl = await generateQRCode(slug)
   const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000'

@@ -7,6 +7,9 @@ import CP3_RedactionCV from '@/components/univers1/checkpoints/CP3_RedactionCV'
 import CP4_LectureOffre from '@/components/univers1/checkpoints/CP4_LectureOffre'
 import CP5_Situations from '@/components/univers1/checkpoints/CP5_Situations'
 import CP6_RoueEntretiens from '@/components/univers1/checkpoints/CP6_RoueEntretiens'
+import CP1_MonCV_PGE1A from '@/components/univers1/checkpoints-pge1a/CP1_MonCV'
+import CP2_RedigerEnvoyer_PGE1A from '@/components/univers1/checkpoints-pge1a/CP2_RedigerEnvoyer'
+import CP3_RoueEntretiens_PGE1A from '@/components/univers1/checkpoints-pge1a/CP3_RoueEntretiens'
 import { createClient } from '@/lib/supabase/client'
 
 interface Props { group: Group }
@@ -20,11 +23,21 @@ const CHECKPOINTS = [
   { n: 6, titre: 'Décollage', desc: 'Simulation des questions d\'entretien', icon: '✈️' },
 ]
 
+// PGE1 Groupe A suit un parcours propre à 3 checkpoints (adapté des checkpoints 2, 3 et 6 de B1)
+const CHECKPOINTS_PGE1A = [
+  { n: 1, titre: 'Mon CV, ma vitrine professionnelle', desc: 'Construire un CV qui fait la différence en PGE', icon: '🧳' },
+  { n: 2, titre: 'Rédiger et envoyer', desc: 'Finaliser sa candidature complète', icon: '🎫' },
+  { n: 3, titre: 'Décollage', desc: 'Simulation des questions d\'entretien', icon: '✈️' },
+]
+
 export default function Univers1Page({ group }: Props) {
   const [mission, setMission] = useState<Mission | null>(null)
   const [vue, setVue] = useState<'splash' | 'contenu'>('splash')
   const [appeared, setAppeared] = useState(false)
   const actif = group.active_mission
+  const isPGE1A = group.slug === 'pge1-groupe-a'
+  const checkpoints = isPGE1A ? CHECKPOINTS_PGE1A : CHECKPOINTS
+  const totalCheckpoints = checkpoints.length
 
   useEffect(() => {
     createClient().from('missions').select('*')
@@ -34,23 +47,33 @@ export default function Univers1Page({ group }: Props) {
   }, [actif])
 
   if (vue === 'contenu') {
-    const cp = CHECKPOINTS[actif - 1]
+    const cp = checkpoints[actif - 1]
     return (
       <div className="min-h-screen" style={{ background: 'linear-gradient(180deg, #0a1628 0%, #0f1e3d 100%)' }}>
         <div className="sticky top-0 z-50 px-4 py-3 flex items-center gap-3" style={{ background: 'rgba(10,22,40,0.97)', backdropFilter: 'blur(16px)', borderBottom: '1px solid rgba(201,168,76,0.25)' }}>
           <button onClick={() => setVue('splash')} className="w-9 h-9 rounded-full flex items-center justify-center font-bold text-lg flex-shrink-0 transition-opacity hover:opacity-70" style={{ background: 'rgba(201,168,76,0.15)', color: '#c9a84c' }}>←</button>
           <div className="min-w-0">
-            <p className="text-xs font-black uppercase tracking-widest" style={{ color: '#c9a84c' }}>Checkpoint {actif} sur 6</p>
+            <p className="text-xs font-black uppercase tracking-widest" style={{ color: '#c9a84c' }}>Checkpoint {actif} sur {totalCheckpoints}</p>
             <p className="text-sm font-bold text-white truncate">{cp?.titre}</p>
           </div>
         </div>
         <div className="px-4 py-6 max-w-2xl mx-auto">
-          {actif === 1 && <CP1_MondeEntreprise />}
-          {actif === 2 && <CP2_BasesCV />}
-          {actif === 3 && <CP3_RedactionCV />}
-          {actif === 4 && <CP4_LectureOffre />}
-          {actif === 5 && <CP5_Situations />}
-          {actif === 6 && <CP6_RoueEntretiens />}
+          {isPGE1A ? (
+            <>
+              {actif === 1 && <CP1_MonCV_PGE1A />}
+              {actif === 2 && <CP2_RedigerEnvoyer_PGE1A />}
+              {actif === 3 && <CP3_RoueEntretiens_PGE1A />}
+            </>
+          ) : (
+            <>
+              {actif === 1 && <CP1_MondeEntreprise />}
+              {actif === 2 && <CP2_BasesCV />}
+              {actif === 3 && <CP3_RedactionCV />}
+              {actif === 4 && <CP4_LectureOffre />}
+              {actif === 5 && <CP5_Situations />}
+              {actif === 6 && <CP6_RoueEntretiens />}
+            </>
+          )}
         </div>
       </div>
     )
@@ -128,7 +151,7 @@ export default function Univers1Page({ group }: Props) {
             <div className="px-5 py-3 flex items-center justify-between">
               <div>
                 <p className="text-xs" style={{ color: 'rgba(255,255,255,0.4)' }}>Checkpoint actif</p>
-                <p className="font-black text-white">{actif} / 6</p>
+                <p className="font-black text-white">{actif} / {totalCheckpoints}</p>
               </div>
               <div className="text-right">
                 <p className="text-xs" style={{ color: 'rgba(255,255,255,0.4)' }}>Statut</p>
@@ -154,14 +177,14 @@ export default function Univers1Page({ group }: Props) {
         </div>
 
         <div className="space-y-3 max-w-md mx-auto">
-          {CHECKPOINTS.map((cp, idx) => {
+          {checkpoints.map((cp, idx) => {
             const etat = cp.n < actif ? 'fait' : cp.n === actif ? 'actif' : 'verrouille'
             const isActif = etat === 'actif'
             const isFait = etat === 'fait'
 
             return (
               <div key={cp.n} className="relative">
-                {idx < CHECKPOINTS.length - 1 && (
+                {idx < checkpoints.length - 1 && (
                   <div className="absolute left-[22px] top-full w-0.5 h-3 z-10" style={{ background: isFait ? '#c9a84c' : 'rgba(201,168,76,0.1)' }} />
                 )}
 
