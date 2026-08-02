@@ -2,7 +2,6 @@
 
 import { useState, useRef, useEffect, useCallback } from 'react'
 import ModeBadge from '../shared/ModeBadge'
-import ProductionLivrable from '../shared/ProductionLivrable'
 
 // ─── Thèmes de préparation à la recherche de stage de fin de 1ère année ───
 type Theme = 'experiences' | 'formations' | 'disponibilite' | 'personnalite' | 'langues' | 'informatique'
@@ -187,26 +186,31 @@ function Roue({ onResultat }: { onResultat: (theme: Theme, carte: CarteTheme) =>
   )
 }
 
-function CarteResultat({ theme, carte }: { theme: Theme; carte: CarteTheme }) {
+function QuestionCard({ theme, carte }: { theme: Theme; carte: CarteTheme }) {
   return (
     <div className="rounded-2xl overflow-hidden">
       <div className="px-5 py-4" style={{ backgroundColor: '#080f20', borderBottom: `2px solid ${themeStyle[theme].hex}` }}>
         <p className="text-xs font-bold uppercase tracking-widest" style={{ color: themeStyle[theme].hex }}>{themeStyle[theme].label}</p>
         <p className="text-base font-bold mt-1" style={{ color: '#f5f0e8' }}>{carte.question}</p>
       </div>
-      <div className="divide-y" style={{ backgroundColor: 'rgba(15,30,61,0.95)', '--tw-divide-color': 'rgba(255,255,255,0.05)' } as React.CSSProperties}>
-        <div className="px-5 py-4">
-          <p className="text-xs font-bold uppercase tracking-widest mb-2" style={{ color: '#c9a84c' }}>✈ Conseil de réponse</p>
-          <p className="text-sm leading-relaxed" style={{ color: 'rgba(245,240,232,0.75)' }}>{carte.conseilReponse}</p>
-        </div>
-        <div className="px-5 py-4">
-          <p className="text-xs font-bold uppercase tracking-widest mb-2" style={{ color: '#fca5a5' }}>✗ À éviter</p>
-          <p className="text-sm leading-relaxed" style={{ color: 'rgba(245,240,232,0.75)' }}>{carte.aEviter}</p>
-        </div>
-        <div className="px-5 py-4">
-          <p className="text-xs font-bold uppercase tracking-widest mb-2" style={{ color: '#6ee7b7' }}>✓ Bonne amorce</p>
-          <p className="text-sm leading-relaxed italic" style={{ color: 'rgba(245,240,232,0.75)' }}>{carte.bonneAmorce}</p>
-        </div>
+    </div>
+  )
+}
+
+function ConseilPanel({ carte }: { carte: CarteTheme }) {
+  return (
+    <div className="rounded-2xl overflow-hidden divide-y" style={{ backgroundColor: 'rgba(15,30,61,0.95)', border: '1px solid rgba(255,255,255,0.08)', '--tw-divide-color': 'rgba(255,255,255,0.05)' } as React.CSSProperties}>
+      <div className="px-5 py-4">
+        <p className="text-xs font-bold uppercase tracking-widest mb-2" style={{ color: '#c9a84c' }}>✈ Conseil de réponse</p>
+        <p className="text-sm leading-relaxed" style={{ color: 'rgba(245,240,232,0.75)' }}>{carte.conseilReponse}</p>
+      </div>
+      <div className="px-5 py-4">
+        <p className="text-xs font-bold uppercase tracking-widest mb-2" style={{ color: '#fca5a5' }}>✗ À éviter</p>
+        <p className="text-sm leading-relaxed" style={{ color: 'rgba(245,240,232,0.75)' }}>{carte.aEviter}</p>
+      </div>
+      <div className="px-5 py-4">
+        <p className="text-xs font-bold uppercase tracking-widest mb-2" style={{ color: '#6ee7b7' }}>✓ Bonne amorce</p>
+        <p className="text-sm leading-relaxed italic" style={{ color: 'rgba(245,240,232,0.75)' }}>{carte.bonneAmorce}</p>
       </div>
     </div>
   )
@@ -214,8 +218,16 @@ function CarteResultat({ theme, carte }: { theme: Theme; carte: CarteTheme }) {
 
 export default function CP6_RoueEntretiens() {
   const [tirages, setTirages] = useState<{ theme: Theme; carte: CarteTheme }[]>([])
+  const [reponseTentative, setReponseTentative] = useState('')
+  const [reponseRevelee, setReponseRevelee] = useState(false)
 
   const dernierTirage = tirages[tirages.length - 1] ?? null
+
+  function nouveauTirage(theme: Theme, carte: CarteTheme) {
+    setTirages(prev => [...prev, { theme, carte }])
+    setReponseTentative('')
+    setReponseRevelee(false)
+  }
 
   return (
     <div className="space-y-5">
@@ -234,22 +246,40 @@ export default function CP6_RoueEntretiens() {
         <div>
           <h3 className="text-lg font-black text-white">Roue de l&apos;entretien</h3>
           <p className="text-xs mt-0.5" style={{ color: 'rgba(245,240,232,0.45)' }}>
-            Faites tourner la roue en équipage : chaque secteur tiré révèle une question et son conseil de réponse.
+            Faites tourner la roue en équipage, proposez votre réponse, puis découvrez le conseil.
           </p>
         </div>
         <ModeBadge mode="cdb" />
       </div>
 
       <div className="rounded-2xl p-6" style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)' }}>
-        <Roue onResultat={(theme, carte) => setTirages(prev => [...prev, { theme, carte }])} />
+        <Roue onResultat={nouveauTirage} />
       </div>
 
       {dernierTirage && (
         <div className="space-y-4">
-          <CarteResultat theme={dernierTirage.theme} carte={dernierTirage.carte} />
-          <ProductionLivrable>
-            Les meilleures amorces retenues au fil de vos tirages ({tirages.length} au total), à personnaliser et répéter avant l&apos;entretien réel.
-          </ProductionLivrable>
+          <QuestionCard theme={dernierTirage.theme} carte={dernierTirage.carte} />
+
+          <div className="rounded-xl p-4" style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)' }}>
+            <p className="text-xs font-bold uppercase tracking-widest mb-2" style={{ color: '#c9a84c' }}>Votre réponse (à l&apos;oral, résumée ici)</p>
+            <textarea
+              value={reponseTentative}
+              onChange={e => setReponseTentative(e.target.value)}
+              disabled={reponseRevelee}
+              rows={3}
+              placeholder="Un membre de l'équipage répond à voix haute, le reste du groupe résume ici avant de voir le conseil…"
+              className="w-full rounded-lg p-2.5 text-sm bg-transparent resize-none outline-none disabled:opacity-60"
+              style={{ color: 'rgba(245,240,232,0.85)', border: '1px solid rgba(201,168,76,0.2)' }}
+            />
+          </div>
+
+          {!reponseRevelee ? (
+            <button onClick={() => setReponseRevelee(true)} className="w-full py-3 rounded-xl font-black uppercase tracking-wider" style={{ background: 'linear-gradient(135deg, #c9a84c, #e8d080)', color: '#0f1e3d' }}>
+              Voir le conseil de réponse →
+            </button>
+          ) : (
+            <ConseilPanel carte={dernierTirage.carte} />
+          )}
         </div>
       )}
     </div>

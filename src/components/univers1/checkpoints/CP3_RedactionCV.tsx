@@ -3,7 +3,6 @@
 import { useState } from 'react'
 import ExerciseStepper from '../shared/ExerciseStepper'
 import ExerciseHeader from '../shared/ExerciseHeader'
-import ProductionLivrable from '../shared/ProductionLivrable'
 import TourDeControleAppel from '../shared/TourDeControleAppel'
 
 // ─── Contenu Exercice 1 — Contrôle carte d'embarquement (Vrai/Faux) ───
@@ -71,13 +70,11 @@ export default function CP3_RedactionCV() {
   // Exercice 1
   const [ex1Index, setEx1Index] = useState(0)
   const [ex1Reponse, setEx1Reponse] = useState<boolean | null>(null)
-  const [ex1Score, setEx1Score] = useState(0)
   const [ex1Termine, setEx1Termine] = useState(false)
 
   // Exercice 2
   const [ex2Index, setEx2Index] = useState(0)
   const [ex2Choix, setEx2Choix] = useState<string | null>(null)
-  const [ex2Score, setEx2Score] = useState(0)
   const [ex2Termine, setEx2Termine] = useState(false)
   const [ex2Ordre] = useState(() =>
     formulesMail.map(r => {
@@ -105,7 +102,6 @@ export default function CP3_RedactionCV() {
   function repondreEx1(rep: boolean) {
     if (ex1Reponse !== null) return
     setEx1Reponse(rep)
-    if (rep === affirmation.reponse) setEx1Score(s => s + 1)
   }
 
   function suivantEx1() {
@@ -120,7 +116,6 @@ export default function CP3_RedactionCV() {
   function choisirEx2(texte: string) {
     if (ex2Choix !== null) return
     setEx2Choix(texte)
-    if (texte === item.bon) setEx2Score(s => s + 1)
   }
 
   function suivantEx2() {
@@ -166,7 +161,6 @@ export default function CP3_RedactionCV() {
               <div className="px-5 pt-5 pb-3">
                 <div className="flex items-center justify-between mb-2">
                   <p className="text-xs" style={{ color: 'rgba(245,240,232,0.4)' }}>Affirmation {ex1Index + 1} sur {affirmationsEnvoi.length}</p>
-                  <p className="text-xs font-bold" style={{ color: '#c9a84c' }}>Score : {ex1Score} / {ex1Reponse !== null ? ex1Index + 1 : ex1Index}</p>
                 </div>
                 <div className="h-1.5 rounded-full overflow-hidden" style={{ background: 'rgba(255,255,255,0.07)' }}>
                   <div className="h-full rounded-full transition-all duration-500" style={{ width: `${(ex1Index / affirmationsEnvoi.length) * 100}%`, background: '#c9a84c' }} />
@@ -205,7 +199,7 @@ export default function CP3_RedactionCV() {
                     </div>
                     <p className="text-sm leading-relaxed" style={{ color: 'rgba(245,240,232,0.8)' }}>{affirmation.explication}</p>
                     <button onClick={suivantEx1} className="w-full py-2.5 rounded-xl font-bold text-sm uppercase tracking-wider" style={{ background: '#c9a84c', color: '#0f1e3d' }}>
-                      {ex1Index < affirmationsEnvoi.length - 1 ? 'Affirmation suivante →' : 'Voir mon score →'}
+                      {ex1Index < affirmationsEnvoi.length - 1 ? 'Affirmation suivante →' : 'Terminer le contrôle →'}
                     </button>
                   </div>
                 )}
@@ -213,13 +207,10 @@ export default function CP3_RedactionCV() {
             </div>
           ) : (
             <div className="rounded-2xl p-6 text-center space-y-4" style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(201,168,76,0.25)' }}>
-              <p className="text-xs font-bold uppercase tracking-widest" style={{ color: '#c9a84c' }}>Résultat</p>
-              <p className="text-5xl font-black" style={{ color: '#e8c96a' }}>
-                {ex1Score}<span className="text-2xl" style={{ color: 'rgba(232,201,106,0.4)' }}>/{affirmationsEnvoi.length}</span>
+              <p className="text-xs font-bold uppercase tracking-widest" style={{ color: '#c9a84c' }}>Contrôle terminé</p>
+              <p className="text-sm" style={{ color: 'rgba(245,240,232,0.7)' }}>
+                Discutez en équipage de la règle d&apos;envoi la plus utile à retenir.
               </p>
-              <ProductionLivrable>
-                Le score obtenu et la règle d&apos;envoi la plus utile retenue par votre équipage.
-              </ProductionLivrable>
               <button onClick={() => setEtape(2)} className="w-full py-3 rounded-xl font-black uppercase tracking-wider" style={{ background: 'linear-gradient(135deg, #c9a84c, #e8d080)', color: '#0f1e3d' }}>
                 Carte tamponnée — Exercice 2 →
               </button>
@@ -243,7 +234,6 @@ export default function CP3_RedactionCV() {
               <div className="px-5 pt-5 pb-3">
                 <div className="flex items-center justify-between mb-2">
                   <p className="text-xs" style={{ color: 'rgba(245,240,232,0.4)' }}>Mail {ex2Index + 1} sur {formulesMail.length}</p>
-                  <p className="text-xs font-bold" style={{ color: '#c9a84c' }}>Score : {ex2Score} / {ex2Choix !== null ? ex2Index + 1 : ex2Index}</p>
                 </div>
                 <div className="h-1.5 rounded-full overflow-hidden" style={{ background: 'rgba(255,255,255,0.07)' }}>
                   <div className="h-full rounded-full transition-all duration-500" style={{ width: `${(ex2Index / formulesMail.length) * 100}%`, background: '#c9a84c' }} />
@@ -278,7 +268,7 @@ export default function CP3_RedactionCV() {
                   <div className="mt-4 rounded-xl p-4 space-y-3" style={{ background: 'rgba(15,30,61,0.7)', border: '1px solid rgba(201,168,76,0.2)' }}>
                     <p className="text-sm leading-relaxed" style={{ color: 'rgba(245,240,232,0.8)' }}>{item.explication}</p>
                     <button onClick={suivantEx2} className="w-full py-2.5 rounded-xl font-bold text-sm uppercase tracking-wider" style={{ background: '#c9a84c', color: '#0f1e3d' }}>
-                      {ex2Index < formulesMail.length - 1 ? 'Mail suivant →' : 'Voir mon score →'}
+                      {ex2Index < formulesMail.length - 1 ? 'Mail suivant →' : 'Terminer l\'exercice →'}
                     </button>
                   </div>
                 )}
@@ -286,13 +276,10 @@ export default function CP3_RedactionCV() {
             </div>
           ) : (
             <div className="rounded-2xl p-6 text-center space-y-4" style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(201,168,76,0.25)' }}>
-              <p className="text-xs font-bold uppercase tracking-widest" style={{ color: '#c9a84c' }}>Résultat</p>
-              <p className="text-5xl font-black" style={{ color: '#e8c96a' }}>
-                {ex2Score}<span className="text-2xl" style={{ color: 'rgba(232,201,106,0.4)' }}>/{formulesMail.length}</span>
+              <p className="text-xs font-bold uppercase tracking-widest" style={{ color: '#c9a84c' }}>Exercice terminé</p>
+              <p className="text-sm" style={{ color: 'rgba(245,240,232,0.7)' }}>
+                Retenez les meilleures formules, réutilisables dans votre propre mail de candidature.
               </p>
-              <ProductionLivrable>
-                Les meilleures formules retenues, réutilisables dans votre propre mail de candidature.
-              </ProductionLivrable>
               <button onClick={() => setEtape(3)} className="w-full py-3 rounded-xl font-black uppercase tracking-wider" style={{ background: 'linear-gradient(135deg, #c9a84c, #e8d080)', color: '#0f1e3d' }}>
                 Formules prêtes — Exercice 3 →
               </button>
@@ -327,10 +314,6 @@ export default function CP3_RedactionCV() {
               ))}
             </div>
           </div>
-
-          <ProductionLivrable>
-            La version finale du mail/lettre de candidature, et le retour de votre intervenante noté par votre équipage.
-          </ProductionLivrable>
 
           <TourDeControleAppel
             appele={appele}

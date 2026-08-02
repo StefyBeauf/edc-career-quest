@@ -4,7 +4,6 @@ import { useState, useEffect } from 'react'
 import { situations, Situation } from '@/lib/content/univers1'
 import ExerciseStepper from '../shared/ExerciseStepper'
 import ExerciseHeader from '../shared/ExerciseHeader'
-import ProductionLivrable from '../shared/ProductionLivrable'
 import TourDeControleAppel from '../shared/TourDeControleAppel'
 
 const NB_INCIDENTS = 5
@@ -74,7 +73,6 @@ export default function CP5_Situations() {
   /* eslint-enable react-hooks/set-state-in-effect */
 
   const incidentActuel = incidents ? incidents[incidentIndex] : null
-  const scoreEx2 = itemsOrdre.reduce((acc, item, i) => acc + (coches[i] === item.bonne ? 1 : 0), 0)
 
   function repondreIncident(opt: 'A' | 'B' | 'C') {
     if (reponseIncident !== null) return
@@ -172,11 +170,6 @@ export default function CP5_Situations() {
                   <div className="rounded-2xl p-4" style={{ background: 'rgba(15,30,61,0.7)', border: '1px solid rgba(201,168,76,0.2)' }}>
                     <p className="text-sm leading-relaxed" style={{ color: 'rgba(245,240,232,0.85)' }}>{getFeedback(incidentActuel, reponseIncident)}</p>
                   </div>
-                  {incidentIndex === NB_INCIDENTS - 1 && (
-                    <ProductionLivrable>
-                      Les 5 incidents rencontrés, les réactions choisies par votre équipage et le conseil clé retenu pour chacun.
-                    </ProductionLivrable>
-                  )}
                   <button onClick={incidentSuivant} className="w-full py-3 rounded-xl font-black uppercase tracking-wider" style={{ background: 'linear-gradient(135deg, #c9a84c, #e8d080)', color: '#0f1e3d' }}>
                     {incidentIndex < NB_INCIDENTS - 1 ? 'Incident suivant →' : 'Tous les contrôles passés — Exercice 2 →'}
                   </button>
@@ -200,7 +193,6 @@ export default function CP5_Situations() {
           <div className="rounded-2xl overflow-hidden" style={{ border: '1px solid rgba(201,168,76,0.2)' }}>
             <div className="px-5 py-3 flex items-center justify-between" style={{ backgroundColor: '#0f1e3d', borderBottom: '1px solid rgba(201,168,76,0.15)' }}>
               <p className="text-xs font-bold uppercase tracking-widest" style={{ color: '#c9a84c' }}>À adopter en stage ?</p>
-              {ex2Valide && <span className="font-black" style={{ color: '#e8c96a' }}>{scoreEx2}<span style={{ color: 'rgba(232,201,106,0.4)' }}>/{itemsAttitude.length}</span></span>}
             </div>
             <div className="p-5 space-y-2" style={{ background: 'rgba(255,255,255,0.03)' }}>
               {itemsOrdre.map((item, i) => {
@@ -236,9 +228,6 @@ export default function CP5_Situations() {
             </button>
           ) : (
             <div className="space-y-4">
-              <ProductionLivrable>
-                Le score obtenu ({scoreEx2}/{itemsAttitude.length}) et les 2-3 règles de tenue/attitude que votre équipage retient pour son stage.
-              </ProductionLivrable>
               <button onClick={() => setEtape(3)} className="w-full py-3 rounded-xl font-black uppercase tracking-wider" style={{ background: 'linear-gradient(135deg, #c9a84c, #e8d080)', color: '#0f1e3d' }}>
                 Contrôle passé — Exercice 3 →
               </button>
@@ -272,10 +261,6 @@ export default function CP5_Situations() {
             <textarea value={reponseEquipage} onChange={e => setReponseEquipage(e.target.value)} rows={4} placeholder="Que décidez-vous de faire, et pourquoi ?"
               className="w-full rounded-lg p-2.5 text-sm bg-transparent resize-none outline-none" style={{ color: 'rgba(245,240,232,0.85)', border: '1px solid rgba(201,168,76,0.2)' }} />
           </div>
-
-          <ProductionLivrable>
-            La situation choisie et la réaction argumentée de votre équipage, rédigée ci-dessus.
-          </ProductionLivrable>
 
           <TourDeControleAppel
             appele={appele}

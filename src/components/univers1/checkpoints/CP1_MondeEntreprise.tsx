@@ -33,7 +33,6 @@ export default function CP1_MondeEntreprise() {
   // Exercice 1 — Quiz BtoB/BtoC
   const [ex1Index, setEx1Index] = useState(0)
   const [ex1Reponse, setEx1Reponse] = useState<ReponseQuiz | null>(null)
-  const [ex1Score, setEx1Score] = useState(0)
   const [ex1Termine, setEx1Termine] = useState(false)
 
   // Exercice 2 — Métier mystère (tirage aléatoire entre Commercial et Conseiller de vente)
@@ -54,9 +53,6 @@ export default function CP1_MondeEntreprise() {
   function choisirReponse(rep: ReponseQuiz) {
     if (ex1Reponse !== null) return
     setEx1Reponse(rep)
-    if (rep === entreprise.reponse) {
-      setEx1Score(s => s + 1)
-    }
   }
 
   function questionSuivante() {
@@ -117,9 +113,6 @@ export default function CP1_MondeEntreprise() {
                 <div className="flex items-center justify-between mb-2">
                   <p className="text-xs" style={{ color: 'rgba(245,240,232,0.4)' }}>
                     Entreprise {ex1Index + 1} sur {entreprisesQuiz.length}
-                  </p>
-                  <p className="text-xs font-bold" style={{ color: '#c9a84c' }}>
-                    Score : {ex1Score} / {ex1Reponse !== null ? ex1Index + 1 : ex1Index}
                   </p>
                 </div>
                 <div className="h-1.5 rounded-full overflow-hidden" style={{ background: 'rgba(255,255,255,0.07)' }}>
@@ -193,28 +186,18 @@ export default function CP1_MondeEntreprise() {
                       className="w-full py-2.5 rounded-xl font-bold text-sm uppercase tracking-wider"
                       style={{ background: '#c9a84c', color: '#0f1e3d' }}
                     >
-                      {ex1Index < entreprisesQuiz.length - 1 ? 'Entreprise suivante →' : 'Voir mon score →'}
+                      {ex1Index < entreprisesQuiz.length - 1 ? 'Entreprise suivante →' : 'Terminer le quiz →'}
                     </button>
                   </div>
                 )}
               </div>
             </div>
           ) : (
-            // Écran de score
+            // Écran de fin d'exercice
             <div className="rounded-2xl p-6 text-center space-y-4" style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(201,168,76,0.25)' }}>
-              <p className="text-xs font-bold uppercase tracking-widest" style={{ color: '#c9a84c' }}>Résultat</p>
-              <p className="text-5xl font-black" style={{ color: '#e8c96a' }}>
-                {ex1Score}
-                <span className="text-2xl" style={{ color: 'rgba(232,201,106,0.4)' }}>/{entreprisesQuiz.length}</span>
-              </p>
+              <p className="text-xs font-bold uppercase tracking-widest" style={{ color: '#c9a84c' }}>Quiz terminé</p>
               <p className="text-sm" style={{ color: 'rgba(245,240,232,0.7)' }}>
-                {ex1Score === entreprisesQuiz.length
-                  ? 'Parfait ! Vous maîtrisez les modèles BtoB, BtoC et hybrides.'
-                  : ex1Score >= 6
-                  ? 'Très bien ! Quelques nuances à retenir, notamment sur les modèles mixtes.'
-                  : ex1Score >= 4
-                  ? 'Pas mal. Retenez surtout que certaines entreprises combinent les deux modèles.'
-                  : 'Revoyez les fondamentaux BtoB / BtoC avec votre équipage.'}
+                Bien joué ! Vous avez passé en revue les modèles BtoB, BtoC et hybrides avec votre équipage.
               </p>
               <button
                 onClick={() => setEtape(2)}
