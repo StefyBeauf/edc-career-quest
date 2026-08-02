@@ -5,7 +5,7 @@ interface Props { group: Group }
 
 export default async function Univers2Page({ group }: Props) {
   const secondSemestre = group.track === 'pge2' && group.active_mission >= 4
-  const heroImage = secondSemestre ? '/hero-univers4.jpg' : '/hero-univers2.jpg'
+  const heroImage = secondSemestre ? '/hero-univers2PGE.jpg' : '/hero-univers2.jpg'
 
   return (
     <div className="min-h-screen" style={{ background: '#0f0a04' }}>
@@ -88,7 +88,9 @@ export default async function Univers2Page({ group }: Props) {
 
             {/* Citation */}
             <p className="text-sm italic leading-relaxed mb-6" style={{ color: 'rgba(255,225,160,0.8)', fontFamily: 'Georgia, serif', borderLeft: '2px solid rgba(201,168,76,0.5)', paddingLeft: '14px' }}>
-              &ldquo;Votre équipement est prêt. Il est maintenant temps de quitter le camp de base et d&apos;avancer sur le terrain.&rdquo;
+              {secondSemestre
+                ? "“Le dossier est sur la table, la loupe est prête. Il est temps de suivre les indices jusqu’au bout.”"
+                : "“Votre équipement est prêt. Il est maintenant temps de quitter le camp de base et d’avancer sur le terrain.”"}
             </p>
 
             {/* Indicateur actif */}

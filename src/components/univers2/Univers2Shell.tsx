@@ -6,12 +6,12 @@ import { getMissionsForTrack } from '@/lib/content/univers2'
 import MissionSelector from './MissionSelector'
 import CardDeck from './CardDeck'
 import MissionLocked from '@/components/shared/MissionLocked'
-import Mission1Boussole from './Mission1Boussole'
-import Mission2CarnetBord from './Mission2CarnetBord'
-import Mission3LongueVue from './Mission3LongueVue'
-import Dossier4Pistes from './Dossier4Pistes'
-import Dossier5Contacts from './Dossier5Contacts'
-import Dossier6Opportunite from './Dossier6Opportunite'
+import Cours1Boussole from './Cours1Boussole'
+import Cours2Linkedin from './Cours2Linkedin'
+import Cours3RevelateurIdees from './Cours3RevelateurIdees'
+import Cours4EnqueteJobboards from './Cours4EnqueteJobboards'
+import Cours5PitchProfessionnel from './Cours5PitchProfessionnel'
+import Cours6Strategie30Jours from './Cours6Strategie30Jours'
 
 interface Univers2ShellProps {
   group: Group
@@ -54,17 +54,17 @@ export default function Univers2Shell({ group }: Univers2ShellProps) {
         {isLocked ? (
           <MissionLocked group={group} />
         ) : selectedMission === 1 ? (
-          <Mission1Boussole />
+          <Cours1Boussole />
         ) : selectedMission === 2 ? (
-          <Mission2CarnetBord />
+          <Cours2Linkedin />
         ) : selectedMission === 3 ? (
-          <Mission3LongueVue />
+          <Cours3RevelateurIdees track={track} />
         ) : track === 'pge2' && selectedMission === 4 ? (
-          <Dossier4Pistes />
+          <Cours4EnqueteJobboards />
         ) : track === 'pge2' && selectedMission === 5 ? (
-          <Dossier5Contacts />
+          <Cours5PitchProfessionnel />
         ) : track === 'pge2' && selectedMission === 6 ? (
-          <Dossier6Opportunite />
+          <Cours6Strategie30Jours />
         ) : (
           <CardDeck missionNumber={selectedMission} track={track} />
         )}
