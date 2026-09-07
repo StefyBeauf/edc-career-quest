@@ -29,7 +29,7 @@ Mettre à jour la plateforme pédagogique EDC Career (Vador OS) selon les spéci
 Résultat attendu :
 Application Next.js déployée (Vercel) avec trois univers pédagogiques fonctionnels et testés :
 - **Univers 1 — Passeport vers le Stage** (B1/PGE1) : stabilisé, non modifié par V3.3
-- **Univers 2 — Expédition Professionnelle** (B2/PGE2) : révision ciblée (3 missions B2, boussole aléatoire, atelier guidé, révélateur d'idées, même corrections appliquées à PGE2 S1, conservation de PGE2 S2)
+- **Univers 2 — Expédition Professionnelle** (B2/PGE2) : révision ciblée (3 missions B2, mission 1 avec boussole aléatoire + mini quiz de personnalité, atelier guidé, révélateur d'idées, même corrections appliquées à PGE2 S1, conservation de PGE2 S2)
 - **Univers 3 — La Mission** (B3) : création de 3 missions immersives dans l'univers existant (communication professionnelle, conduite de réunion, synthèse 48h)
 
 **Tâche en cours (mission active) :** Mise à jour V3.3 selon fiche mission "EDC Career Quest — V3.3" (`fiche-edc-career-v3.3.docx`). **B2 et PGE2 déployés en production le 2026-09-07.** B3 codé et testé mais **volontairement non déployé** (à la demande de Stéphanie, le temps de valider séparément) — la production tourne encore sur l'ancien système B3 à 6 missions IA. Voir section 17 "Journal V3.3" pour le détail.
@@ -58,7 +58,8 @@ Ce qui compte le plus :
 
 Ce que le projet doit faire :
 - **Correction B2** : afficher 3 missions au lieu de 6 (Profil professionnel, Image professionnelle, Communication professionnelle)
-- **Boussole professionnelle (B2 Mission 1)** : fonctionnement aléatoire, quatre directions (Nord/Est/Sud/Ouest), pistes spécifiques par question, message obligatoire "Présentez-la à votre intervenante pour votre notation"
+- **Boussole professionnelle aléatoire (B2 Mission 1, Temps 1)** : fonctionnement aléatoire, quatre directions (Nord/Est/Sud/Ouest), pistes spécifiques par question, aide courte à la réflexion, relance personnalisée, message obligatoire "Ces pistes sont là pour t'aider à réfléchir. Choisis, adapte ou reformule avec tes propres mots."
+- **Mini quiz de personnalité professionnelle (B2 Mission 1, Temps 2)** : 20 questions, 4 réponses par question, quatre profils ludiques et professionnels (A = Le moteur de l'expédition, B = Le gardien de la carte, C = L'éclaireur d'idées, D = Le créateur de liens), scoring automatique, affichage résultat personnalisé avec traduction professionnelle, apports en groupe, points à valoriser, vigilance et phrase à compléter
 - **Atelier guidé image professionnelle (B2 Mission 2)** : aucune génération automatique de profil LinkedIn complet, critères de qualité, exemples partiels, feedbacks courts
 - **Révélateur d'idées (B2 Mission 3)** : aider l'étudiant à identifier une idée de prise de parole (pas générer un post LinkedIn prêt à publier)
 - **Application PGE2 S1** : réutiliser les composants B2 corrigés (boussole, atelier, révélateur) pour les 3 premières séances PGE2
@@ -70,6 +71,40 @@ Ce que le projet doit faire :
 - **Évaluation intégrée** : 50% note orale individuelle + 50% note groupe écrite pour chaque niveau
 - **Alignement rédactionnel** : utiliser systématiquement le féminin "intervenante"
 
+### 3.1. Spécification détaillée — Mini Quiz de Personnalité Professionnelle (B2 M1, Temps 2)
+
+Le mini quiz est un outil de réflexion ludique destiné à aider l'étudiant à identifier son profil professionnel dominant et ses points d'appui.
+
+**Principes fondamentaux :**
+- Pas un test psychométrique scientifique — présenter comme outil de réflexion personnel
+- Aucun stockage de réponses ou résultats
+- 20 questions fixes, 4 réponses par question (A/B/C/D)
+- Scoring client uniquement (Math.random(), pas d'API)
+- Affichage du profil dominant à la fin
+
+**Quatre profils ludiques et traductions professionnelles :**
+
+| Lettre | Profil ludique | Traduction professionnelle |
+|--------|----------------|--------------------------|
+| A | Le moteur de l'expédition | Orienté action, initiative et résultat |
+| B | Le gardien de la carte | Organisé, fiable et structurant |
+| C | L'éclaireur d'idées | Créatif, curieux et adaptable |
+| D | Le créateur de liens | Relationnel, coopératif et communicant |
+
+**Affichage du résultat (complet pour chaque profil) :**
+1. Nom ludique + traduction professionnelle
+2. Ce que tu apportes dans un groupe (4 bullets)
+3. À valoriser professionnellement (5 skills)
+4. Point de vigilance (1 phrase)
+5. Phrase à compléter (ex. "Dans un contexte professionnel, mon énergie peut m'aider à…")
+
+**Messages obligatoires :**
+- **Avant le quiz :** "Répondez spontanément aux 20 questions. Il n'y a pas de bonne ou de mauvaise réponse. Ce quiz vous aide à identifier votre profil professionnel dominant et vos points d'appui pour progresser."
+- **Après le résultat :** "Ce résultat n'est pas une étiquette définitive. Il sert à t'aider à mieux comprendre tes points d'appui et à préparer ta présentation orale."
+
+**Fin de mission :**
+Afficher : "Préparez une présentation courte de votre boussole et de votre profil de personnalité professionnelle. Présentez-la à votre intervenante pour votre notation."
+
 Ce que le projet ne doit pas faire pour l'instant :
 - ❌ Reconstruire toute l'architecture ou l'infrastructure existante
 - ❌ Modifier les parcours B1 ou tout élément hors périmètre V3.3
@@ -80,6 +115,7 @@ Ce que le projet ne doit pas faire pour l'instant :
 - ❌ Afficher des pistes génériques identiques pour toutes les questions (ex. boussole)
 - ❌ Stocker les données étudiantes dans la plateforme
 - ❌ Créer de fonction de partage automatique (LinkedIn, email, etc.)
+- ❌ Présenter le quiz comme un outil de diagnostic ou de classification définitive
 
 Version souhaitée :
 - [x] Version robuste pour usage réel (utilisation en direct en salle de cours)
@@ -141,7 +177,8 @@ Dossiers ou fichiers importants (structure réelle — un seul routing dynamique
 - `src/app/[slug]/page.tsx` : point d'entrée unique. Récupère le groupe (Supabase `groups`) par son slug de QR Code, puis dispatch vers `Univers1Page` / `Univers2Page` / `Univers3Page` selon `group.universe`
 - `src/components/univers1/` : parcours Univers 1 "Passeport vers le Stage" (B1/PGE1) — stabilisé, ne pas modifier
 - `src/components/univers2/` : parcours Univers 2 "Expédition Professionnelle" (B2/PGE2)
-  - `Cours1Boussole.tsx` + `CompassDial.tsx` : boussole B2 M1 (aléatoire, pistes spécifiques par question)
+  - `Cours1Boussole.tsx` + `CompassDial.tsx` : boussole professionnelle aléatoire B2 M1 Temps 1 (aléatoire, pistes spécifiques par question)
+  - `Cours1Quiz.tsx` : **NOUVEAU** — mini quiz de personnalité professionnelle B2 M1 Temps 2 (20 questions, 4 profils, scoring client)
   - `Cours2Linkedin.tsx` : atelier guidé image professionnelle (B2 M2, pas de génération de profil)
   - `Cours3RevelateurIdees.tsx` : révélateur d'idées LinkedIn (B2 M3, pas de génération de post)
   - `Cours4EnqueteJobboards.tsx` / `Cours5PitchProfessionnel.tsx` / `Cours6Strategie30Jours.tsx` : séances PGE2 S2 (univers détective, conservées)
@@ -179,8 +216,10 @@ Emplacement des données :
 - Assets : `/public/univers/`
 
 Format d'entrée :
-- Questions de la boussole : tableau JSON `{ direction: string, questions: string[] }`
-- Pistes : tableau JSON `{ question: string, pistes: string[] }`
+- Questions de la boussole : tableau JSON `{ direction: string, questions: [{ question, aide, pistes[], relance }] }`
+- Questions du quiz : tableau JSON `{ id, texte, reponses: [{ lettre, texte }] }`
+- Résultats quiz : objet JSON `{ A: { nom, traduction, apports[], valorisation[], vigilance, phrase }, B: {...}, C: {...}, D: {...} }`
+- Pistes boussole : tableau spécifiques, jamais génériques
 - Feedback : objet JSON `{ type: "success" | "alert" | "neutral", message: string }`
 
 Format de sortie attendu :
@@ -189,8 +228,11 @@ Format de sortie attendu :
 - Interface admin pour Stéphanie (pilotage en direct)
 
 Règles de traitement :
-- Les questions de la boussole (B2 M1) doivent être **aléatoires** (Math.random())
+- Les questions de la boussole (B2 M1 Temps 1) doivent être **aléatoires** (Math.random())
 - Les pistes affichées doivent être **spécifiques à la question**, jamais génériques
+- Le mini quiz (B2 M1 Temps 2) doit être présenté comme **outil de réflexion ludique**, jamais comme test diagnostique ou classification définitive
+- Le scoring du quiz doit rester **côté client** (aucun stockage, aucun envoi serveur)
+- Les résultats du quiz doivent afficher **le profil dominant uniquement** (pas de profils secondaires ou scores)
 - Les feedbacks doivent être **courts** (une phrase, max 2 lignes)
 - L'application doit **ne jamais générer de livrable complet** (LinkedIn, post, document)
 - L'univers avion (Univers 1) ne doit **jamais** apparaître dans Univers 2 ou 3
@@ -214,9 +256,13 @@ Pages ou écrans nécessaires :
 
 ### Univers 2 — Expédition Professionnelle (B2/PGE2) — *En révision V3.3*
 - **Semestre 1 — Univers 🧭 aventure** (B2 + PGE2)
-  - 3 missions B2 (Profil professionnel, Image professionnelle, Communication professionnelle)
+  - **Mission 1 — Profil professionnel** (2 temps) :
+    - Temps 1 : Boussole professionnelle aléatoire (4 directions, pistes spécifiques, feedback immédiat)
+    - Temps 2 : Mini quiz de personnalité professionnelle (20 questions, 4 profils, résultat personnalisé)
+  - **Mission 2 — Image professionnelle** (atelier guidé LinkedIn, pas de génération)
+  - **Mission 3 — Communication professionnelle** (révélateur d'idées, pas de génération de post)
   - 3 séances PGE2 S1 (mêmes que B2)
-  - Chaque mission : 2 exercices Mode 1 + 1 exercice Mode 2
+  - Chaque mission (sauf M1 qui a 2 temps) : 2 exercices Mode 1 + 1 exercice Mode 2
 - **Semestre 2 — Univers 🕵️ détective** (PGE2 uniquement)
   - 3 séances PGE2 S2 (Exploration opportunités, Relations professionnelles, Concrétisation projet)
   - Avec fonctionnalité "Qui est en face de moi ?" conservée
@@ -447,7 +493,13 @@ Faire une hypothèse raisonnable, l'indiquer clairement, puis avancer si le risq
 
 La mise à jour V3.3 est considérée terminée quand :
 - ✅ B2 affiche 3 missions (pas 6)
-- ✅ Boussole B2 M1 fonctionne en aléatoire avec pistes spécifiques
+- ✅ Boussole B2 M1 (Temps 1) fonctionne en aléatoire avec pistes spécifiques
+- ✅ Mini quiz de personnalité B2 M1 (Temps 2) complètement implémenté :
+  - 20 questions, 4 profils A/B/C/D
+  - Scoring automatique côté client
+  - Affichage résultat avec tous les éléments (nom + traduction + apports + valorisation + vigilance + phrase)
+  - Messages obligatoires présents (intro + message de précaution)
+  - Aucun stockage de réponses
 - ✅ B2 M2 et M3 fonctionnent en ateliers guidés (pas de génération de livrable)
 - ✅ Mêmes corrections appliquées aux 3 premières séances PGE2 S1
 - ✅ PGE2 S2 conservé et opérationnel
@@ -474,6 +526,18 @@ Vérifier que le résultat correspond à l'objectif V3.3 (corrections ciblées, 
 - Prochaines étapes recommandées (test avec groupes réels, ajustements pédagogiques, étapes futures)
 
 ## 17. Journal V3.3
+
+### 2026-09-07 (suite) — Mini quiz de personnalité professionnelle B2 M1 codé et testé, non déployé
+
+Implémentation du **mini quiz de personnalité professionnelle** (Temps 2 de B2 M1, Séance 1) à partir de la fiche mission `Fiche_Mission_B2_Seance1_BoussoleQuiz.docx` :
+- `src/lib/content/univers2-quiz.ts` : 20 questions fixes, 4 profils A/B/C/D (Le moteur de l'expédition, Le gardien de la carte, L'éclaireur d'idées, Le créateur de liens) avec traduction professionnelle, apports, valorisation, vigilance et phrase à compléter — messages d'intro et de précaution obligatoires inclus
+- `src/components/univers2/Cours1Quiz.tsx` : composant du quiz (intro → 20 questions → résultat), scoring 100% côté client (comptage par lettre), aucun stockage
+- `src/components/univers2/Cours1Boussole.tsx` : remplacement des anciennes étapes 2 (« Carte profil aventurier ») et 3 (« Mon cap professionnel ») par le nouveau Temps 2 (quiz, mode validation intervenante) — le cours passe de 3 étapes à 2 temps (Boussole puis Quiz), conforme à la section 3.1
+- Suppression de `profilsAventuriers` et `CAP_CHAMPS` dans `univers2-cours1.ts` (devenus obsolètes, plus aucune référence ailleurs)
+
+Vérifications effectuées : `npx tsc --noEmit` (0 erreur), `npx eslint` sur les fichiers modifiés (0 erreur), test navigateur complet en local sur `b2-groupe-a` (boussole 4 directions → quiz 20 questions → résultat profil affiché en entier → écran de présentation à l'intervenante), aucune erreur console.
+
+**Statut** : codé et testé localement, **non déployé** (aucun commit) — à la demande implicite de prudence sur cette classe de changement (remplacement d'un flow déjà en production). Décision de déploiement à valider avec Stéphanie.
 
 ### 2026-09-07 — B2 et PGE2 déployés en production
 

@@ -1,25 +1,22 @@
 'use client'
 
 import { useState } from 'react'
-import { directionsBoussole, profilsAventuriers, CAP_CHAMPS, type ProfilAventurier, type QuestionBoussole } from '@/lib/content/univers2-cours1'
+import { directionsBoussole, type QuestionBoussole } from '@/lib/content/univers2-cours1'
 import ExerciseStepper from './shared/ExerciseStepper'
 import ExerciseHeader from './shared/ExerciseHeader'
 import CompassDial from './CompassDial'
+import Cours1Quiz from './Cours1Quiz'
 
 export default function Cours1Boussole() {
-  const [etape, setEtape] = useState<1 | 2 | 3>(1)
+  const [etape, setEtape] = useState<1 | 2>(1)
 
-  // Exercice 1 — Boussole aléatoire
+  // Temps 1 — Boussole aléatoire
   const [directionActive, setDirectionActive] = useState<typeof directionsBoussole[number] | null>(null)
   const [question, setQuestion] = useState<QuestionBoussole | null>(null)
   const [directionsExplorees, setDirectionsExplorees] = useState<string[]>([])
 
-  // Exercice 2 — Carte profil aventurier
-  const [profilChoisi, setProfilChoisi] = useState<ProfilAventurier | null>(null)
-
-  // Exercice 3 — Mon cap professionnel
-  const [reponsesCap, setReponsesCap] = useState<Record<string, string>>({})
-  const [capPresente, setCapPresente] = useState(false)
+  // Temps 2 — Mini quiz de personnalité professionnelle
+  const [quizTermine, setQuizTermine] = useState(false)
 
   function choisirDirection(code: typeof directionsBoussole[number]['code']) {
     const direction = directionsBoussole.find(d => d.code === code)!
@@ -48,8 +45,7 @@ export default function Cours1Boussole() {
         etape={etape}
         steps={[
           { n: 1, label: 'Boussole aléatoire', picto: '🧭' },
-          { n: 2, label: 'Carte profil', picto: '🗺️' },
-          { n: 3, label: 'Mon cap', picto: '⛰️' },
+          { n: 2, label: 'Quiz de personnalité', picto: '🎯' },
         ]}
       />
 
@@ -142,122 +138,24 @@ export default function Cours1Boussole() {
         </div>
       )}
 
-      {/* ═══ EXERCICE 2 — Carte profil aventurier ═══ */}
+      {/* ═══ TEMPS 2 — Mini quiz de personnalité professionnelle (Mode 2) ═══ */}
       {etape === 2 && (
         <div className="space-y-4">
           <ExerciseHeader
             numero={2}
-            titre="Carte profil aventurier"
-            consigne="À partir de vos réponses, choisissez le profil qui vous ressemble le plus."
-            mode="feedback"
-          />
-
-          <div className="grid grid-cols-1 gap-2.5">
-            {profilsAventuriers.map(p => {
-              const selectionne = profilChoisi?.id === p.id
-              return (
-                <button
-                  key={p.id}
-                  onClick={() => setProfilChoisi(p)}
-                  className="rounded-2xl p-4 text-left transition-all flex items-start gap-3"
-                  style={{
-                    background: selectionne ? 'rgba(201,168,76,0.12)' : 'rgba(255,255,255,0.04)',
-                    border: selectionne ? '1.5px solid rgba(201,168,76,0.55)' : '1px solid rgba(255,255,255,0.08)',
-                  }}
-                >
-                  <span className="text-2xl">{p.emoji}</span>
-                  <div>
-                    <p className="font-black text-white text-sm">{p.nom}</p>
-                    <p className="text-xs mt-0.5" style={{ color: 'rgba(245,240,232,0.5)' }}>{p.description}</p>
-                  </div>
-                </button>
-              )
-            })}
-          </div>
-
-          {profilChoisi && (
-            <div className="rounded-2xl p-5 space-y-4" style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(201,168,76,0.25)' }}>
-              <div>
-                <p className="text-xs font-bold uppercase tracking-widest mb-2" style={{ color: '#c9a84c' }}>Forces associées</p>
-                <div className="flex flex-wrap gap-1.5">
-                  {profilChoisi.forces.map(f => (
-                    <span key={f} className="text-xs px-2.5 py-1 rounded-full" style={{ background: 'rgba(90,163,124,0.12)', color: '#5aa37c' }}>{f}</span>
-                  ))}
-                </div>
-              </div>
-              <div>
-                <p className="text-xs font-bold uppercase tracking-widest mb-2" style={{ color: '#c9a84c' }}>Environnements possibles</p>
-                <div className="flex flex-wrap gap-1.5">
-                  {profilChoisi.environnements.map(e => (
-                    <span key={e} className="text-xs px-2.5 py-1 rounded-full" style={{ background: 'rgba(255,255,255,0.06)', color: 'rgba(245,240,232,0.7)' }}>{e}</span>
-                  ))}
-                </div>
-              </div>
-              <div>
-                <p className="text-xs font-bold uppercase tracking-widest mb-1.5" style={{ color: '#c9a84c' }}>Point de vigilance</p>
-                <p className="text-sm" style={{ color: 'rgba(245,240,232,0.7)' }}>{profilChoisi.vigilance}</p>
-              </div>
-              <p className="text-sm italic leading-relaxed" style={{ color: 'rgba(255,225,160,0.85)', borderLeft: '2px solid rgba(201,168,76,0.5)', paddingLeft: '12px' }}>
-                &ldquo;{profilChoisi.phrase}&rdquo;
-              </p>
-              <div className="rounded-xl px-4 py-3 text-xs font-semibold text-center" style={{ background: 'rgba(201,168,76,0.1)', color: '#c9a84c' }}>
-                Ce profil est une piste de réflexion, pas une étiquette définitive.
-              </div>
-
-              <button
-                onClick={() => setEtape(3)}
-                className="w-full py-3 rounded-xl font-black uppercase tracking-wider"
-                style={{ background: 'linear-gradient(135deg, #c9a84c, #e8d080)', color: '#0f0a04' }}
-              >
-                Continuer — Exercice 3 →
-              </button>
-            </div>
-          )}
-        </div>
-      )}
-
-      {/* ═══ EXERCICE 3 — Mon cap professionnel (Mode 2) ═══ */}
-      {etape === 3 && (
-        <div className="space-y-4">
-          <ExerciseHeader
-            numero={3}
-            titre="Mon cap professionnel"
-            consigne="Formulez votre direction en 4 points, seul ou en binôme."
+            titre="Quiz de personnalité professionnelle"
+            consigne="Répondez seul·e aux 20 questions pour découvrir votre profil dominant."
             mode="validation"
           />
 
-          <div className="space-y-3">
-            {CAP_CHAMPS.map(champ => (
-              <div key={champ.cle}>
-                <label className="text-xs font-bold uppercase tracking-widest mb-1.5 block" style={{ color: 'rgba(201,168,76,0.7)' }}>
-                  {champ.label}
-                </label>
-                <textarea
-                  value={reponsesCap[champ.cle] ?? ''}
-                  onChange={e => setReponsesCap(prev => ({ ...prev, [champ.cle]: e.target.value }))}
-                  placeholder={champ.placeholder}
-                  rows={2}
-                  className="w-full rounded-xl px-4 py-3 text-sm resize-none"
-                  style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.1)', color: 'white' }}
-                />
-              </div>
-            ))}
-          </div>
-
-          {!capPresente ? (
-            <button
-              onClick={() => setCapPresente(true)}
-              className="w-full py-4 rounded-2xl font-black text-base uppercase tracking-wider transition-all"
-              style={{ background: 'linear-gradient(135deg, #c9a84c, #e8d080)', color: '#0f0a04', boxShadow: '0 8px 32px rgba(201,168,76,0.25)' }}
-            >
-              🧭 Présenter mon cap à l&apos;intervenante
-            </button>
+          {!quizTermine ? (
+            <Cours1Quiz onTermine={() => setQuizTermine(true)} />
           ) : (
             <div className="rounded-2xl p-5 text-center space-y-2" style={{ background: 'rgba(201,168,76,0.08)', border: '1.5px solid rgba(201,168,76,0.4)' }}>
-              <p className="text-2xl">⛰️</p>
+              <p className="text-2xl">🧭</p>
               <p className="font-black text-white">Votre réflexion est prête.</p>
               <p className="text-sm leading-relaxed" style={{ color: 'rgba(245,240,232,0.75)' }}>
-                Présentez-la maintenant à l&apos;intervenante pour obtenir un retour, affiner votre analyse et passer à l&apos;étape suivante.
+                Préparez une présentation courte de votre boussole et de votre profil de personnalité professionnelle. Présentez-la à votre intervenante pour votre notation.
               </p>
             </div>
           )}
