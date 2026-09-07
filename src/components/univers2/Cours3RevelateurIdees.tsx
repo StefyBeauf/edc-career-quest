@@ -246,12 +246,21 @@ export default function Cours3RevelateurIdees({ track }: Cours3Props) {
               📓 Présenter mon angle à l&apos;intervenante
             </button>
           ) : track === 'bachelor2' ? (
-            <div className="rounded-2xl p-6 text-center space-y-3" style={{ background: 'rgba(201,168,76,0.08)', border: '1.5px solid rgba(201,168,76,0.4)' }}>
-              <p className="text-3xl">🏕️</p>
-              <p className="font-black text-white text-lg">Carnet de route refermé.</p>
-              <p className="text-sm leading-relaxed" style={{ color: 'rgba(245,240,232,0.75)' }}>
-                Présentez votre angle à l&apos;intervenante pour un dernier retour avant rédaction. Vous avez parcouru les 3 cours de l&apos;Expédition Professionnelle — cette étape de votre parcours s&apos;achève ici.
-              </p>
+            <div className="space-y-4">
+              <div className="rounded-2xl p-6 text-center space-y-3" style={{ background: 'rgba(201,168,76,0.08)', border: '1.5px solid rgba(201,168,76,0.4)' }}>
+                <p className="text-3xl">🏕️</p>
+                <p className="font-black text-white text-lg">Carnet de route refermé.</p>
+                <p className="text-sm leading-relaxed" style={{ color: 'rgba(245,240,232,0.75)' }}>
+                  Présentez votre angle à l&apos;intervenante pour un dernier retour avant rédaction. Vous avez parcouru les 3 cours de l&apos;Expédition Professionnelle — cette étape de votre parcours s&apos;achève ici.
+                </p>
+              </div>
+              <div className="rounded-2xl p-4 space-y-1.5" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)' }}>
+                <p className="text-xs font-black uppercase tracking-widest" style={{ color: '#c9a84c' }}>Modalités d&apos;évaluation du semestre</p>
+                <p className="text-xs leading-relaxed" style={{ color: 'rgba(245,240,232,0.6)' }}>
+                  50% note orale individuelle — présentation de la boussole professionnelle (Mission 1)<br />
+                  50% note groupe écrite — dossier Kit visibilité professionnelle (1 page de synthèse de groupe + 1 fiche individuelle par étudiant)
+                </p>
+              </div>
             </div>
           ) : (
             <div className="rounded-2xl p-5 text-center space-y-2" style={{ background: 'rgba(201,168,76,0.08)', border: '1.5px solid rgba(201,168,76,0.4)' }}>

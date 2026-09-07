@@ -1,11 +1,13 @@
-import type { Group } from '@/types'
+import type { Group, Track } from '@/types'
 import Univers2Shell from './Univers2Shell'
+import { getMissionsForTrack } from '@/lib/content/univers2'
 
 interface Props { group: Group }
 
 export default async function Univers2Page({ group }: Props) {
   const secondSemestre = group.track === 'pge2' && group.active_mission >= 4
   const heroImage = secondSemestre ? '/hero-univers2PGE.jpg' : '/hero-univers2.jpg'
+  const totalMissions = getMissionsForTrack((group.track ?? 'bachelor2') as Track).length
 
   return (
     <div className="min-h-screen" style={{ background: '#0f0a04' }}>
@@ -56,7 +58,7 @@ export default async function Univers2Page({ group }: Props) {
             <div className="mb-5">
               <span className="inline-flex items-center gap-2 text-xs font-black uppercase tracking-[0.18em] px-4 py-2" style={{ background: '#c9a84c', color: '#0f0a04' }}>
                 <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#0f0a04', display: 'inline-block' }} />
-                Mission {group.active_mission} / 6
+                Mission {group.active_mission} / {totalMissions}
               </span>
             </div>
 

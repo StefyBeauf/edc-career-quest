@@ -1,245 +1,289 @@
-# CLAUDE.md — Instructions du projet
+# CLAUDE.md — Instructions du projet EDC Career Quest
 
 <!--
-Ce fichier donne à Claude Code le contexte spécifique de ce projet.
+MODE D'EMPLOI
+Ce fichier donne à Claude Code le contexte spécifique du projet EDC Career Quest.
 Il complète (sans remplacer) le CLAUDE.md global de Stéphanie.
-Ne jamais y inclure de mot de passe, clé API, token ou information sensible : voir section 13.
+
+Mise à jour V3.3 : révision ciblée des parcours B2, PGE2 et création du parcours B3.
+
+À faire :
+- Ne jamais ajouter de mot de passe, clé API, token ou information sensible (voir section 13)
+- Conserver la structure pédagogique existante (univers, checkpoints, progression)
+- Appliquer uniquement les modifications ciblées listées dans la fiche mission V3.3
+- Tester chaque parcours indépendamment avant déploiement
 -->
 
 ## 1. Résumé du projet
 
-Nom du projet : **EDC Career Quest**
+Nom du projet : **EDC Career Quest — Version 3.3**
 
 Type de projet :
 - [x] Application web
-- [ ] Site web
-- [ ] Page web / landing page
-- [ ] Automatisation Make
-- [ ] Automatisation n8n
-- [ ] Traitement de fichiers ou de données
 - [x] Outil interne (pédagogique)
-- [ ] Autre
+- [x] Amélioration d'un projet existant
 
 Objectif principal :
-Concevoir et développer une application web pédagogique complète pour animer les cours "Atelier Carrière" auprès des étudiants de l'EDC Paris (B1 à B3). L'application repose sur une entrée par QR Code de groupe, trois univers pédagogiques distincts adaptés au niveau de l'étudiant, et pour le niveau B3 un moteur de simulation IA autonome générant des scénarios professionnels évolutifs avec feedback structuré.
+Mettre à jour la plateforme pédagogique EDC Career (Vador OS) selon les spécifications V3.3 en appliquant des modifications ciblées sur les parcours B2, PGE2 et B3. L'objectif est d'améliorer la qualité pédagogique sans reconstruire l'architecture existante : correction du nombre de missions B2, boussole aléatoire, transformation des générations automatiques en ateliers guidés, création de trois missions B3 immersives, et intégration des modalités d'évaluation (50% note orale + 50% note groupe écrite).
 
 Résultat attendu :
-Une application Next.js déployée (Vercel), pilotée intégralement depuis un espace admin, sans compte étudiant ni saisie de données personnelles, couvrant les 9 groupes de l'EDC et les 3 univers pédagogiques (Passeport vers le Stage / Expédition Professionnelle / Mission Horizon).
+Application Next.js déployée (Vercel) avec trois univers pédagogiques fonctionnels et testés :
+- **Univers 1 — Passeport vers le Stage** (B1/PGE1) : stabilisé, non modifié par V3.3
+- **Univers 2 — Expédition Professionnelle** (B2/PGE2) : révision ciblée (3 missions B2, boussole aléatoire, atelier guidé, révélateur d'idées, même corrections appliquées à PGE2 S1, conservation de PGE2 S2)
+- **Univers 3 — La Mission** (B3) : création de 3 missions immersives dans l'univers existant (communication professionnelle, conduite de réunion, synthèse 48h)
 
-> **Tâche en cours (mission active) :** révision et enrichissement du seul **Univers 2 — Expédition Professionnelle (B2/PGE2)**, réparti en deux périodes narratives : « 🧭 aventure » (semestre 1, B2 + PGE2) et « 🕵️ détective » (semestre 2, PGE2 uniquement). Voir fiche mission dédiée « EDC Career Quest — B2/PGE2 » (fichier `fiche-mission-edc-career-2eme-annee.docx`), et son prompt source détaillé `prompt_edc_career_2eme_annee.md`. **L'Univers 1 (B1/PGE1) est stabilisé** suite à sa mission de révision précédente et **n'est pas concerné** par la tâche actuelle. **L'Univers 3 (B3) n'est pas concerné** non plus.
+**Tâche en cours (mission active) :** Mise à jour V3.3 selon fiche mission "EDC Career Quest — V3.3" (`fiche-edc-career-v3.3.docx`). **B2 et PGE2 déployés en production le 2026-09-07.** B3 codé et testé mais **volontairement non déployé** (à la demande de Stéphanie, le temps de valider séparément) — la production tourne encore sur l'ancien système B3 à 6 missions IA. Voir section 17 "Journal V3.3" pour le détail.
 
 ## 2. Contexte métier
 
 Pourquoi ce projet existe :
-Digitaliser et rendre interactifs les cours "Atelier Carrière" de Stéphanie à l'EDC Paris, en remplaçant un format classique par une expérience gamifiée différenciée selon le niveau académique (B1/PGE1, B2/PGE2, B3) et la spécialisation (Finance / Négociation / Marketing Digital pour les B3).
+Améliorer la qualité pédagogique de la plateforme EDC Career en corrigeant les parcours B2, en enrichissant les ateliers guidés (boussole aléatoire, non-génération de livrables), et en créant des missions B3 immersives et de synthèse. La mise à jour répond à des remontées d'usage et aux évolutions pédagogiques souhaitées par Stéphanie.
 
 Qui va utiliser le résultat :
-- [ ] Moi uniquement
-- [ ] Mon équipe
-- [ ] Mes clients
 - [x] Des apprenants (étudiants EDC Paris, B1 à B3)
-- [x] Moi-même en tant qu'administratrice (pilotage de la session en direct)
+- [x] Moi-même (Stéphanie) en tant qu'administratrice et intervenante (pilotage en direct, animation des ateliers)
 
 Niveau technique des utilisateurs finaux :
 - [x] Non technique (étudiants — simple scan de QR Code)
-- Administratrice (Stéphanie) : non développeuse, pilotage via interface admin simple
+- Intervenante (Stéphanie) : interface admin intuitive, pilotage sans code
 
 Ce qui compte le plus :
-- [x] Design professionnel (immersif, distinct par univers)
-- [x] Fiabilité (usage en direct devant un groupe d'étudiants)
-- [x] Sécurité / confidentialité (aucune donnée personnelle étudiante)
-- [x] Facilité de maintenance (pilotage 100% via l'espace admin, sans intervention technique)
+- [x] Design professionnel (immersif, distinct par univers, impact pédagogique)
+- [x] Fiabilité (usage en direct en salle de cours devant des groupes)
+- [x] Sécurité / confidentialité (aucune donnée personnelle étudiante collectée ou stockée)
+- [x] Facilité de maintenance (pilotage 100% via interface admin, pas d'intervention technique requise)
+- [x] Guidage pédagogique (ne pas faire le travail à la place des étudiants, favori réflexion personnelle)
 
 ## 3. Périmètre du projet
 
 Ce que le projet doit faire :
-- Générer et gérer des QR Codes par groupe (9 groupes : B1-A, B1-B, PGE1-A, B2-A, B2-B, PGE2-A, B3 Marketing, B3 Négociation, B3 Finance), avec décodage automatique à l'entrée étudiant
-- Proposer 3 univers pédagogiques distincts selon le niveau :
-  - **Univers 1 — Passeport vers le Stage** (B1/PGE1) — *stabilisé, non concerné par la mission active* : 6 checkpoints suivant l'ordre imposé « ✅ Correction de bord × 2 → 🛫 Appel tour de contrôle × 1 » par checkpoint. Détail complet : voir fiche mission « EDC Career Quest — B1/PGE1 ».
-  - **Univers 2 — Expédition Professionnelle** (B2/PGE2) — *en cours de révision détaillée (mission active)* : 6 cours répartis en deux périodes narratives.
-    - **Semestre 1 — univers 🧭 aventure** (B2 + PGE2) :
-      1. Cours 1 — La boussole professionnelle (introspection : identité, compétences, motivations, direction)
-      2. Cours 2 — Profil LinkedIn réaliste (construire/améliorer un profil LinkedIn crédible)
-      3. Cours 3 — Révélateur d'idées LinkedIn (trouver un angle de post, jamais le rédiger à la place de l'étudiant)
-    - **Semestre 2 — univers 🕵️ détective** (PGE2 uniquement) :
-      4. Cours 4 — Enquête jobboards (choisir les bons canaux de candidature)
-      5. Cours 5 — Pitch professionnel (adapter sa présentation selon l'interlocuteur)
-      6. Cours 6 — Stratégie 30 jours (diagnostic, obstacles, plan d'action)
-    - Règle d'accès : **B2 → cours 1 à 3 uniquement** ; **PGE2 → cours 1 à 6**.
-    - Chaque cours comporte jusqu'à 3 exercices, toujours dans l'ordre : 2 exercices **Mode 1 — Feedback immédiat**, puis 1 exercice **Mode 2 — Validation intervenante** en clôture.
-    - Détail complet des exercices, écrans, boutons, tableaux et feedback : voir fiche mission « EDC Career Quest — B2/PGE2 ».
-  - **Univers 3 — Mission Horizon** (B3) — *non concerné par la mission active* : moteur de simulation IA (génération de contexte initial, injection automatique d'incidents toutes les 10-15 min, adaptation par spécialité Finance/Négociation/Marketing Digital), feedback IA structuré (1 point fort + 1 axe + 1 question + 1 vigilance, sans donner la réponse), 6 missions par spécialité
-- Fournir un espace admin sécurisé : liste des groupes, QR codes, contrôle de la mission active, verrouillage de groupe, vue test étudiant
-- Appliquer un design premium et immersif, visuellement distinct par univers (✈️ Univers 1 / 🧭+🕵️ Univers 2 / 🚀 Univers 3), responsive mobile-first
+- **Correction B2** : afficher 3 missions au lieu de 6 (Profil professionnel, Image professionnelle, Communication professionnelle)
+- **Boussole professionnelle (B2 Mission 1)** : fonctionnement aléatoire, quatre directions (Nord/Est/Sud/Ouest), pistes spécifiques par question, message obligatoire "Présentez-la à votre intervenante pour votre notation"
+- **Atelier guidé image professionnelle (B2 Mission 2)** : aucune génération automatique de profil LinkedIn complet, critères de qualité, exemples partiels, feedbacks courts
+- **Révélateur d'idées (B2 Mission 3)** : aider l'étudiant à identifier une idée de prise de parole (pas générer un post LinkedIn prêt à publier)
+- **Application PGE2 S1** : réutiliser les composants B2 corrigés (boussole, atelier, révélateur) pour les 3 premières séances PGE2
+- **Préservation PGE2 S2** : conserver l'univers détective et la fonctionnalité "Qui est en face de moi ?"
+- **Création B3** : trois missions dans l'univers existant "🎯 La mission"
+  - Séance 1 : Communication professionnelle sensible (relance, retard, erreur, désaccord, feedback, etc.)
+  - Séance 2 : Conduite de réunion efficace (objectif, ordre du jour, participants, suivi, synthèse)
+  - Séance 3 : Mission immersive "48h pour reprendre le contrôle" (contexte, alertes aléatoires, décisions, note de synthèse)
+- **Évaluation intégrée** : 50% note orale individuelle + 50% note groupe écrite pour chaque niveau
+- **Alignement rédactionnel** : utiliser systématiquement le féminin "intervenante"
 
 Ce que le projet ne doit pas faire pour l'instant :
-- Aucune création de compte étudiant, aucune saisie de données personnelles
-- Aucune progression pilotée autrement que via l'espace admin et le QR Code
-- Pas de placeholder ni de code non fonctionnel livré
-- L'application ne garde rien en mémoire d'une session à l'autre, quel que soit l'univers — mais le **vocabulaire diffère par univers** :
-  - Univers 1 : utiliser systématiquement « Production à reporter dans le livrable », jamais « trace enregistrée ».
-  - **Univers 2 : ne jamais utiliser** « trace enregistrée », « production à reporter dans le livrable », « élément conservé par l'application » ou « historique sauvegardé » — décrire à la place ce que l'application affiche, ce que l'étudiant/le groupe doit faire, le feedback affiché, le rôle de l'intervenante et la transition vers l'exercice suivant.
-- **Univers 2 : ne jamais générer un livrable final à la place de l'étudiant** (ex. Cours 3 : pas de post LinkedIn prêt à publier) : proposer des déclencheurs de réflexion (questions ouvertes) que l'étudiant transforme lui-même en formulation personnelle.
-- **Univers 2 : ne jamais enfermer un étudiant dans un profil ou une étiquette définitive** (ex. Cours 1, Exercice 2 — profil aventurier) : toujours présenter le résultat comme une piste de réflexion.
-- **Univers 2 : ne jamais utiliser l'univers avion** (décollage, tour de contrôle, embarquement, cabine, passager, équipage) — cet univers est réservé exclusivement à l'Univers 1.
-- Ne pas modifier les Univers 1 et 3 dans le cadre de la mission de révision en cours sur l'Univers 2, sauf validation explicite
+- ❌ Reconstruire toute l'architecture ou l'infrastructure existante
+- ❌ Modifier les parcours B1 ou tout élément hors périmètre V3.3
+- ❌ Supprimer ou dégrader les fonctionnalités existantes non listées
+- ❌ Générer automatiquement des profils LinkedIn, posts, messages ou documents professionnels complets
+- ❌ Utiliser le traitement IA (NLP, génération lourde) dans la mission B3 immersive
+- ❌ Utiliser le masculin pour "intervenant" — toujours "intervenante"
+- ❌ Afficher des pistes génériques identiques pour toutes les questions (ex. boussole)
+- ❌ Stocker les données étudiantes dans la plateforme
+- ❌ Créer de fonction de partage automatique (LinkedIn, email, etc.)
 
 Version souhaitée :
 - [x] Version robuste pour usage réel (utilisation en direct en salle de cours)
-- [x] Amélioration d'un projet existant (mission active : Univers 2)
+- [x] Amélioration ciblée d'un projet existant (mise à jour V3.3)
 
 Priorité principale :
-Mission active : revoir et enrichir les 6 cours de l'Univers 2 (B2/PGE2) selon la fiche mission dédiée — logique UX en deux temps (Mode 1 Feedback immédiat / Mode 2 Validation intervenante), design system « aventure » (S1) puis « détective » (S2), sans régresser les Univers 1 et 3 déjà en place.
-(Phase de fond du projet, pour mémoire : Phase 1 Architecture & Setup → progression séquentielle des univers 1 → 2 → 3 → espace admin → polish design.)
+Appliquer les modifications V3.3 de manière complète, testable et non régressive. L'ordre de traitement suggéré : B2 (3 missions + boussole aléatoire) → PGE2 S1 (mêmes corrections) → PGE2 S2 (conservation) → B3 (création des 3 missions).
 
 ## 4. Contraintes importantes
 
 Contraintes de temps :
-Non précisées dans la fiche mission — **hypothèse à valider avec Stéphanie** : à caler sur le calendrier des cours EDC Paris (cf. Notion "Cours 2025-2027").
+À caler sur le calendrier des cours EDC Paris 2025-2027. Voir Notion "Cours 2025-2027" pour les dates de session.
 
 Contraintes de budget :
-Non précisées — **hypothèse raisonnable** : privilégier des outils gratuits/peu coûteux (Supabase, Vercel, npm qrcode) déjà identifiés dans le prompt.
+Privilégier les outils gratuits/peu coûteux déjà identifiés : Supabase, Vercel, npm qrcode. Pas d'ajout de dépendances externes coûteuses.
 
 Contraintes techniques :
-- Next.js 15, TypeScript strict, Tailwind CSS, Shadcn UI
-- Supabase (tables : `groups`, `missions`, `contents`, `simulations`, `simulation_events`, `admin_users`)
-- Code 100% fonctionnel, typé strict, sans placeholder
-- Mission active (Univers 2) : rester dans l'architecture existante, ne pas casser le routing admin ni les mécanismes déjà en place pour les Univers 1 et 3
+- **Stack imposé** : Next.js 15 App Router, TypeScript strict, Tailwind CSS, Shadcn UI, Supabase backend, Vercel deployment
+- **Pas de traitement IA dans B3 immersive** : la mission doit rester purement scénaristique, sans NLP ou génération de contenu par l'application
+- **Univers isolés** : vocabulaire différent par univers, jamais de mélange (ex. pas de métaphore avion dans Univers 2 ou 3)
+- **Aucune donnée étudiante stockée** : l'application oublie tout après chaque session (univers avec vocabulaire spécifique au lieu de traçabilité)
 
 Contraintes de design :
-Design premium, immersif, distinct par univers (identité visuelle propre à chaque univers thématique), responsive mobile-first.
-- Univers 1 : univers « avion / voyage », palette bleu nuit / doré / blanc / gris clair, icônes aéronautiques sobres.
-- **Univers 2** :
-  - Sous-univers aventure (S1) : boussole, carte, carnet de route, sac d'exploration, camp de base, lanterne, sommet, panneau directionnel. Palette : beige, vert profond, bleu nuit, doré léger, blanc cassé, brun clair. Ambiance chaleureuse mais premium.
-  - Sous-univers détective (S2) : loupe, dossier d'enquête, tableau d'indices, fiches suspect, tampon confidentiel, carte des pistes, post-it, fil rouge, rapport d'enquête. Palette : bleu nuit, noir doux, beige, doré, rouge discret, gris fumé. Ambiance stratégie/analyse, jamais enfantine.
-  - Une action principale par écran, peu de texte, consignes courtes, micro-interactions, badges de progression, pictogrammes cohérents avec l'univers actif.
+- Immersif et distinct par univers (🧭 aventure S1 + 🕵️ détective S2 pour Univers 2 ; 🎯 mission pour Univers 3)
+- Responsive mobile-first (QR Code scan → usage sur téléphone ou tablette)
+- Design premium, cohérent avec la charte SJ Conseil (couleurs, typographie, minimalisme dramatique)
+- Peu de texte, beaucoup d'action, feedback court et visuel
 
-Contraintes légales, données ou confidentialité :
-Aucune donnée personnelle étudiante collectée ou stockée. Aucun compte étudiant.
+Contraintes de pédagogie :
+- Ne jamais faire le travail à la place de l'étudiant (ex. pas de LinkedIn généré, pas de post LinkedIn complet)
+- Toujours guider vers la réflexion personnelle, pas vers une réponse unique
+- Boussole aléatoire pour éviter la mémorisation inter-groupes
+- Deux modes de feedback : Mode 1 (feedback immédiat) et Mode 2 (validation par l'intervenante)
+- Chaque cours = 2 exercices Mode 1 + 1 exercice Mode 2
 
-Contraintes d'usage :
-- Clés API (OpenAI/Anthropic) dans `.env.local` uniquement, jamais en dur dans le code
-- Toute la progression pédagogique doit être pilotable par Stéphanie (non développeuse) depuis l'espace admin, sans intervention technique
+Contraintes de confidentialité / RGPD :
+- Aucune collecte de données personnelles (nom, email, données de contact)
+- Aucun stockage de données entre les sessions
+- Entrée uniquement via QR Code de groupe (pas de création de compte)
+- Respect de la vie privée des étudiants
 
 ## 5. Outils, plateformes et technologies
 
 Outils ou plateformes imposés :
-- Supabase (base de données, auth admin, stockage) — via Supabase MCP
-- OpenAI API ou Anthropic API (génération de scénarios, injection d'incidents, feedback IA — **Univers 3 uniquement**, non requis pour la mission active Univers 2)
-- npm package `qrcode` (génération des QR Codes par groupe)
-- Vercel (déploiement, gestion des variables d'environnement) — via Vercel CLI
-
-Outils ou plateformes préférés :
-- Next.js 15 / TypeScript strict / Tailwind CSS / Shadcn UI
+- **Frontend** : Next.js 15 App Router, TypeScript strict, Tailwind CSS, Shadcn UI
+- **Backend** : Supabase (PostgreSQL)
+- **Déploiement** : Vercel
+- **QR Code** : npm qrcode
+- **API** : OpenAI/Anthropic (uniquement pour Univers 1 et 3, pas pour B3 en V3.3)
 
 Outils ou plateformes à éviter :
-- Non précisé
-
-Si aucune technologie n'est imposée :
-Sans objet — stack déjà définie ci-dessus.
+- Pas de nouvelle dépendance lourde (ex. pas de framework CSS supplémentaire)
+- Pas d'API externe coûteuse ou non justifiée
+- Pas de base de données alternative (Supabase est imposé)
 
 ## 6. Structure du projet
 
-Dossiers ou fichiers importants :
-- À définir dès l'initialisation du projet Next.js (Phase 1)
-- Mission active : identifier précisément les composants/routes de l'Univers 2 (B2/PGE2) avant toute modification
+Dossiers ou fichiers importants (structure réelle — un seul routing dynamique `[slug]`, pas de dossiers séparés par niveau) :
+- `src/app/[slug]/page.tsx` : point d'entrée unique. Récupère le groupe (Supabase `groups`) par son slug de QR Code, puis dispatch vers `Univers1Page` / `Univers2Page` / `Univers3Page` selon `group.universe`
+- `src/components/univers1/` : parcours Univers 1 "Passeport vers le Stage" (B1/PGE1) — stabilisé, ne pas modifier
+- `src/components/univers2/` : parcours Univers 2 "Expédition Professionnelle" (B2/PGE2)
+  - `Cours1Boussole.tsx` + `CompassDial.tsx` : boussole B2 M1 (aléatoire, pistes spécifiques par question)
+  - `Cours2Linkedin.tsx` : atelier guidé image professionnelle (B2 M2, pas de génération de profil)
+  - `Cours3RevelateurIdees.tsx` : révélateur d'idées LinkedIn (B2 M3, pas de génération de post)
+  - `Cours4EnqueteJobboards.tsx` / `Cours5PitchProfessionnel.tsx` / `Cours6Strategie30Jours.tsx` : séances PGE2 S2 (univers détective, conservées)
+  - `shared/` (thème aventure) et `shared/*Detective*` (thème S2) : header/badge/stepper d'exercice
+- `src/components/univers3/` : parcours Univers 3 "La Mission" (B3) — **en production : encore l'ancien système à 6 missions pilotées par IA** (`HorizonShell.tsx` + `/api/horizon/generate`). La refonte V3.3 (3 missions statiques sans IA : `Mission1CommunicationSensible.tsx`, `Mission2ReunionEfficace.tsx`, `Mission3ImmersionControle.tsx`, `shared/`, `src/lib/content/univers3.ts`) est **codée et testée mais volontairement non déployée** — voir section 17
+- `src/lib/content/` : contenu pédagogique statique en TypeScript (questions, pistes, feedbacks, scénarios) — `univers2*.ts` (déployé) et `univers3.ts` (en attente, voir section 17)
+- `src/app/admin/` + `src/app/api/admin/` : interface d'administration (pilotage de mission active, verrouillage, planning, gestion des groupes)
+- `src/components/` : composants réutilisables (mission card, feedback, boutons partagés en `src/components/shared/`)
+- `src/lib/` : utilitaires (Supabase, QR Code, constantes, contenu)
+- `public/` : assets (logos univers, icônes, images)
+- `CLAUDE.md` : ce fichier (contexte du projet pour Claude Code)
 
-Fichiers à ne pas modifier sans me prévenir :
-- `.env.local` (clés API — ne jamais exposer ni committer)
-- **Composants et routes des Univers 1 (Passeport vers le Stage) et 3 (Mission Horizon)** : non concernés par la mission de révision en cours sur l'Univers 2
+Fichiers à ne pas modifier sans validation :
+- `src/lib/supabase/` : clients et logique d'accès Supabase (auth admin, requêtes groupes)
+- Schéma/contenu de la table Supabase `missions` : gérée directement dans Supabase (pas de fichier de migration dans ce repo)
+- `.env.local` : secrets (clés API, credentials Supabase)
+- `src/components/univers1/` : Univers 1 (en dehors du périmètre V3.3)
 
 Fichiers ou dossiers à ignorer :
-- Non précisé
-
-Si Claude ne comprend pas la structure :
-Explorer les fichiers principaux, identifier la structure, puis fournir un résumé simple avant toute modification importante.
+- `/node_modules/`
+- `.git/`
+- `.vercel/`
+- `/dist/` ou `/.next/`
 
 ## 7. Données, fichiers et contenus
 
 Sources utilisées :
-- [x] Base de données (Supabase)
-- [ ] API externe (OpenAI/Anthropic pour la génération de contenu IA en Univers 3 uniquement)
-- [x] Autre : fiche de mission Word (.docx) « EDC Career Quest — B2/PGE2 » + prompt POSER source (`prompt_edc_career_2eme_annee.md`) détaillant les 6 cours, exercices, design system et exclusions de l'Univers 2
+- [x] Supabase (tables de contenus pédagogiques : questions boussole, critères, scenarios)
+- [x] Configuration statique (constantes TypeScript pour univers, couleurs, textes)
+- Document de spécifications V3.3 (pour tous les contenus manquants)
 
 Emplacement des données :
-Supabase (tables `groups`, `missions`, `contents`, `simulations`, `simulation_events`, `admin_users`).
-Fiche mission « EDC Career Quest — B2/PGE2 » (`fiche-mission-edc-career-2eme-annee.docx`) fournie en amont de la session Claude Code (spécification détaillée des 6 cours de l'Univers 2).
+- Contenus pédagogiques : tables Supabase (`questions`, `pistes`, `feedback`, `scenarios`, etc.)
+- Configuration statique : fichiers TypeScript dans `/lib/constants/`
+- Assets : `/public/univers/`
 
 Format d'entrée :
-- Métadonnées des 9 groupes en JSON (slug, year, universe, track, specialization)
-- Contenus pédagogiques structurés par cours et par exercice (questions de la boussole, profils LinkedIn types, déclencheurs de réflexion, jobboards, scènes de pitch, plan d'action 30 jours)
-- Brief structuré (rôle, contexte, exigences UX, découpage cours/exercices, tableau de sortie imposé) pour la révision de l'Univers 2
+- Questions de la boussole : tableau JSON `{ direction: string, questions: string[] }`
+- Pistes : tableau JSON `{ question: string, pistes: string[] }`
+- Feedback : objet JSON `{ type: "success" | "alert" | "neutral", message: string }`
 
 Format de sortie attendu :
-Application web fonctionnelle, feedback IA structuré au format : ✅ Point fort / 🔧 Axe d'amélioration / 💭 Question de réflexion / ⚠️ Vigilance professionnelle (Univers 3, hors périmètre actuel).
-Pour l'Univers 2 : composants Next.js mis à jour ou créés (écrans, boutons, feedback, badges) pour les 6 cours, conformes au tableau de spécification par exercice de la fiche mission.
+- Composants React pour chaque mission
+- Pages Next.js pour chaque univers/niveau
+- Interface admin pour Stéphanie (pilotage en direct)
 
 Règles de traitement :
-- Univers 1 : respecter l'ordre imposé par checkpoint (2 exercices « Correction de bord » puis 1 exercice « Appel tour de contrôle ») ; utiliser systématiquement « Production à reporter dans le livrable », jamais « trace enregistrée »
-- **Univers 2** : respecter l'ordre imposé par cours (2 exercices Mode 1 « Feedback immédiat » puis 1 exercice Mode 2 « Validation intervenante ») ; B2 → cours 1-3 uniquement, PGE2 → cours 1-6 ; univers aventure au S1, détective au S2 ; jamais l'univers avion ; bannir les 4 expressions de stockage listées en section 3
-- Univers 3 : feedback IA sans jamais donner la réponse directement ; injection automatique d'incidents toutes les 10-15 minutes, adaptés à la spécialité
+- Les questions de la boussole (B2 M1) doivent être **aléatoires** (Math.random())
+- Les pistes affichées doivent être **spécifiques à la question**, jamais génériques
+- Les feedbacks doivent être **courts** (une phrase, max 2 lignes)
+- L'application doit **ne jamais générer de livrable complet** (LinkedIn, post, document)
+- L'univers avion (Univers 1) ne doit **jamais** apparaître dans Univers 2 ou 3
 
 Données sensibles :
-Aucune donnée personnelle étudiante ne doit être collectée, saisie ou stockée.
+- Aucune donnée personnelle étudiante ne doit être collectée, affichée ou stockée
+- Les clés API OpenAI/Anthropic doivent rester dans `.env.local`, jamais dans le code source
+- Les credentials Supabase (clé secrète, URL) doivent rester confidentiels
 
-## 8. Automatisations Make / n8n / Zapier
-
-Sans objet pour ce projet (application web, pas d'automatisation Make/n8n/Zapier).
-
-## 9. Site web, page web ou application
+## 8. Site web, page web ou application
 
 Objectif de l'interface :
-Permettre à un groupe d'étudiants de vivre une expérience pédagogique gamifiée en salle de cours (scan QR Code → univers dédié → progression pilotée par l'admin), et à Stéphanie de piloter la séance en direct.
+Créer une expérience pédagogique gamifiée immersive qui guide les étudiants à travers des ateliers carrière différenciés par niveau, sans stocker leurs données personnelles, pilotée en direct par l'intervenante.
 
 Pages ou écrans nécessaires :
-- Écran d'entrée / scan QR Code par groupe
-- Univers 1 — Passeport vers le Stage (stabilisé, non concerné par la mission active)
-- **Univers 2 — Expédition Professionnelle** (*en cours de révision*) : 6 écrans de cours (boussole interactive, générateur de profil LinkedIn, révélateur d'idées, enquête jobboards, scènes de pitch, plan d'action 30 jours), chacun avec ses 3 exercices et leurs écrans dédiés
-- Univers 3 — Mission Horizon (non concerné par la mission active)
-- Espace admin (groupes, QR codes, contrôle mission active, verrouillage, vue test étudiant)
+
+### Univers 1 — Passeport vers le Stage (B1/PGE1) — *Stabilisé*
+- Écran d'accueil (scan QR Code → détection groupe B1)
+- 6 checkpoints (progression séquentielle)
+- Chaque checkpoint : 2 exercices Mode 1 (feedback immédiat) + 1 exercice Mode 2 (validation intervenante)
+
+### Univers 2 — Expédition Professionnelle (B2/PGE2) — *En révision V3.3*
+- **Semestre 1 — Univers 🧭 aventure** (B2 + PGE2)
+  - 3 missions B2 (Profil professionnel, Image professionnelle, Communication professionnelle)
+  - 3 séances PGE2 S1 (mêmes que B2)
+  - Chaque mission : 2 exercices Mode 1 + 1 exercice Mode 2
+- **Semestre 2 — Univers 🕵️ détective** (PGE2 uniquement)
+  - 3 séances PGE2 S2 (Exploration opportunités, Relations professionnelles, Concrétisation projet)
+  - Avec fonctionnalité "Qui est en face de moi ?" conservée
+
+### Univers 3 — La Mission (B3) — *Création V3.3*
+- **Séance 1** : Communication professionnelle sensible
+- **Séance 2** : Conduite de réunion efficace
+- **Séance 3** : Mission immersive "48h pour reprendre le contrôle" (alertes aléatoires, note de synthèse finale)
+
+### Espace Admin (Stéphanie)
+- Liste des 9 groupes (QR Codes associés)
+- Contrôle de la mission active (univers, niveau, cours en cours)
+- Verrouillage/déverrouillage de groupes
+- Vue test pour prévisualiser en tant qu'étudiant
 
 Contenus importants :
-- Titre principal : EDC Career Quest
-- Promesse : une expérience immersive et progressive pour préparer sa vie professionnelle
-- CTA principal : scanner le QR Code de son groupe pour démarrer ; pour l'Univers 2, boutons différenciés par mode de jeu (ex. « Valider » / « Tirer une carte » / « Explorer une autre piste » en Mode 1 ; « Appeler le guide » / « Soumettre le dossier » / « Demander l'avis de l'enquêtrice » en Mode 2)
-- Sections obligatoires : les 3 univers, l'espace admin
-- Éléments de réassurance : aucune donnée personnelle collectée
+- **Titre principal** : "EDC Career Quest" ou titre univers selon la page
+- **Promesse** : Clarifier le but pédagogique de chaque exercice (ex. "Découvre ton profil professionnel")
+- **CTA principal** : Boutons clairs ("Lancer la mission", "Voir des pistes", "Remettre la synthèse", etc.)
+- **Sections obligatoires** : Texte initial (contexte), exercice/question, feedback, transition vers exercice suivant
+- **Éléments de réassurance** : "Ces pistes t'aident à réfléchir, pas à la place de toi" ; "Présente-la à ton intervenante pour notation"
 
 Style visuel souhaité :
-Premium, immersif, dynamique — identité visuelle distincte par univers (✈️ Univers 1 / 🧭🕵️ Univers 2 / 🚀 Univers 3), responsive mobile-first (usage probable sur smartphone étudiant).
+- **Univers 1** : Univers avion (décollage, tour de contrôle, embarquement, équipage) — palette bleu ciel/or
+- **Univers 2 S1** : Univers aventure (boussole, routes, expédition) — palette verte/bronze
+- **Univers 2 S2** : Univers détective (enquête, indices, piste) — palette grise/noir/bronze
+- **Univers 3** : Univers mission (stratégie, décision, timeline) — palette bleu marine/or/noir
+- Style général : **premium, minimaliste, dramatique** (fort contraste, peu de texte, beaucoup d'impact visuel)
 
 Références ou inspirations :
-Fiche mission « EDC Career Quest — B2/PGE2 » pour le design system détaillé de l'Univers 2 (boussole, carnet de route, dossier d'enquête, tableau d'indices).
+- Charte SJ Conseil : couleurs (ivoire, or/bronze, noir, navy), typographie (Bebas Neue display, Gill Sans body), minimal high-contrast
+- TEDx : slides d'impact, peu de texte, questions puissantes
+- Gamification : progression visible, feedback rapide, petit défi par étape
 
 Règles UX :
-- Interface claire et immédiate pour un étudiant non technique (aucune friction à l'entrée)
-- Actions principales visibles (scan, cours suivant, tirage de question, choix de catégorie)
-- Textes simples, orientés bénéfice pour l'étudiant
-- Éviter toute complexité inutile côté admin : Stéphanie doit tout piloter seule, sans développeur
-- Univers 2 : toujours indiquer à l'étudiant où il en est (B2 ou PGE2, aventure ou détective, quel cours), ce qu'il doit faire, s'il obtient un feedback immédiat ou doit appeler l'intervenante, et quand l'exercice est terminé
+- L'interface doit être claire pour un étudiant non technique (scan QR → action immédiate)
+- Les actions principales doivent être visibles et un seul bouton principal par écran
+- Les textes doivent être simples, orientés vers l'action, pas vers l'information
+- Responsive mobile-first (QR scan = accès mobile)
+- Pas de formulaires longs, pas d'écrans chargés
+- Feedback court et visuel (couleur, icône, message sur 1-2 lignes)
+- Ne jamais préemplir ou générer une réponse à la place de l'étudiant
 
-## 10. Commandes utiles
-
-À confirmer une fois le projet initialisé (Phase 1 du prompt maître) — inspecter `package.json` et le `README` puis mettre à jour les commandes ci-dessous.
+## 9. Commandes utiles
 
 Installation :
 ```bash
 npm install
 ```
 
-Lancer le projet :
+Lancer le projet en local :
 ```bash
 npm run dev
+# À l'adresse http://localhost:3000
 ```
 
 Tester le projet :
 ```bash
-[commande de test — à définir, ex. npm run test]
+npm run test
+# ou
+npm run test:watch
 ```
 
 Vérifier la qualité :
 ```bash
 npm run lint
+npm run format
 ```
 
 Créer une version de production :
@@ -247,126 +291,225 @@ Créer une version de production :
 npm run build
 ```
 
-Si les commandes ne sont pas connues :
-Inspecter `package.json`, le `README` et les fichiers de configuration une fois le projet initialisé, puis proposer les commandes pertinentes.
+Déployer sur Vercel :
+```bash
+vercel deploy
+# ou connexion GitHub automatique via Vercel Dashboard
+```
 
-## 11. Règles de travail pour Claude dans ce projet
+## 10. Règles de travail pour Claude dans ce projet
 
 Avant de modifier :
-- Comprendre l'objectif de la tâche et sa phase (Architecture / Univers 1 / Univers 2 / Univers 3 / Admin / Design)
-- Identifier les fichiers concernés
-- Pour la mission active : vérifier que la modification reste circonscrite à l'Univers 2, sans toucher aux Univers 1/3
-- Expliquer brièvement le plan d'action si la modification est importante
-- Demander validation avant toute action risquée ou difficile à annuler
+- Comprendre précisément ce qui doit changer (relire la fiche mission V3.3)
+- Identifier les fichiers concernés (ne modifier que ce qui est listé)
+- Expliquer brièvement le plan d'action
+- Demander validation avant toute modification risquée (schéma base de données, règles d'accès par groupe)
 
 Pendant la modification :
-- Suivre la séquence de phases définie dans le prompt maître (Phase 1 → 6)
-- Ne jamais coder en dur une clé API : toujours `.env.local`
-- Ne jamais implémenter de saisie ou stockage de données personnelles étudiantes
-- Livrer du code 100% fonctionnel, typé strict, sans placeholder
-- Ne pas ajouter de dépendances inutiles ni sur-ingénierer
-- Pour l'Univers 2 : respecter l'ordre imposé des exercices (2 Feedback immédiat → 1 Validation intervenante) dans chaque cours ; respecter la règle d'accès B2 (cours 1-3) / PGE2 (cours 1-6)
+- Appliquer uniquement les modifications V3.3 listées, ne rien de plus
+- Conserver les fonctionnalités existantes non concernées
+- Éviter la sur-ingénierie
+- Ne pas ajouter de dépendances inutiles
+- Garder le code compréhensible et maintenable
+- Vérifier que le vocabulaire/univers est cohérent (pas de mélange d'univers dans un écran)
 
 Après la modification :
-- Résumer ce qui a été changé
-- Indiquer les fichiers modifiés
-- Expliquer comment vérifier que tout fonctionne
+- Résumer ce qui a été changé (fichiers touchés)
+- Indiquer comment vérifier que tout fonctionne (test scenario pour chaque niveau)
 - Signaler les limites, risques ou points à améliorer
-- Proposer une prochaine étape claire, alignée sur la phase suivante du prompt maître
+- Proposer une étape suivante claire (ex. créer les questions manquantes pour la boussole, tester B2 M1 avec un groupe simulation, etc.)
 
-## 12. Tests et vérification
+## 11. Tests et vérification
 
 Méthode de vérification attendue :
-Vérifier que chaque univers fonctionne de bout en bout pour un groupe test (scan QR Code → progression → feedback), et que l'espace admin permet de tout piloter sans intervention technique.
-Pour la mission active : parcourir un cours de l'Univers 2 de bout en bout comme le ferait un groupe d'étudiants (entrée QR code → exercice 1 et 2 en Mode 1 → exercice 3 en Mode 2 → transition vers le cours suivant).
+Parcourir chaque univers/niveau de bout en bout comme le ferait un groupe d'étudiants :
+1. Scan QR Code → identification du groupe et univers correct
+2. Navigation mission → exercices s'enchaînent dans le bon ordre
+3. Feedback affichage → messages clairs et cohérents avec le mode (immédiat ou validation)
+4. Design → palette et univers narratif cohérents, responsive mobile
+5. Admin → Stéphanie peut verrouiller un groupe, changer de mission active
+6. Aucune donnée sensible exposée
 
 Données ou scénario de test :
-Simuler un groupe B2 (ex. B2-A) parcourant l'Univers 2 en entier — Cours 1 « La boussole professionnelle » (Boussole aléatoire → Carte profil aventurier → Mon cap professionnel) puis vérifier que l'accès s'arrête au Cours 3 ; simuler un groupe PGE2 (ex. PGE2-A) accédant en plus aux Cours 4 à 6 (univers détective) ; simuler un groupe B1 (ex. B1-A) sur l'Univers 1 et un groupe B3 (ex. B3 Finance) sur l'Univers 3, pour confirmer l'absence de régression (hors périmètre de la mission active).
+
+**Univers 1 — B1** (validation de non-régression) :
+- QR Code groupe B1-A → accès Univers 1 "Passeport vers le Stage"
+- Parcourir un checkpoint complet (2 exercices Mode 1 + 1 Mode 2)
+- Vérifier que le vocabulaire "Production à reporter dans le livrable" est utilisé
+
+**Univers 2 — B2** (cible de la mise à jour) :
+- QR Code groupe B2-A → accès Univers 2 "Expédition Professionnelle"
+- Mission 1 (Boussole) : tirer une question au hasard × 3 fois, vérifier que chaque question a des pistes spécifiques, message final "Présentez-la à votre intervenante"
+- Mission 2 (Image professionnelle) : parcourir l'atelier guidé, vérifier qu'aucun profil LinkedIn n'est généré, affichage de critères/feedback
+- Mission 3 (Communication) : parcourir le révélateur d'idées, vérifier qu'aucun post LinkedIn n'est généré, guidance vers réflexion personnelle
+- Vérifier accès arrêté après Mission 3 (pas accès Missions 4-6)
+
+**Univers 2 — PGE2 S1** (même test que B2 pour les 3 premières séances)
+
+**Univers 2 — PGE2 S2** (validation de conservation) :
+- QR Code groupe PGE2-A → accès Univers 2 "Dossier Alternance & Stage"
+- Parcourir fonctionnalité "Qui est en face de moi ?" (scène visuelle, identification interlocuteur)
+- Vérifier que design détective (🕵️) est appliqué
+
+**Univers 3 — B3** (création V3.3) :
+- QR Code groupe B3 Finance → accès Univers 3 "La Mission"
+- Séance 1 : Message professionnel sensible
+- Séance 2 : Ordre du jour + plan de réunion
+- Séance 3 : Mission immersive, tirer une alerte au hasard × 3 fois, remplir note de synthèse
+- Vérifier que design mission (🎯) est appliqué, pas d'IA embarquée
+
+**Admin** :
+- Se connecter à l'espace admin avec credentials
+- Lister les 9 groupes, scanner un QR Code
+- Verrouiller un groupe, déverrouiller
+- Changer la mission active (ex. passer de B2 M1 à B2 M2)
+- Prévisualiser en tant qu'étudiant (voir l'app du point de vue B2-A)
 
 Critères de réussite :
-- Le QR Code de chaque groupe redirige vers le bon univers avec les bonnes règles d'accès (ex. B2 vs PGE2 sur l'Univers 2)
-- Univers 2 : les exercices de chaque cours s'enchaînent dans le bon ordre (2 Mode 1 puis 1 Mode 2), le design respecte la palette aventure (S1) ou détective (S2) selon le cours, et ne mentionne jamais l'univers avion
-- Le moteur de simulation IA (Univers 3) génère un contexte, injecte un incident, et produit un feedback au format défini (non régressé)
-- L'espace admin permet de contrôler la mission active et de verrouiller un groupe sans erreur
-- Aucune donnée personnelle n'est collectée à aucune étape
+- ✅ Chaque QR Code redirige vers le bon univers/niveau
+- ✅ Les règles d'accès B2 (3 missions) et PGE2 (6 séances) sont opérationnelles
+- ✅ Boussole B2 M1 fonctionne en aléatoire avec pistes spécifiques
+- ✅ Pas de génération automatique de livrable (LinkedIn, post, etc.)
+- ✅ Design cohérent par univers et par semestre (aventure vs détective pour Univers 2)
+- ✅ Tous les textes finaux demandent "l'intervenante" (féminin)
+- ✅ Pas de mélange d'univers narratifs (avion jamais dans U2 ou U3)
+- ✅ Univers 1 et 3 non régressés
+- ✅ Aucune donnée personnelle stockée
+- ✅ Admin fonctionne : verrouillage, changement de mission active
 
-## 13. Sécurité et points de vigilance
+## 12. Sécurité et points de vigilance
 
 Claude doit faire attention à :
-- Ne jamais exposer de clés API OpenAI/Anthropic ou Supabase
-- Ne jamais écrire de secrets dans le code — uniquement dans `.env.local`
-- Ne pas supprimer ou écraser de fichiers sans validation
-- Vérifier qu'aucune donnée personnelle étudiante n'est collectée ou stockée à aucun moment
-- Signaler les risques liés aux coûts d'API (appels IA en Univers 3, potentiellement fréquents en session live) et aux quotas Supabase/Vercel
-- Prévenir avant toute modification structurelle importante (schéma Supabase, règles de progression par groupe)
-- Prévenir avant toute modification touchant aux Univers 1 ou 3 dans le cadre de la mission de révision de l'Univers 2
+- **Ne jamais exposer** de clés API OpenAI / Anthropic / Supabase dans le code source
+- **Écrire les secrets uniquement** dans `.env.local` (jamais dans le repo public)
+- **Ne pas supprimer ou écraser** de fichiers sans validation (ex. contenu d'une mission existante)
+- **Vérifier qu'aucune donnée personnelle** n'est collectée, affichée, ou stockée à aucun moment (RGPD)
+- **Signaler les risques** : coûts d'API (appels IA pour U3 si implémentés), quotas Supabase/Vercel, limites de déploiement
+- **Prévenir avant modification structurelle** : changement de schéma Supabase, règles d'accès par groupe, modification des Univers 1 ou 3
+- **Tester la non-régression** : Univers 1 et 3 doivent rester opérationnels sans dégradation
 
 Informations sensibles à ne jamais inclure dans le projet :
 - Clés API OpenAI / Anthropic
-- Credentials Supabase
-- Toute donnée personnelle étudiante
+- Credentials Supabase (clé secrète, URL de connexion, token)
+- Mots de passe admin (credentials Stéphanie)
+- Toute donnée personnelle étudiante réelle (noms, emails, données de contact)
 
-## 14. Documentation attendue
+## 13. Documentation attendue
 
-Documentation utile :
-- Comment lancer le projet en local
-- Comment ajouter/modifier un groupe, une mission ou un contenu pédagogique
-- Comment fonctionne le moteur de simulation IA (Univers 3)
-- Comment utiliser l'espace admin en session live
-- Comment fonctionne la distinction Correction de bord / Appel tour de contrôle (Univers 1) et Feedback immédiat / Validation intervenante (Univers 2)
-- Emplacement : [ ] README.md — à confirmer avec Stéphanie
+Documentation utile à maintenir/créer :
+- **README.md** : comment lancer le projet en local, déployer, accéder à l'admin
+- **CLAUDE.md** (ce fichier) : contexte du projet pour Claude Code
+- **Architecture.md** (optionnel) : structure des univers, logique de progression, regles d'accès par groupe
+- Commentaires en code : sections sensibles (aléatoire dans boussole, validation par intervenante, règles d'univers)
+- **Fiche mission V3.3** : spécifications détaillées (disponible dans `fiche-edc-career-v3.3.docx`)
 
-## 15. Décisions déjà prises
+Emplacement souhaité :
+- README.md : racine du projet
+- CLAUDE.md : racine du projet (ce fichier)
+- Commentaires en code : `/app/`, `/lib/`, `/components/`
+
+## 14. Décisions déjà prises
 
 Décisions importantes :
-- Stack : Next.js 15 + TypeScript strict + Tailwind + Shadcn UI + Supabase — pour rapidité de mise en place et écosystème mature
-- Pas de compte étudiant, entrée uniquement via QR Code de groupe — pour simplicité d'usage en salle et confidentialité
-- Progression pilotée uniquement par l'espace admin — pour permettre à Stéphanie de garder le contrôle pédagogique en direct
-- Découpage en 4 sous-agents (Univers 1, Univers 2, Univers 3, Admin/Infra) — pour paralléliser le développement de blocs fonctionnels indépendants
-- Univers 1 : chaque checkpoint suit l'ordre « 2 exercices correction immédiate, 1 exercice validation intervenante » — raison : cohérence pédagogique (savoirs simples d'abord, nuance ensuite)
-- **Univers 2 : même logique de progression que l'Univers 1** (2 exercices Mode 1, 1 exercice Mode 2 en clôture de chaque cours) — raison : cohérence pédagogique transversale entre univers, malgré des vocabulaires et univers narratifs distincts
-- **Univers 2 : vocabulaire de non-mémorisation différent de l'Univers 1** — les expressions « trace enregistrée », « production à reporter dans le livrable », « élément conservé par l'application », « historique sauvegardé » sont toutes bannies (contrairement à l'Univers 1 qui impose « Production à reporter dans le livrable ») — raison : éviter la confusion entre les conventions propres à chaque univers
-- Univers 1 : l'application ne conserve aucune donnée ni historique de groupe entre les sessions — raison : confidentialité et simplicité d'usage en présentiel ; **règle identique pour l'Univers 2**
+- **Stack** : Next.js 15 + TypeScript strict + Tailwind + Shadcn UI + Supabase — pour rapidité, écosystème mature, productivité
+- **Entrée** : QR Code de groupe uniquement (pas de compte étudiant) — pour simplicité d'usage et confidentialité
+- **Progression** : pilotée par l'espace admin (Stéphanie contrôle en direct) — pour agentivité pédagogique
+- **Univers 1** : stabilisé, ne pas modifier dans V3.3
+- **Univers 2** : logique 2 Mode 1 + 1 Mode 2 par cours (cohérence pédagogique)
+- **Univers 2** : vocabulaire de non-mémorisation différent de U1 (pas "trace enregistrée" ni "production à reporter")
+- **Univers 2** : aucun univers avion (réservé à U1) — utiliser avion/détective
+- **Univers 2** : pas de génération automatique de profil LinkedIn, post, ou livrable
+- **Univers 3** : purement scénaristique (pas d'IA embarquée pour V3.3)
+- **Évaluation** : 50% note orale individuelle + 50% note groupe écrite
 
 Choix refusés :
-- Univers 1 : génération automatique du livrable semestriel de l'étudiant par l'application — raison : l'intervenante doit garder la main sur l'évaluation et la personnalisation du livrable
-- **Univers 2 (Cours 3) : génération d'un post LinkedIn prêt à publier par l'application** — raison : l'objectif est de déclencher la réflexion personnelle de l'étudiant, pas de rédiger le contenu à sa place
+- Génération automatique de livrable final par l'application (ex. profil LinkedIn complet)
+- Utilisation de traitement IA lourd dans B3 (rester scénaristique)
+- Stockage de données étudiantes entre les sessions
+- Mélange de vocabulaires d'univers (avion uniquement en U1)
 
 Si une décision technique importante doit être prise :
-Expliquer les options simplement, recommander une option, puis attendre validation si l'impact est important.
+Expliquer les options simplement, recommander une option, puis attendre validation de Stéphanie si l'impact est élevé (ex. schéma base de données, nouvelles permissions, coûts API).
 
-## 16. Questions ouvertes
+## 15. Questions ouvertes
 
-Questions à clarifier :
-- Calendrier de livraison souhaité (à caler sur le planning des cours EDC Paris)
-- Un projet Supabase et des credentials sont-ils déjà créés ? (hypothèse du prompt maître : oui)
-- Le déploiement cible Vercel avec connexion GitHub est-il déjà en place ? (hypothèse du prompt maître : oui)
-- Le design system des univers aventure/détective (Univers 2) doit-il porter des éléments de la charte SJ Conseil, ou rester totalement autonome dans ses univers thématiques ?
-- Le contenu des exercices de l'Univers 2 (questions de la boussole, profils types, fiches jobboards, scènes de pitch) doit-il être stocké de façon statique dans Supabase (table `contents`), ou existe-t-il un besoin de génération dynamique ? **Hypothèse** : contenu statique, à l'image des choix faits pour l'Univers 1.
+Questions à clarifier avec Stéphanie :
+- Calendrier de livraison de V3.3 (à caler sur planning des cours EDC)
+- Credentials Supabase déjà créés et fonctionnels ? (hypothèse : oui)
+- Déploiement Vercel avec connexion GitHub déjà en place ? (hypothèse : oui)
+- Le contenu des exercices V3.3 (questions boussole, pistes, scenarios B3) doit-il être généré ou importé ? (hypothèse : générer selon spécifications)
+- Sessions de test avec groupes réels avant déploiement ? (recommandé avant usage en cours)
 
 Si une information manque :
-Faire une hypothèse raisonnable, l'indiquer clairement, puis avancer si le risque est faible. Demander validation si le risque est élevé (ex. schéma de base de données, règles d'accès par groupe).
+Faire une hypothèse raisonnable, l'indiquer clairement, puis avancer si le risque est faible. Demander validation de Stéphanie si le risque est élevé (ex. schéma base de données, nouvelles permissions, coûts imprévus).
 
-## 17. Définition de terminé
+## 16. Définition de terminé
 
-La tâche ou le projet est considéré comme terminé quand :
-- Les 9 groupes sont opérationnels avec QR Code fonctionnel
-- Les 3 univers pédagogiques sont développés et testés de bout en bout
-- L'espace admin permet un pilotage complet en session live
-- Le design premium et immersif est appliqué et responsive mobile-first
-- Aucune donnée personnelle étudiante n'est collectée
+La mise à jour V3.3 est considérée terminée quand :
+- ✅ B2 affiche 3 missions (pas 6)
+- ✅ Boussole B2 M1 fonctionne en aléatoire avec pistes spécifiques
+- ✅ B2 M2 et M3 fonctionnent en ateliers guidés (pas de génération de livrable)
+- ✅ Mêmes corrections appliquées aux 3 premières séances PGE2 S1
+- ✅ PGE2 S2 conservé et opérationnel
+- ⏳ B3 crée 3 missions (communication, réunion, synthèse 48h) — codé et testé localement, **non déployé** (voir section 17)
+- ⏳ Mission B3 immersive sans traitement IA — idem, en attente de déploiement
+- ✅ Tous les textes finaux demandent "l'intervenante" (féminin)
+- ✅ Formulaires d'évaluation intégrés (note orale + note groupe) — pour B2/PGE2 ; pour B3, prêt mais non déployé
+- ✅ Univers 1 et 3 non régressés (Univers 3 tourne encore sur l'ancien système en production)
+- ✅ Design cohérent par univers (aventure S1, détective S2, mission B3)
+- ✅ Aucune donnée étudiante collectée ou stockée
 
-Livrables attendus (projet global) :
-- Application Next.js déployée sur Vercel
-- Base Supabase configurée et peuplée (contenus des 3 univers)
-- Espace admin fonctionnel
-- README de déploiement et d'utilisation
-
-Livrables attendus (mission active — Univers 2) :
-- Composants Next.js des 6 cours B2/PGE2 conformes à la fiche mission (tableau d'exercices, écrans, boutons, feedback)
-- Design system Univers 2 appliqué de façon cohérente (univers aventure au S1, détective au S2, palettes et pictogrammes dédiés)
-- Règle d'accès B2 (cours 1-3) / PGE2 (cours 1-6) opérationnelle
-- Univers 1 et 3 non régressés
+Livrables attendus :
+- Codebase Next.js mise à jour et déployable sur Vercel
+- Composants React pour chaque parcours corrigé / créé
+- CLAUDE.md actualisé (ce fichier)
+- Documentation des modifications (changelog ou résumé)
+- Base Supabase avec contenus V3.3 (questions, pistes, scenarios)
+- Tests de non-régression (U1 et U3 opérationnels)
 
 Dernière vérification :
-Vérifier que le résultat correspond à l'objectif initial (animation des cours Atelier Carrière EDC Paris), puis fournir un résumé final avec les prochaines étapes recommandées (ex. génération des contenus manquants pour les cours 4-6, session pilote avec un groupe test B2 et PGE2).
+Vérifier que le résultat correspond à l'objectif V3.3 (corrections ciblées, pas de régression), puis fournir un résumé final avec :
+- Fichiers modifiés
+- Étapes de déploiement (build → Vercel)
+- Prochaines étapes recommandées (test avec groupes réels, ajustements pédagogiques, étapes futures)
+
+## 17. Journal V3.3
+
+### 2026-09-07 — B2 et PGE2 déployés en production
+
+Fichiers modifiés et déployés (push sur `main`) :
+- `src/components/univers2/Univers2Page.tsx` : le compteur "Mission X / 6" codé en dur est devenu dynamique (`X / 3` pour B2, `X / 6` pour PGE2)
+- `src/lib/content/univers2-cours1.ts` + `src/components/univers2/Cours1Boussole.tsx` : la boussole B2 M1 affiche désormais une aide à la réflexion, des pistes spécifiques et une relance **par question tirée** (au lieu de pistes partagées par direction) ; ajout d'un bouton "Tirer une direction au hasard" et du message de rappel obligatoire
+- `src/components/univers2/Cours3RevelateurIdees.tsx` : ajout du rappel des modalités d'évaluation (50% oral / 50% écrit) à l'écran de fin de parcours B2
+
+Non modifié — déjà conforme à la V3.3 :
+- `Cours2Linkedin.tsx` (atelier guidé, pas de génération de profil) et `Cours3RevelateurIdees.tsx` (révélateur d'idées, pas de génération de post)
+- PGE2 S1 (réutilise automatiquement les Cours 1-3 corrigés via `availableFor` dans `univers2.ts`) et PGE2 S2 (détective, "Qui est en face de moi ?" dans `Cours5PitchProfessionnel.tsx`)
+- Vocabulaire féminin "intervenante" déjà systématique
+
+Vérifications effectuées : `npx tsc --noEmit` (0 erreur), `npx eslint src/` (0 erreur, 4 avertissements pré-existants hors périmètre), test navigateur en local sur B2 Groupe A (boussole aléatoire OK).
+
+### B3 — codé et testé, volontairement NON déployé (à la demande de Stéphanie, 2026-09-07)
+
+La refonte de l'Univers 3 existe en fichiers locaux non commités dans le répertoire de travail, prête à être déployée plus tard :
+- `src/lib/content/univers3.ts` : contenu statique et scénaristique des 3 missions B3 — aucun appel IA
+- `src/components/univers3/shared/` : `ExerciseHeader`, `ModeBadge`, `ExerciseStepper`, `MissionHeader` — thème navy/or propre à l'Univers 3
+- `src/components/univers3/Mission1CommunicationSensible.tsx`, `Mission2ReunionEfficace.tsx`, `Mission3ImmersionControle.tsx` : les 3 missions B3 destinées à remplacer les 6 missions pilotées par IA
+- Une version réécrite de `src/components/univers3/HorizonShell.tsx` (routeur 3 missions statiques) existe aussi en local mais n'a **pas** été appliquée — le fichier déployé est toujours l'original à 6 missions IA
+
+**En production actuellement (non touché)** : `HorizonShell.tsx` (6 missions), `/api/horizon/generate` (appel Anthropic), `/api/simulation/*`, `AlertSession.tsx`, `EventFeed.tsx`, `ScenarioDisplay.tsx`, `SimulationRunner.tsx`, `SimulationLauncher.tsx`, `SimulationFeedbackZone.tsx`, et le compteur admin (`src/app/admin/groupes/[slug]/page.tsx` + `next-mission/route.ts`) toujours plafonné à 6 pour `mission-horizon`.
+
+Vérifications effectuées sur le code B3 en local (non déployé) : `npx tsc --noEmit` (0 erreur), `npx eslint src/` (0 erreur), test navigateur local sur B3 Marketing Digital Mission 3 "48h" (fonctionnel, aucune requête réseau vers une API IA). Non testé : Missions 1 et 2 (même structure de composant que la Mission 3 déjà validée).
+
+**Pour déployer B3 plus tard**, il faudra :
+1. Ré-appliquer la réécriture de `HorizonShell.tsx` (router vers `Mission1/2/3` au lieu de M1-M6 avec IA)
+2. Supprimer les fichiers IA orphelins listés ci-dessus (`AlertSession.tsx`, `/api/horizon/*`, `/api/simulation/*`, etc.)
+3. Replafonner le compteur admin à 3 pour `universe === 'mission-horizon'` dans les 2 fichiers admin listés ci-dessus
+4. Mettre à jour la table Supabase `missions` (titres + suppression des lignes 4-6) :
+```sql
+UPDATE missions SET title = 'Communication professionnelle sensible' WHERE universe = 'mission-horizon' AND number = 1;
+UPDATE missions SET title = 'Conduite de réunion efficace' WHERE universe = 'mission-horizon' AND number = 2;
+UPDATE missions SET title = 'Mission immersive — 48h pour reprendre le contrôle' WHERE universe = 'mission-horizon' AND number = 3;
+DELETE FROM missions WHERE universe = 'mission-horizon' AND number > 3;
+```
+5. Retester B3 Missions 1 et 2 avant mise en ligne

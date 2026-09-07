@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { directionsBoussole, profilsAventuriers, CAP_CHAMPS, type ProfilAventurier } from '@/lib/content/univers2-cours1'
+import { directionsBoussole, profilsAventuriers, CAP_CHAMPS, type ProfilAventurier, type QuestionBoussole } from '@/lib/content/univers2-cours1'
 import ExerciseStepper from './shared/ExerciseStepper'
 import ExerciseHeader from './shared/ExerciseHeader'
 import CompassDial from './CompassDial'
@@ -11,7 +11,7 @@ export default function Cours1Boussole() {
 
   // Exercice 1 — Boussole aléatoire
   const [directionActive, setDirectionActive] = useState<typeof directionsBoussole[number] | null>(null)
-  const [question, setQuestion] = useState<string | null>(null)
+  const [question, setQuestion] = useState<QuestionBoussole | null>(null)
   const [directionsExplorees, setDirectionsExplorees] = useState<string[]>([])
 
   // Exercice 2 — Carte profil aventurier
@@ -59,7 +59,7 @@ export default function Cours1Boussole() {
           <ExerciseHeader
             numero={1}
             titre="Boussole aléatoire"
-            consigne="Cliquez sur une direction, discutez la question tirée en binôme."
+            consigne="Choisissez une direction ou tirez-en une au hasard, discutez la question tirée en binôme."
             mode="feedback"
           />
 
@@ -71,20 +71,47 @@ export default function Cours1Boussole() {
             onSelect={choisirDirection}
           />
 
-          {directionActive && question && (
-            <div className="rounded-2xl p-6" style={{ background: 'linear-gradient(145deg, rgba(201,168,76,0.1), rgba(201,168,76,0.03))', border: '1px solid rgba(201,168,76,0.25)' }}>
-              <p className="text-xs font-black uppercase tracking-widest mb-2" style={{ color: 'rgba(201,168,76,0.7)' }}>
-                {directionActive.label} — {directionActive.theme}
-              </p>
-              <p className="text-white text-lg font-semibold leading-relaxed mb-4">{question}</p>
+          <button
+            onClick={() => choisirDirection(directionsBoussole[Math.floor(Math.random() * directionsBoussole.length)].code)}
+            className="w-full py-2.5 rounded-xl font-bold text-sm uppercase tracking-wider"
+            style={{ background: 'rgba(201,168,76,0.08)', border: '1px dashed rgba(201,168,76,0.4)', color: '#c9a84c' }}
+          >
+            🎲 Tirer une direction au hasard
+          </button>
 
-              <p className="text-xs font-bold uppercase tracking-widest mb-2" style={{ color: 'rgba(245,240,232,0.4)' }}>Pistes de réponse</p>
-              <div className="flex flex-wrap gap-1.5 mb-4">
-                {directionActive.exemples.map(ex => (
-                  <span key={ex} className="text-xs px-2.5 py-1 rounded-full" style={{ background: 'rgba(255,255,255,0.06)', color: 'rgba(245,240,232,0.7)' }}>
-                    {ex}
-                  </span>
-                ))}
+          {directionActive && question && (
+            <div className="rounded-2xl p-6 space-y-4" style={{ background: 'linear-gradient(145deg, rgba(201,168,76,0.1), rgba(201,168,76,0.03))', border: '1px solid rgba(201,168,76,0.25)' }}>
+              <div>
+                <p className="text-xs font-black uppercase tracking-widest mb-2" style={{ color: 'rgba(201,168,76,0.7)' }}>
+                  {directionActive.label} — {directionActive.theme}
+                </p>
+                <p className="text-white text-lg font-semibold leading-relaxed">{question.texte}</p>
+              </div>
+
+              <div>
+                <p className="text-xs font-bold uppercase tracking-widest mb-1" style={{ color: 'rgba(245,240,232,0.4)' }}>Aide à la réflexion</p>
+                <p className="text-sm" style={{ color: 'rgba(245,240,232,0.75)' }}>{question.aide}</p>
+              </div>
+
+              <div>
+                <p className="text-xs font-bold uppercase tracking-widest mb-2" style={{ color: 'rgba(245,240,232,0.4)' }}>Pistes spécifiques</p>
+                <ul className="space-y-1.5">
+                  {question.pistes.map(piste => (
+                    <li key={piste} className="text-sm flex items-start gap-2" style={{ color: 'rgba(245,240,232,0.7)' }}>
+                      <span style={{ color: '#c9a84c' }}>—</span>
+                      <span>{piste}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              <div>
+                <p className="text-xs font-bold uppercase tracking-widest mb-1" style={{ color: 'rgba(245,240,232,0.4)' }}>Relance pour approfondir</p>
+                <p className="text-sm italic" style={{ color: 'rgba(255,225,160,0.85)' }}>{question.relance}</p>
+              </div>
+
+              <div className="rounded-xl px-4 py-3 text-xs font-semibold text-center" style={{ background: 'rgba(201,168,76,0.1)', color: '#c9a84c' }}>
+                Ces pistes sont là pour t&apos;aider à réfléchir. Choisis, adapte ou reformule avec tes propres mots.
               </div>
 
               <button
