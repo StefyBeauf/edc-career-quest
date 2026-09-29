@@ -1,5 +1,5 @@
 import type { Group } from '@/types'
-import HorizonShell from './HorizonShell'
+import MissionShell from './MissionShell'
 
 interface Props {
   group: Group
@@ -136,7 +136,7 @@ export default async function Univers3Page({ group }: Props) {
       </div>
 
       <main className="relative z-10">
-        <HorizonShell group={group} missionNumber={missionNumber} />
+        <MissionShell group={group} missionNumber={missionNumber} />
       </main>
     </div>
   )

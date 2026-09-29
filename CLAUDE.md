@@ -3,577 +3,448 @@
 <!--
 MODE D'EMPLOI
 Ce fichier donne à Claude Code le contexte spécifique du projet EDC Career Quest.
-Il complète (sans remplacer) le CLAUDE.md global de Stéphanie.
+Il complète (sans le remplacer) le CLAUDE.md global de Stéphanie.
 
-Mise à jour V3.3 : révision ciblée des parcours B2, PGE2 et création du parcours B3.
+Mission active : création de la Mission 1 B3 « 🎯 Se vendre sans se survendre ».
+Référence : fiche mission `fiche-mission-b3-m1-se-vendre-v2.docx`.
 
-À faire :
-- Ne jamais ajouter de mot de passe, clé API, token ou information sensible (voir section 13)
-- Conserver la structure pédagogique existante (univers, checkpoints, progression)
-- Appliquer uniquement les modifications ciblées listées dans la fiche mission V3.3
-- Tester chaque parcours indépendamment avant déploiement
+Règles de maintenance de ce fichier :
+- N'y ajoutez jamais de mot de passe, clé API, token ni information sensible (voir section 12).
+- Gardez-le court : l'historique détaillé va dans la section 16 « Journal ».
+- Mettez à jour la section 1 « Tâche en cours » à chaque nouvelle mission.
 -->
 
 ## 1. Résumé du projet
 
-Nom du projet : **EDC Career Quest — Version 3.3**
+Nom du projet : **EDC Career Quest (plateforme EDC Career / Vador OS)**
 
-Type de projet :
-- [x] Application web
-- [x] Outil interne (pédagogique)
-- [x] Amélioration d'un projet existant
+Type de projet : application web pédagogique (outil interne). Il s'agit d'une amélioration d'un projet existant.
 
 Objectif principal :
-Mettre à jour la plateforme pédagogique EDC Career (Vador OS) selon les spécifications V3.3 en appliquant des modifications ciblées sur les parcours B2, PGE2 et B3. L'objectif est d'améliorer la qualité pédagogique sans reconstruire l'architecture existante : correction du nombre de missions B2, boussole aléatoire, transformation des générations automatiques en ateliers guidés, création de trois missions B3 immersives, et intégration des modalités d'évaluation (50% note orale + 50% note groupe écrite).
+Plateforme gamifiée qui anime en direct les ateliers carrière des étudiants EDC Paris (B1 à B3, PGE1-PGE2).
+- Les étudiants accèdent aux ateliers par QR Code de groupe.
+- L'intervenante pilote la séance depuis l'espace admin.
+- L'application guide la réflexion. Elle ne produit jamais le travail à la place de l'étudiant.
 
-Résultat attendu :
-Application Next.js déployée (Vercel) avec trois univers pédagogiques fonctionnels et testés :
-- **Univers 1 — Passeport vers le Stage** (B1/PGE1) : stabilisé, non modifié par V3.3
-- **Univers 2 — Expédition Professionnelle** (B2/PGE2) : révision ciblée (3 missions B2, mission 1 avec boussole aléatoire + mini quiz de personnalité, atelier guidé, révélateur d'idées, même corrections appliquées à PGE2 S1, conservation de PGE2 S2)
-- **Univers 3 — La Mission** (B3) : création de 3 missions immersives dans l'univers existant (communication professionnelle, conduite de réunion, synthèse 48h)
+Trois univers :
 
-**Tâche en cours (mission active) :** Mise à jour V3.3 selon fiche mission "EDC Career Quest — V3.3" (`fiche-edc-career-v3.3.docx`). **B2 et PGE2 déployés en production le 2026-09-07.** B3 codé et testé mais **volontairement non déployé** (à la demande de Stéphanie, le temps de valider séparément) — la production tourne encore sur l'ancien système B3 à 6 missions IA. Voir section 17 "Journal V3.3" pour le détail.
+| Univers | Public | Thème | Statut |
+|---|---|---|---|
+| 1 — Passeport vers le Stage | B1 / PGE1 | ✈️ avion | Stabilisé. **Ne pas modifier.** |
+| 2 — Expédition Professionnelle | B2 / PGE2 | 🧭 aventure (S1) · 🕵️ détective (S2) | V3.3 déployée le 2026-09-07. Le mini quiz B2 M1 est codé mais non déployé. |
+| 3 — La Mission | B3 | 🎯 mission | Refonte locale non déployée : 6 missions (M1 Se vendre à coder, M2 et M3 statiques, M4 à M6 verrouillées). La production tourne encore sur l'ancien système à 6 missions IA. |
+
+### ▶ Tâche en cours
+
+**Créer la Mission 1 B3 « 🎯 Se vendre sans se survendre »** dans l'Univers 3, sur la base de la refonte V3.3 locale (non déployée).
+- **Statut (2026-09-29)** : codée et testée en local, non commitée, non déployée. Reste : validation des textes par Stéphanie, test avec un groupe réel, puis procédure de déploiement (section 16).
+- Le routeur local est `MissionShell.tsx` (la réécriture de `HorizonShell.tsx` était introuvable).
+- Spécification complète : section 3.1.
+- Fiche mission : `fiche-mission-b3-m1-se-vendre-v2.docx`.
+- **Décision (2026-09-29)** : elle **remplace** « Communication professionnelle sensible » comme Mission 1.
+- B3 reste un parcours à **6 missions** : les missions 4 à 6 seront créées plus tard.
 
 ## 2. Contexte métier
 
 Pourquoi ce projet existe :
-Améliorer la qualité pédagogique de la plateforme EDC Career en corrigeant les parcours B2, en enrichissant les ateliers guidés (boussole aléatoire, non-génération de livrables), et en créant des missions B3 immersives et de synthèse. La mise à jour répond à des remontées d'usage et aux évolutions pédagogiques souhaitées par Stéphanie.
+Rendre les ateliers carrière actifs, ludiques et différenciés par niveau. En B3, les étudiants ont déjà travaillé leur CV. La Mission 1 les fait passer de « Je cherche une alternance dans le commerce » à « Je sais expliquer ce que j'apporte, comment je fonctionne et pourquoi mon profil peut intéresser une entreprise ».
 
-Qui va utiliser le résultat :
-- [x] Des apprenants (étudiants EDC Paris, B1 à B3)
-- [x] Moi-même (Stéphanie) en tant qu'administratrice et intervenante (pilotage en direct, animation des ateliers)
-
-Niveau technique des utilisateurs finaux :
-- [x] Non technique (étudiants — simple scan de QR Code)
-- Intervenante (Stéphanie) : interface admin intuitive, pilotage sans code
+Qui utilise le résultat :
+- **Étudiants EDC Paris (B1 à B3)**. Ils ne sont pas techniques et accèdent par scan de QR Code, souvent sur mobile. En B3, les profils sont commerce, négociation et business development, en grand groupe.
+- **Stéphanie, l'intervenante et administratrice**. Elle pilote en direct, sans code.
 
 Ce qui compte le plus :
-- [x] Design professionnel (immersif, distinct par univers, impact pédagogique)
-- [x] Fiabilité (usage en direct en salle de cours devant des groupes)
-- [x] Sécurité / confidentialité (aucune donnée personnelle étudiante collectée ou stockée)
-- [x] Facilité de maintenance (pilotage 100% via interface admin, pas d'intervention technique requise)
-- [x] Guidage pédagogique (ne pas faire le travail à la place des étudiants, favori réflexion personnelle)
+- **Fiabilité** : l'outil est utilisé en direct devant des groupes.
+- **Guidage pédagogique** : ne jamais faire le travail à la place de l'étudiant.
+- **Design** : immersif et distinct par univers.
+- **Confidentialité** : zéro donnée étudiante stockée.
+- **Maintenance** : pilotage 100 % via l'admin.
 
 ## 3. Périmètre du projet
 
-Ce que le projet doit faire :
-- **Correction B2** : afficher 3 missions au lieu de 6 (Profil professionnel, Image professionnelle, Communication professionnelle)
-- **Boussole professionnelle aléatoire (B2 Mission 1, Temps 1)** : fonctionnement aléatoire, quatre directions (Nord/Est/Sud/Ouest), pistes spécifiques par question, aide courte à la réflexion, relance personnalisée, message obligatoire "Ces pistes sont là pour t'aider à réfléchir. Choisis, adapte ou reformule avec tes propres mots."
-- **Mini quiz de personnalité professionnelle (B2 Mission 1, Temps 2)** : 20 questions, 4 réponses par question, quatre profils ludiques et professionnels (A = Le moteur de l'expédition, B = Le gardien de la carte, C = L'éclaireur d'idées, D = Le créateur de liens), scoring automatique, affichage résultat personnalisé avec traduction professionnelle, apports en groupe, points à valoriser, vigilance et phrase à compléter
-- **Atelier guidé image professionnelle (B2 Mission 2)** : aucune génération automatique de profil LinkedIn complet, critères de qualité, exemples partiels, feedbacks courts
-- **Révélateur d'idées (B2 Mission 3)** : aider l'étudiant à identifier une idée de prise de parole (pas générer un post LinkedIn prêt à publier)
-- **Application PGE2 S1** : réutiliser les composants B2 corrigés (boussole, atelier, révélateur) pour les 3 premières séances PGE2
-- **Préservation PGE2 S2** : conserver l'univers détective et la fonctionnalité "Qui est en face de moi ?"
-- **Création B3** : trois missions dans l'univers existant "🎯 La mission"
-  - Séance 1 : Communication professionnelle sensible (relance, retard, erreur, désaccord, feedback, etc.)
-  - Séance 2 : Conduite de réunion efficace (objectif, ordre du jour, participants, suivi, synthèse)
-  - Séance 3 : Mission immersive "48h pour reprendre le contrôle" (contexte, alertes aléatoires, décisions, note de synthèse)
-- **Évaluation intégrée** : 50% note orale individuelle + 50% note groupe écrite pour chaque niveau
-- **Alignement rédactionnel** : utiliser systématiquement le féminin "intervenante"
+Ce que la mission active doit faire :
+- Créer la Mission 1 B3 en **5 étapes**, avec une fiche finale « Mon positionnement commercial » (voir 3.1).
+- La brancher comme **Mission 1** dans le routeur Univers 3 de la refonte V3.3 locale (`HorizonShell.tsx` réécrit), à la place de `Mission1CommunicationSensible.tsx`.
+- Conserver le parcours B3 à 6 missions : M1 Se vendre · M2 Réunion efficace · M3 48h · M4 à M6 verrouillées.
+- Afficher les missions 4 à 6 comme des cartes verrouillées « Mission à venir » (thème 🎯, non cliquables), sans contenu IA.
+- Si l'admin active une mission 4 à 6, l'étudiant voit un écran d'attente « Mission à venir » : aucune erreur, aucun ancien contenu.
+- Conserver le thème 🎯 navy/or et les composants de `src/components/univers3/shared/`.
 
-### 3.1. Spécification détaillée — Mini Quiz de Personnalité Professionnelle (B2 M1, Temps 2)
+Ce que le projet ne doit pas faire :
+- ❌ Reconstruire l'architecture, ou modifier l'Univers 1 et l'Univers 2.
+- ❌ Déployer B3 sans accord explicite de Stéphanie (voir la procédure en section 16).
+- ❌ Générer ou préremplir un pitch, une formulation ou un livrable à la place de l'étudiant.
+- ❌ Utiliser un traitement IA dans l'Univers 3 : les feedbacks passent par des heuristiques côté client.
+- ❌ Stocker une donnée étudiante côté serveur (Supabase, API, logs).
+- ❌ Créer une fonction de partage automatique (LinkedIn, email…).
+- ❌ Transformer la séance en atelier CV ou candidature.
+- ❌ Écrire « intervenant » au masculin : toujours « intervenante ».
 
-Le mini quiz est un outil de réflexion ludique destiné à aider l'étudiant à identifier son profil professionnel dominant et ses points d'appui.
+Version souhaitée : version robuste pour un usage réel en salle, livrée comme amélioration ciblée non régressive.
 
-**Principes fondamentaux :**
-- Pas un test psychométrique scientifique — présenter comme outil de réflexion personnel
-- Aucun stockage de réponses ou résultats
-- 20 questions fixes, 4 réponses par question (A/B/C/D)
-- Scoring client uniquement (Math.random(), pas d'API)
-- Affichage du profil dominant à la fin
+### 3.1. Spécification — Mission 1 B3 « 🎯 Se vendre sans se survendre »
 
-**Quatre profils ludiques et traductions professionnelles :**
+- **Durée** : 25 à 35 min.
+- **Format** : diagnostic individuel → échanges en binôme → pitchs express devant l'intervenante.
+- **ILO** : C13 en principal, C7 en appui. À renseigner dans les métadonnées de la mission, dans `univers3.ts`.
 
-| Lettre | Profil ludique | Traduction professionnelle |
-|--------|----------------|--------------------------|
-| A | Le moteur de l'expédition | Orienté action, initiative et résultat |
-| B | Le gardien de la carte | Organisé, fiable et structurant |
-| C | L'éclaireur d'idées | Créatif, curieux et adaptable |
-| D | Le créateur de liens | Relationnel, coopératif et communicant |
+**Étapes :**
 
-**Affichage du résultat (complet pour chaque profil) :**
-1. Nom ludique + traduction professionnelle
-2. Ce que tu apportes dans un groupe (4 bullets)
-3. À valoriser professionnellement (5 skills)
-4. Point de vigilance (1 phrase)
-5. Phrase à compléter (ex. "Dans un contexte professionnel, mon énergie peut m'aider à…")
+| # | Écran | Mécanique | Mode |
+|---|---|---|---|
+| 1 | Quel commercial suis-je ? | 6 cartes profils, sélection de 1 ou 2 maximum (blocage au-delà). Feedback court, puis relance obligatoire : « Quelle situation vécue prouve ce style commercial ? » | Mode 1 |
+| 2 | Ce que j'apporte vraiment | 3 manches. Une qualité est tirée au hasard, sans doublon, avec 1 re-tirage possible par manche. L'étudiant complète « Cette qualité peut se traduire professionnellement par… ». L'exemple reste masqué par défaut (bouton « Voir un exemple »). | Mode 1 |
+| 3 | Se vendre sans se survendre | 9 phrases dans un ordre aléatoire, à classer en Trop vague / Trop prétentieux / Crédible. Drag-and-drop, avec des boutons de repli sur mobile. Correction, score, puis message de synthèse. | Mode 1 |
+| 4 | Mon pitch commercial | 5 champs guidés, assemblés automatiquement. Compteur de mots (cible 90–120). Chrono optionnel de 45 s. Option « Adapter à ma cible » (Recruteur / Manager / Client) : une question d'ajustement s'affiche et l'étudiant retouche lui-même son pitch. | Mode 2 (présentation à l'intervenante) |
+| 5 | Mon axe de progression | 1 compétence à choisir, puis 3 champs : « Cette année, je veux progresser sur… / Parce que… / Ma première action sera… » | Mode 1 |
 
-**Messages obligatoires :**
-- **Avant le quiz :** "Répondez spontanément aux 20 questions. Il n'y a pas de bonne ou de mauvaise réponse. Ce quiz vous aide à identifier votre profil professionnel dominant et vos points d'appui pour progresser."
-- **Après le résultat :** "Ce résultat n'est pas une étiquette définitive. Il sert à t'aider à mieux comprendre tes points d'appui et à préparer ta présentation orale."
+**Fiche finale « Mon positionnement commercial » :**
+1. Mon style dominant, avec la situation qui le prouve.
+2. Mes 3 forces commerciales (issues de l'étape 2).
+3. Ce que je peux apporter.
+4. Mon pitch en 45 s.
+5. Mon axe de progression.
 
-**Fin de mission :**
-Afficher : "Préparez une présentation courte de votre boussole et de votre profil de personnalité professionnelle. Présentez-la à votre intervenante pour votre notation."
+Actions proposées sur la fiche : Modifier · Copier / Imprimer (côté client uniquement) · Mode présentation (grand format) · Valider ma fiche. L'écran de fin rappelle l'évaluation : 50 % oral / 50 % écrit groupe.
 
-Ce que le projet ne doit pas faire pour l'instant :
-- ❌ Reconstruire toute l'architecture ou l'infrastructure existante
-- ❌ Modifier les parcours B1 ou tout élément hors périmètre V3.3
-- ❌ Supprimer ou dégrader les fonctionnalités existantes non listées
-- ❌ Générer automatiquement des profils LinkedIn, posts, messages ou documents professionnels complets
-- ❌ Utiliser le traitement IA (NLP, génération lourde) dans la mission B3 immersive
-- ❌ Utiliser le masculin pour "intervenant" — toujours "intervenante"
-- ❌ Afficher des pistes génériques identiques pour toutes les questions (ex. boussole)
-- ❌ Stocker les données étudiantes dans la plateforme
-- ❌ Créer de fonction de partage automatique (LinkedIn, email, etc.)
-- ❌ Présenter le quiz comme un outil de diagnostic ou de classification définitive
+**Feedback (heuristiques client, aucune IA) :**
 
-Version souhaitée :
-- [x] Version robuste pour usage réel (utilisation en direct en salle de cours)
-- [x] Amélioration ciblée d'un projet existant (mise à jour V3.3)
+| Verdict | Règle |
+|---|---|
+| Vague | Moins de 8 mots, ou absence de verbe d'action commercial (prospecter, relancer, argumenter, suivre, conseiller, négocier…). |
+| Prétentieux | Présence de marqueurs de survente (« excellent », « le meilleur », « n'importe quoi », « meilleur que », superlatifs absolus). |
+| Crédible | Tous les autres cas. |
 
-Priorité principale :
-Appliquer les modifications V3.3 de manière complète, testable et non régressive. L'ordre de traitement suggéré : B2 (3 missions + boussole aléatoire) → PGE2 S1 (mêmes corrections) → PGE2 S2 (conservation) → B3 (création des 3 missions).
+Règles communes à tous les feedbacks :
+- 1 à 2 phrases maximum.
+- Pointer ce qui manque, sans jamais proposer de reformulation complète.
+- Ne jamais bloquer : l'étudiant peut toujours avancer.
+- Toujours afficher le bouton « Améliorer ma formulation ».
+- Documenter les listes de mots en commentaire dans le code.
+
+**Contenus** (profils, qualités, phrases à classer, structure du pitch, compétences, messages de feedback, boutons) : reprendre **à l'identique** la fiche mission. Les stocker dans `src/lib/content/univers3.ts`.
+
+**Détail d'implémentation** : le prompt de la fiche v2 (`prompt-mission-b3-m1-se-vendre.md`) précise :
+- les questions d'ajustement par cible ;
+- les listes de mots des heuristiques et la fonction `evaluerFormulation` ;
+- la clé `sessionStorage` : `b3-m1-se-vendre:<slug>` ;
+- le composant `MissionAVenir` ;
+- le scénario de test complet.
+
+En cas d'écart, CLAUDE.md fait foi pour les règles et le prompt fait foi pour le détail des écrans.
+
+**Messages clés :**
+
+| Moment | Message |
+|---|---|
+| Synthèse de l'étape 3 | « Se vendre professionnellement, ce n'est pas se surestimer. C'est être capable d'expliquer ce qu'on apporte avec des mots concrets, crédibles et adaptés. » |
+| Après l'étape 1 | « Un profil commercial n'est pas une étiquette. L'objectif est d'identifier ce que tu peux valoriser et ce que tu dois encore développer. » |
+
+**Vocabulaire à utiliser** : mission, cible, pitch, posture, valeur ajoutée, challenge, opportunité, négociation, terrain, action, progression. Le ton est professionnel, énergique et direct, jamais infantilisant.
+
+### 3.2. Rappel — Mini quiz B2 M1 (codé, non déployé)
+
+- 20 questions, 4 profils A/B/C/D, scoring client, profil dominant uniquement, aucun stockage.
+- C'est un outil de réflexion, pas un diagnostic.
+- Contenus : `src/lib/content/univers2-quiz.ts`.
+- Ne pas modifier dans la mission active.
 
 ## 4. Contraintes importantes
 
-Contraintes de temps :
-À caler sur le calendrier des cours EDC Paris 2025-2027. Voir Notion "Cours 2025-2027" pour les dates de session.
+Temps : caler les livraisons sur le calendrier EDC (Notion « Cours 2025-2027 »).
 
-Contraintes de budget :
-Privilégier les outils gratuits/peu coûteux déjà identifiés : Supabase, Vercel, npm qrcode. Pas d'ajout de dépendances externes coûteuses.
+Budget : outils gratuits ou peu coûteux déjà en place (Supabase, Vercel, npm qrcode). Aucune dépendance payante.
 
 Contraintes techniques :
-- **Stack imposé** : Next.js 15 App Router, TypeScript strict, Tailwind CSS, Shadcn UI, Supabase backend, Vercel deployment
-- **Pas de traitement IA dans B3 immersive** : la mission doit rester purement scénaristique, sans NLP ou génération de contenu par l'application
-- **Univers isolés** : vocabulaire différent par univers, jamais de mélange (ex. pas de métaphore avion dans Univers 2 ou 3)
-- **Aucune donnée étudiante stockée** : l'application oublie tout après chaque session (univers avec vocabulaire spécifique au lieu de traçabilité)
+- Stack imposée : Next.js 15 App Router, TypeScript strict, Tailwind, Shadcn UI, Supabase, Vercel.
+- **Univers 3 = zéro IA** : pas d'appel à `/api/horizon/*` ni à une API LLM.
+- **Persistance** : état React + `sessionStorage` uniquement, qui s'efface à la fermeture de l'onglet. C'est ce qui permet de survivre à un rechargement de page sans stocker côté serveur.
+- **Univers isolés** : vocabulaire propre à chaque univers, jamais de mélange (pas d'avion ni d'aventure en U3).
 
 Contraintes de design :
-- Immersif et distinct par univers (🧭 aventure S1 + 🕵️ détective S2 pour Univers 2 ; 🎯 mission pour Univers 3)
-- Responsive mobile-first (QR Code scan → usage sur téléphone ou tablette)
-- Design premium, cohérent avec la charte SJ Conseil (couleurs, typographie, minimalisme dramatique)
-- Peu de texte, beaucoup d'action, feedback court et visuel
+- Thème 🎯 mission : navy / or / noir, premium, minimaliste, dramatique.
+- Mobile-first : les étudiants arrivent par scan de QR Code.
+- Une consigne, une zone d'action et un bouton principal par écran. Feedback visuel sur 1 à 2 lignes.
 
-Contraintes de pédagogie :
-- Ne jamais faire le travail à la place de l'étudiant (ex. pas de LinkedIn généré, pas de post LinkedIn complet)
-- Toujours guider vers la réflexion personnelle, pas vers une réponse unique
-- Boussole aléatoire pour éviter la mémorisation inter-groupes
-- Deux modes de feedback : Mode 1 (feedback immédiat) et Mode 2 (validation par l'intervenante)
-- Chaque cours = 2 exercices Mode 1 + 1 exercice Mode 2
+Contraintes pédagogiques :
+- Guider, questionner et challenger, sans jamais répondre à la place de l'étudiant.
+- Mode 1 = feedback immédiat ; Mode 2 = validation par l'intervenante.
+- L'aléatoire (tirages, ordre des phrases) évite la mémorisation d'un groupe à l'autre.
 
-Contraintes de confidentialité / RGPD :
-- Aucune collecte de données personnelles (nom, email, données de contact)
-- Aucun stockage de données entre les sessions
-- Entrée uniquement via QR Code de groupe (pas de création de compte)
-- Respect de la vie privée des étudiants
+Confidentialité / RGPD :
+- Aucune collecte de nom, d'email ou de contact.
+- Accès par QR Code de groupe uniquement, sans compte.
+- Rien n'est conservé entre les sessions.
+
+Usage : Stéphanie doit pouvoir activer et verrouiller la mission depuis l'admin, sans code.
 
 ## 5. Outils, plateformes et technologies
 
-Outils ou plateformes imposés :
-- **Frontend** : Next.js 15 App Router, TypeScript strict, Tailwind CSS, Shadcn UI
-- **Backend** : Supabase (PostgreSQL)
-- **Déploiement** : Vercel
-- **QR Code** : npm qrcode
-- **API** : OpenAI/Anthropic (uniquement pour Univers 1 et 3, pas pour B3 en V3.3)
+Imposés :
+- **Front** : Next.js 15, TypeScript strict, Tailwind, Shadcn UI.
+- **Back** : Supabase.
+- **Déploiement** : Vercel (connexion GitHub).
+- **QR** : npm qrcode.
 
-Outils ou plateformes à éviter :
-- Pas de nouvelle dépendance lourde (ex. pas de framework CSS supplémentaire)
-- Pas d'API externe coûteuse ou non justifiée
-- Pas de base de données alternative (Supabase est imposé)
+Préférés : composants existants de `src/components/shared/` et `src/components/univers3/shared/`.
+
+À éviter :
+- Nouvelle librairie (y compris de drag-and-drop) : utiliser l'API HTML5 native ou l'existant.
+- Autre base de données que Supabase.
+- API externe payante.
 
 ## 6. Structure du projet
 
-Dossiers ou fichiers importants (structure réelle — un seul routing dynamique `[slug]`, pas de dossiers séparés par niveau) :
-- `src/app/[slug]/page.tsx` : point d'entrée unique. Récupère le groupe (Supabase `groups`) par son slug de QR Code, puis dispatch vers `Univers1Page` / `Univers2Page` / `Univers3Page` selon `group.universe`
-- `src/components/univers1/` : parcours Univers 1 "Passeport vers le Stage" (B1/PGE1) — stabilisé, ne pas modifier
-- `src/components/univers2/` : parcours Univers 2 "Expédition Professionnelle" (B2/PGE2)
-  - `Cours1Boussole.tsx` + `CompassDial.tsx` : boussole professionnelle aléatoire B2 M1 Temps 1 (aléatoire, pistes spécifiques par question)
-  - `Cours1Quiz.tsx` : **NOUVEAU** — mini quiz de personnalité professionnelle B2 M1 Temps 2 (20 questions, 4 profils, scoring client)
-  - `Cours2Linkedin.tsx` : atelier guidé image professionnelle (B2 M2, pas de génération de profil)
-  - `Cours3RevelateurIdees.tsx` : révélateur d'idées LinkedIn (B2 M3, pas de génération de post)
-  - `Cours4EnqueteJobboards.tsx` / `Cours5PitchProfessionnel.tsx` / `Cours6Strategie30Jours.tsx` : séances PGE2 S2 (univers détective, conservées)
-  - `shared/` (thème aventure) et `shared/*Detective*` (thème S2) : header/badge/stepper d'exercice
-- `src/components/univers3/` : parcours Univers 3 "La Mission" (B3) — **en production : encore l'ancien système à 6 missions pilotées par IA** (`HorizonShell.tsx` + `/api/horizon/generate`). La refonte V3.3 (3 missions statiques sans IA : `Mission1CommunicationSensible.tsx`, `Mission2ReunionEfficace.tsx`, `Mission3ImmersionControle.tsx`, `shared/`, `src/lib/content/univers3.ts`) est **codée et testée mais volontairement non déployée** — voir section 17
-- `src/lib/content/` : contenu pédagogique statique en TypeScript (questions, pistes, feedbacks, scénarios) — `univers2*.ts` (déployé) et `univers3.ts` (en attente, voir section 17)
-- `src/app/admin/` + `src/app/api/admin/` : interface d'administration (pilotage de mission active, verrouillage, planning, gestion des groupes)
-- `src/components/` : composants réutilisables (mission card, feedback, boutons partagés en `src/components/shared/`)
-- `src/lib/` : utilitaires (Supabase, QR Code, constantes, contenu)
-- `public/` : assets (logos univers, icônes, images)
-- `CLAUDE.md` : ce fichier (contexte du projet pour Claude Code)
+Fichiers importants :
+- `src/app/[slug]/page.tsx` : point d'entrée unique. Récupère le groupe par son slug de QR Code, puis dispatche vers `Univers1Page`, `Univers2Page` ou `Univers3Page` selon `group.universe`.
+- `src/components/univers1/` : Univers 1, **ne pas modifier**.
+- `src/components/univers2/` : Univers 2. Contient `Cours1Boussole.tsx`, `CompassDial.tsx`, `Cours1Quiz.tsx`, `Cours2Linkedin.tsx`, `Cours3RevelateurIdees.tsx`, ainsi que `Cours4-6` (S2 détective) et `shared/`.
+- `src/components/univers3/` : Univers 3.
+  - **En production** : `HorizonShell.tsx` (6 missions IA), `AlertSession.tsx`, `SimulationRunner.tsx`, etc.
+  - **En local, non commité (refonte V3.3)** : `Mission1CommunicationSensible.tsx`, `Mission2ReunionEfficace.tsx`, `Mission3ImmersionControle.tsx`, `shared/`, et une réécriture de `HorizonShell.tsx`.
+  - **À créer** : `Mission1SeVendre.tsx`. C'est un nom proposé : suivre la convention existante.
+  - **Remplacé** : `Mission1CommunicationSensible.tsx` et ses contenus dans `univers3.ts`. Les retirer du routage, mais **ne pas supprimer** les fichiers sans validation (réutilisation possible plus tard).
+- `src/lib/content/` : contenus pédagogiques statiques (`univers2*.ts` déployés, `univers3.ts` local).
+- `src/app/admin/` + `src/app/api/admin/` : pilotage (mission active, verrouillage, planning, groupes).
 
-Fichiers à ne pas modifier sans validation :
-- `src/lib/supabase/` : clients et logique d'accès Supabase (auth admin, requêtes groupes)
-- Schéma/contenu de la table Supabase `missions` : gérée directement dans Supabase (pas de fichier de migration dans ce repo)
-- `.env.local` : secrets (clés API, credentials Supabase)
-- `src/components/univers1/` : Univers 1 (en dehors du périmètre V3.3)
+À ne pas modifier sans validation :
+- `src/lib/supabase/`
+- La table Supabase `missions` (gérée directement dans Supabase, sans migration dans le repo).
+- `.env.local`
+- `src/components/univers1/`
+- Tout fichier de l'Univers 3 **déployé** (`HorizonShell.tsx` en prod, `/api/horizon/*`, `/api/simulation/*`).
 
-Fichiers ou dossiers à ignorer :
-- `/node_modules/`
-- `.git/`
-- `.vercel/`
-- `/dist/` ou `/.next/`
+À ignorer : `node_modules/`, `.git/`, `.vercel/`, `.next/`, `dist/`.
+
+⚠️ **Avant toute modification**, lancez `git status` pour confirmer que les fichiers locaux B3 non commités sont toujours présents. S'ils manquent, arrêtez-vous et prévenez Stéphanie.
 
 ## 7. Données, fichiers et contenus
 
-Sources utilisées :
-- [x] Supabase (tables de contenus pédagogiques : questions boussole, critères, scenarios)
-- [x] Configuration statique (constantes TypeScript pour univers, couleurs, textes)
-- Document de spécifications V3.3 (pour tous les contenus manquants)
+Sources :
+- Constantes TypeScript dans `src/lib/content/`.
+- Supabase pour les groupes, les missions et le pilotage.
+- Fiches mission `.docx` fournies par Stéphanie.
 
-Emplacement des données :
-- Contenus pédagogiques : tables Supabase (`questions`, `pistes`, `feedback`, `scenarios`, etc.)
-- Configuration statique : fichiers TypeScript dans `/lib/constants/`
-- Assets : `/public/univers/`
+Formats d'entrée (Mission 1 B3), à typer dans `univers3.ts` :
 
-Format d'entrée :
-- Questions de la boussole : tableau JSON `{ direction: string, questions: [{ question, aide, pistes[], relance }] }`
-- Questions du quiz : tableau JSON `{ id, texte, reponses: [{ lettre, texte }] }`
-- Résultats quiz : objet JSON `{ A: { nom, traduction, apports[], valorisation[], vigilance, phrase }, B: {...}, C: {...}, D: {...} }`
-- Pistes boussole : tableau spécifiques, jamais génériques
-- Feedback : objet JSON `{ type: "success" | "alert" | "neutral", message: string }`
+| Contenu | Format |
+|---|---|
+| Profils | `{ id, nom, description }[]` (6) |
+| Qualités | `{ qualite, exemple }[]` (10) |
+| Phrases | `{ texte, categorie: "vague" \| "pretentieux" \| "credible" }[]` (9) |
+| Pitch | `{ id, amorce }[]` (5) + `cibles: { id, question }[]` (3) |
+| Compétences | `string[]` (14) |
+| Feedbacks | `{ type: "success" \| "alert" \| "neutral", message }` |
+| Métadonnées | `{ ilo: ["C13", "C7"], duree, niveau: "B3" }` |
 
-Format de sortie attendu :
-- Composants React pour chaque mission
-- Pages Next.js pour chaque univers/niveau
-- Interface admin pour Stéphanie (pilotage en direct)
+Sortie attendue : un composant React par mission et la fiche finale rendue côté client.
 
 Règles de traitement :
-- Les questions de la boussole (B2 M1 Temps 1) doivent être **aléatoires** (Math.random())
-- Les pistes affichées doivent être **spécifiques à la question**, jamais génériques
-- Le mini quiz (B2 M1 Temps 2) doit être présenté comme **outil de réflexion ludique**, jamais comme test diagnostique ou classification définitive
-- Le scoring du quiz doit rester **côté client** (aucun stockage, aucun envoi serveur)
-- Les résultats du quiz doivent afficher **le profil dominant uniquement** (pas de profils secondaires ou scores)
-- Les feedbacks doivent être **courts** (une phrase, max 2 lignes)
-- L'application doit **ne jamais générer de livrable complet** (LinkedIn, post, document)
-- L'univers avion (Univers 1) ne doit **jamais** apparaître dans Univers 2 ou 3
+- Tous les tirages et ordres aléatoires se font côté client (`Math.random()`).
+- Les feedbacks sont courts : 1 phrase, 2 lignes maximum.
+- Les contenus viennent de la fiche mission, sans reformulation.
 
-Données sensibles :
-- Aucune donnée personnelle étudiante ne doit être collectée, affichée ou stockée
-- Les clés API OpenAI/Anthropic doivent rester dans `.env.local`, jamais dans le code source
-- Les credentials Supabase (clé secrète, URL) doivent rester confidentiels
+Données sensibles : aucune donnée étudiante hors du navigateur. Les secrets restent dans `.env.local`.
 
-## 8. Site web, page web ou application
+## 8. Application — écrans et UX
 
-Objectif de l'interface :
-Créer une expérience pédagogique gamifiée immersive qui guide les étudiants à travers des ateliers carrière différenciés par niveau, sans stocker leurs données personnelles, pilotée en direct par l'intervenante.
+**Univers 3 — La Mission (B3), parcours à 6 missions :**
 
-Pages ou écrans nécessaires :
+| # | Mission | Statut |
+|---|---|---|
+| 1 | 🎯 Se vendre sans se survendre | À coder (mission active). Remplace « Communication professionnelle sensible ». |
+| 2 | Conduite de réunion efficace | Codée en local, non testée. |
+| 3 | 48h pour reprendre le contrôle | Codée et testée en local. |
+| 4 à 6 | À définir | **Verrouillées** : carte « Mission à venir », non cliquable, sans aucun contenu IA. Contenus à créer plus tard. |
 
-### Univers 1 — Passeport vers le Stage (B1/PGE1) — *Stabilisé*
-- Écran d'accueil (scan QR Code → détection groupe B1)
-- 6 checkpoints (progression séquentielle)
-- Chaque checkpoint : 2 exercices Mode 1 (feedback immédiat) + 1 exercice Mode 2 (validation intervenante)
+**Admin** :
+- 9 groupes, QR Codes.
+- Mission active.
+- Verrouillage.
+- Vue test « en tant qu'étudiant ».
 
-### Univers 2 — Expédition Professionnelle (B2/PGE2) — *En révision V3.3*
-- **Semestre 1 — Univers 🧭 aventure** (B2 + PGE2)
-  - **Mission 1 — Profil professionnel** (2 temps) :
-    - Temps 1 : Boussole professionnelle aléatoire (4 directions, pistes spécifiques, feedback immédiat)
-    - Temps 2 : Mini quiz de personnalité professionnelle (20 questions, 4 profils, résultat personnalisé)
-  - **Mission 2 — Image professionnelle** (atelier guidé LinkedIn, pas de génération)
-  - **Mission 3 — Communication professionnelle** (révélateur d'idées, pas de génération de post)
-  - 3 séances PGE2 S1 (mêmes que B2)
-  - Chaque mission (sauf M1 qui a 2 temps) : 2 exercices Mode 1 + 1 exercice Mode 2
-- **Semestre 2 — Univers 🕵️ détective** (PGE2 uniquement)
-  - 3 séances PGE2 S2 (Exploration opportunités, Relations professionnelles, Concrétisation projet)
-  - Avec fonctionnalité "Qui est en face de moi ?" conservée
+**Contenus clés de la Mission 1 :**
+- Titre : « 🎯 Se vendre sans se survendre ».
+- Promesse : « Clarifie ta posture commerciale et construis un pitch crédible ».
+- CTA : Lancer la mission · Choisir mon profil · Transformer ma qualité · Classer la phrase · Construire mon pitch · Tester mon pitch · Améliorer ma formulation · Choisir mon axe de progression · Valider ma fiche · Présenter à l'intervenante.
 
-### Univers 3 — La Mission (B3) — *Création V3.3*
-- **Séance 1** : Communication professionnelle sensible
-- **Séance 2** : Conduite de réunion efficace
-- **Séance 3** : Mission immersive "48h pour reprendre le contrôle" (alertes aléatoires, note de synthèse finale)
-
-### Espace Admin (Stéphanie)
-- Liste des 9 groupes (QR Codes associés)
-- Contrôle de la mission active (univers, niveau, cours en cours)
-- Verrouillage/déverrouillage de groupes
-- Vue test pour prévisualiser en tant qu'étudiant
-
-Contenus importants :
-- **Titre principal** : "EDC Career Quest" ou titre univers selon la page
-- **Promesse** : Clarifier le but pédagogique de chaque exercice (ex. "Découvre ton profil professionnel")
-- **CTA principal** : Boutons clairs ("Lancer la mission", "Voir des pistes", "Remettre la synthèse", etc.)
-- **Sections obligatoires** : Texte initial (contexte), exercice/question, feedback, transition vers exercice suivant
-- **Éléments de réassurance** : "Ces pistes t'aident à réfléchir, pas à la place de toi" ; "Présente-la à ton intervenante pour notation"
-
-Style visuel souhaité :
-- **Univers 1** : Univers avion (décollage, tour de contrôle, embarquement, équipage) — palette bleu ciel/or
-- **Univers 2 S1** : Univers aventure (boussole, routes, expédition) — palette verte/bronze
-- **Univers 2 S2** : Univers détective (enquête, indices, piste) — palette grise/noir/bronze
-- **Univers 3** : Univers mission (stratégie, décision, timeline) — palette bleu marine/or/noir
-- Style général : **premium, minimaliste, dramatique** (fort contraste, peu de texte, beaucoup d'impact visuel)
-
-Références ou inspirations :
-- Charte SJ Conseil : couleurs (ivoire, or/bronze, noir, navy), typographie (Bebas Neue display, Gill Sans body), minimal high-contrast
-- TEDx : slides d'impact, peu de texte, questions puissantes
-- Gamification : progression visible, feedback rapide, petit défi par étape
-
-Règles UX :
-- L'interface doit être claire pour un étudiant non technique (scan QR → action immédiate)
-- Les actions principales doivent être visibles et un seul bouton principal par écran
-- Les textes doivent être simples, orientés vers l'action, pas vers l'information
-- Responsive mobile-first (QR scan = accès mobile)
-- Pas de formulaires longs, pas d'écrans chargés
-- Feedback court et visuel (couleur, icône, message sur 1-2 lignes)
-- Ne jamais préemplir ou générer une réponse à la place de l'étudiant
+**Règles UX :**
+- Un bouton principal par écran.
+- Action immédiate, pas de longs paragraphes : l'exemple est dépliable.
+- Barre de progression sur les 5 étapes.
+- Lisible sur mobile. Le mode présentation doit être lisible depuis le fond d'une salle.
+- Ne jamais préremplir une réponse.
 
 ## 9. Commandes utiles
 
-Installation :
 ```bash
-npm install
-```
-
-Lancer le projet en local :
-```bash
-npm run dev
-# À l'adresse http://localhost:3000
-```
-
-Tester le projet :
-```bash
-npm run test
-# ou
-npm run test:watch
-```
-
-Vérifier la qualité :
-```bash
-npm run lint
-npm run format
-```
-
-Créer une version de production :
-```bash
-npm run build
-```
-
-Déployer sur Vercel :
-```bash
-vercel deploy
-# ou connexion GitHub automatique via Vercel Dashboard
+npm install          # installation
+npm run dev          # local → http://localhost:3000
+npm run test         # tests (ou npm run test:watch)
+npx tsc --noEmit     # vérification TypeScript
+npx eslint src/      # lint
+npm run build        # build de production
+vercel deploy        # déploiement (uniquement avec accord de Stéphanie)
 ```
 
 ## 10. Règles de travail pour Claude dans ce projet
 
 Avant de modifier :
-- Comprendre précisément ce qui doit changer (relire la fiche mission V3.3)
-- Identifier les fichiers concernés (ne modifier que ce qui est listé)
-- Expliquer brièvement le plan d'action
-- Demander validation avant toute modification risquée (schéma base de données, règles d'accès par groupe)
+- Relire la section 3.1 et la fiche mission.
+- Vérifier l'état local B3 (`git status`).
+- Présenter un plan de 10 lignes maximum : fichiers touchés, composants réutilisés et créés, emplacement de la mission dans le parcours.
+- **Attendre la validation** avant de coder.
 
 Pendant la modification :
-- Appliquer uniquement les modifications V3.3 listées, ne rien de plus
-- Conserver les fonctionnalités existantes non concernées
-- Éviter la sur-ingénierie
-- Ne pas ajouter de dépendances inutiles
-- Garder le code compréhensible et maintenable
-- Vérifier que le vocabulaire/univers est cohérent (pas de mélange d'univers dans un écran)
+- Toucher uniquement ce qu'exige la mission active.
+- Réutiliser les composants et le thème U3.
+- Aucune dépendance ajoutée.
+- Code simple, commenté sur les points sensibles : heuristiques de feedback, aléatoire, persistance.
 
 Après la modification :
-- Résumer ce qui a été changé (fichiers touchés)
-- Indiquer comment vérifier que tout fonctionne (test scenario pour chaque niveau)
-- Signaler les limites, risques ou points à améliorer
-- Proposer une étape suivante claire (ex. créer les questions manquantes pour la boussole, tester B2 M1 avec un groupe simulation, etc.)
+- Lister les fichiers modifiés.
+- Indiquer les hypothèses prises.
+- Fournir la checklist de test réalisée.
+- Signaler les points à valider par Stéphanie : textes, limites des heuristiques, éléments « à sourcer ».
+- Proposer une prochaine étape claire.
+- Ajouter une entrée au Journal (section 16).
 
 ## 11. Tests et vérification
 
-Méthode de vérification attendue :
-Parcourir chaque univers/niveau de bout en bout comme le ferait un groupe d'étudiants :
-1. Scan QR Code → identification du groupe et univers correct
-2. Navigation mission → exercices s'enchaînent dans le bon ordre
-3. Feedback affichage → messages clairs et cohérents avec le mode (immédiat ou validation)
-4. Design → palette et univers narratif cohérents, responsive mobile
-5. Admin → Stéphanie peut verrouiller un groupe, changer de mission active
-6. Aucune donnée sensible exposée
+Scénario de test — Mission 1 B3 (en local, groupe B3) :
+1. Scan du QR Code → Univers 3, thème 🎯, Mission 1 visible.
+2. Étape 1 : la sélection d'un 3ᵉ profil est bloquée ; la relance est obligatoire.
+3. Étape 2 : 3 qualités distinctes sont tirées. Tester les 3 verdicts :
+   - vague : « Je suis motivé » ;
+   - prétentieux : « Je suis le meilleur » ;
+   - crédible : une phrase avec une action concrète.
+4. Étape 3 : les 9 phrases sont dans un ordre différent à chaque rechargement ; le score s'affiche ; le classement fonctionne sur mobile.
+5. Étape 4 : le compteur de mots fonctionne, le chrono de 45 s aussi, et la question de l'option cible s'affiche.
+6. Étape 5, puis fiche finale : les 5 rubriques sont remplies avec les seules saisies de l'étudiant ; le mode présentation est lisible.
+7. Missions 4 à 6 : cartes verrouillées, non cliquables. Si l'admin les active, un écran « Mission à venir » s'affiche, sans erreur.
+8. Un rechargement en cours de mission reprend à la bonne étape. À la fermeture de l'onglet, plus rien ne subsiste.
+9. Onglet Réseau : **aucune requête** vers une API IA ni aucune écriture de données étudiantes.
 
-Données ou scénario de test :
-
-**Univers 1 — B1** (validation de non-régression) :
-- QR Code groupe B1-A → accès Univers 1 "Passeport vers le Stage"
-- Parcourir un checkpoint complet (2 exercices Mode 1 + 1 Mode 2)
-- Vérifier que le vocabulaire "Production à reporter dans le livrable" est utilisé
-
-**Univers 2 — B2** (cible de la mise à jour) :
-- QR Code groupe B2-A → accès Univers 2 "Expédition Professionnelle"
-- Mission 1 (Boussole) : tirer une question au hasard × 3 fois, vérifier que chaque question a des pistes spécifiques, message final "Présentez-la à votre intervenante"
-- Mission 2 (Image professionnelle) : parcourir l'atelier guidé, vérifier qu'aucun profil LinkedIn n'est généré, affichage de critères/feedback
-- Mission 3 (Communication) : parcourir le révélateur d'idées, vérifier qu'aucun post LinkedIn n'est généré, guidance vers réflexion personnelle
-- Vérifier accès arrêté après Mission 3 (pas accès Missions 4-6)
-
-**Univers 2 — PGE2 S1** (même test que B2 pour les 3 premières séances)
-
-**Univers 2 — PGE2 S2** (validation de conservation) :
-- QR Code groupe PGE2-A → accès Univers 2 "Dossier Alternance & Stage"
-- Parcourir fonctionnalité "Qui est en face de moi ?" (scène visuelle, identification interlocuteur)
-- Vérifier que design détective (🕵️) est appliqué
-
-**Univers 3 — B3** (création V3.3) :
-- QR Code groupe B3 Finance → accès Univers 3 "La Mission"
-- Séance 1 : Message professionnel sensible
-- Séance 2 : Ordre du jour + plan de réunion
-- Séance 3 : Mission immersive, tirer une alerte au hasard × 3 fois, remplir note de synthèse
-- Vérifier que design mission (🎯) est appliqué, pas d'IA embarquée
-
-**Admin** :
-- Se connecter à l'espace admin avec credentials
-- Lister les 9 groupes, scanner un QR Code
-- Verrouiller un groupe, déverrouiller
-- Changer la mission active (ex. passer de B2 M1 à B2 M2)
-- Prévisualiser en tant qu'étudiant (voir l'app du point de vue B2-A)
+Non-régression :
+- U1 : un checkpoint complet.
+- U2 : B2 M1 à M3 et PGE2 S2 « Qui est en face de moi ? ».
+- Admin : verrouillage et changement de mission active.
 
 Critères de réussite :
-- ✅ Chaque QR Code redirige vers le bon univers/niveau
-- ✅ Les règles d'accès B2 (3 missions) et PGE2 (6 séances) sont opérationnelles
-- ✅ Boussole B2 M1 fonctionne en aléatoire avec pistes spécifiques
-- ✅ Pas de génération automatique de livrable (LinkedIn, post, etc.)
-- ✅ Design cohérent par univers et par semestre (aventure vs détective pour Univers 2)
-- ✅ Tous les textes finaux demandent "l'intervenante" (féminin)
-- ✅ Pas de mélange d'univers narratifs (avion jamais dans U2 ou U3)
-- ✅ Univers 1 et 3 non régressés
-- ✅ Aucune donnée personnelle stockée
-- ✅ Admin fonctionne : verrouillage, changement de mission active
+- ✅ Les 5 étapes sont jouables en 25 à 35 min, sur mobile et ordinateur.
+- ✅ Aucun texte n'est rédigé à la place de l'étudiant.
+- ✅ Aucune IA et aucun stockage serveur en U3.
+- ✅ « Intervenante » au féminin partout.
+- ✅ Aucun mélange d'univers.
+- ✅ U1 et U2 intacts.
+- ✅ `tsc` et `eslint` : 0 erreur.
 
 ## 12. Sécurité et points de vigilance
 
-Claude doit faire attention à :
-- **Ne jamais exposer** de clés API OpenAI / Anthropic / Supabase dans le code source
-- **Écrire les secrets uniquement** dans `.env.local` (jamais dans le repo public)
-- **Ne pas supprimer ou écraser** de fichiers sans validation (ex. contenu d'une mission existante)
-- **Vérifier qu'aucune donnée personnelle** n'est collectée, affichée, ou stockée à aucun moment (RGPD)
-- **Signaler les risques** : coûts d'API (appels IA pour U3 si implémentés), quotas Supabase/Vercel, limites de déploiement
-- **Prévenir avant modification structurelle** : changement de schéma Supabase, règles d'accès par groupe, modification des Univers 1 ou 3
-- **Tester la non-régression** : Univers 1 et 3 doivent rester opérationnels sans dégradation
+- Ne jamais exposer de clés (OpenAI, Anthropic, Supabase) : elles restent dans `.env.local`, jamais dans le code.
+- Ne supprimer ni écraser aucun fichier sans validation, en particulier les fichiers B3 locaux non commités et les contenus de mission existants.
+- Prévenir avant toute modification structurelle : schéma Supabase, règles d'accès par groupe, compteur admin, routeur U3.
+- Ne rien commiter ni déployer sans accord explicite de Stéphanie.
+- Signaler les risques : quotas Vercel / Supabase, et coûts d'API tant que l'ancien B3 IA reste en production.
 
-Informations sensibles à ne jamais inclure dans le projet :
-- Clés API OpenAI / Anthropic
-- Credentials Supabase (clé secrète, URL de connexion, token)
-- Mots de passe admin (credentials Stéphanie)
-- Toute donnée personnelle étudiante réelle (noms, emails, données de contact)
+Ne jamais inclure dans le projet : clés API, credentials Supabase, mot de passe admin, données étudiantes réelles.
 
 ## 13. Documentation attendue
 
-Documentation utile à maintenir/créer :
-- **README.md** : comment lancer le projet en local, déployer, accéder à l'admin
-- **CLAUDE.md** (ce fichier) : contexte du projet pour Claude Code
-- **Architecture.md** (optionnel) : structure des univers, logique de progression, regles d'accès par groupe
-- Commentaires en code : sections sensibles (aléatoire dans boussole, validation par intervenante, règles d'univers)
-- **Fiche mission V3.3** : spécifications détaillées (disponible dans `fiche-edc-career-v3.3.docx`)
-
-Emplacement souhaité :
-- README.md : racine du projet
-- CLAUDE.md : racine du projet (ce fichier)
-- Commentaires en code : `/app/`, `/lib/`, `/components/`
+- **README.md** (racine) : lancer, déployer, accéder à l'admin, modifier les contenus dans `src/lib/content/`.
+- **CLAUDE.md** (ce fichier) : tenir à jour la section 1 « Tâche en cours » et la section 16 « Journal ».
+- **Commentaires dans le code** : heuristiques de feedback, aléatoire, persistance `sessionStorage`, règles d'univers.
+- **Fiches mission** : `fiche-edc-career-v3.3.docx`, `fiche-mission-b3-m1-se-vendre-v2.docx` (et son prompt `prompt-mission-b3-m1-se-vendre.md`). La fiche v1 est périmée.
 
 ## 14. Décisions déjà prises
 
-Décisions importantes :
-- **Stack** : Next.js 15 + TypeScript strict + Tailwind + Shadcn UI + Supabase — pour rapidité, écosystème mature, productivité
-- **Entrée** : QR Code de groupe uniquement (pas de compte étudiant) — pour simplicité d'usage et confidentialité
-- **Progression** : pilotée par l'espace admin (Stéphanie contrôle en direct) — pour agentivité pédagogique
-- **Univers 1** : stabilisé, ne pas modifier dans V3.3
-- **Univers 2** : logique 2 Mode 1 + 1 Mode 2 par cours (cohérence pédagogique)
-- **Univers 2** : vocabulaire de non-mémorisation différent de U1 (pas "trace enregistrée" ni "production à reporter")
-- **Univers 2** : aucun univers avion (réservé à U1) — utiliser avion/détective
-- **Univers 2** : pas de génération automatique de profil LinkedIn, post, ou livrable
-- **Univers 3** : purement scénaristique (pas d'IA embarquée pour V3.3)
-- **Évaluation** : 50% note orale individuelle + 50% note groupe écrite
+- **Stack** : Next.js 15, TypeScript, Tailwind, Shadcn, Supabase, Vercel. Raison : rapidité et écosystème mature.
+- **Entrée** : QR Code de groupe, sans compte. Raison : simplicité et confidentialité.
+- **Progression** : pilotée par l'admin. Raison : Stéphanie contrôle la séance en direct.
+- **Univers 1** : stabilisé et gelé.
+- **Univers 3** : scénaristique, sans IA embarquée. Les feedbacks de la Mission 1 passent par des heuristiques client.
+- **Persistance** : `sessionStorage` uniquement. Raison : reprendre après un rechargement sans stocker de données.
+- **Évaluation** : 50 % note orale individuelle + 50 % note groupe écrite.
+- **B3** : pas de déploiement sans validation séparée de Stéphanie.
+- **Accord du texte** : l'amorce « Je suis étudiant en B3, orienté commerce / négociation. » est un champ modifiable. L'étudiant l'accorde ou la précise lui-même.
+- **Export de la fiche** : Copier (`navigator.clipboard`) et Imprimer (`window.print()`) côté navigateur. Pas de PDF serveur, pas de nouvelle dépendance.
+- **B3 = 6 missions** (décision du 2026-09-29). « Se vendre sans se survendre » remplace « Communication professionnelle sensible » en Mission 1. Le compteur admin reste à 6. Les missions 4 à 6 sont verrouillées (« Mission à venir ») jusqu'à la création de leurs contenus.
 
 Choix refusés :
-- Génération automatique de livrable final par l'application (ex. profil LinkedIn complet)
-- Utilisation de traitement IA lourd dans B3 (rester scénaristique)
-- Stockage de données étudiantes entre les sessions
-- Mélange de vocabulaires d'univers (avion uniquement en U1)
+- Génération automatique de livrables (profil LinkedIn, post, pitch).
+- IA dans l'Univers 3.
+- Stockage des données étudiantes.
+- Mélange des vocabulaires d'univers.
+- Séance B3 centrée sur le CV.
 
-Si une décision technique importante doit être prise :
-Expliquer les options simplement, recommander une option, puis attendre validation de Stéphanie si l'impact est élevé (ex. schéma base de données, nouvelles permissions, coûts API).
+Si une décision technique importante se présente : expliquer les options simplement, recommander l'une d'elles, puis attendre la validation.
 
 ## 15. Questions ouvertes
 
-Questions à clarifier avec Stéphanie :
-- Calendrier de livraison de V3.3 (à caler sur planning des cours EDC)
-- Credentials Supabase déjà créés et fonctionnels ? (hypothèse : oui)
-- Déploiement Vercel avec connexion GitHub déjà en place ? (hypothèse : oui)
-- Le contenu des exercices V3.3 (questions boussole, pistes, scenarios B3) doit-il être généré ou importé ? (hypothèse : générer selon spécifications)
-- Sessions de test avec groupes réels avant déploiement ? (recommandé avant usage en cours)
+1. **Contenus des missions 4 à 6 de B3.** Ils seront définis par Stéphanie plus tard. En attendant, ces missions sont verrouillées (voir section 14).
+2. **Règle « 2 exercices Mode 1 + 1 Mode 2 ».** Hypothèse : elle ne s'applique pas strictement à cette mission de 5 étapes. Les étapes 1, 2, 3 et 5 sont en Mode 1 ; le pitch (étape 4) est en Mode 2.
+3. **Mise en production de B3** (refonte V3.3 + Mission 1) : à quelle date, et après quel test avec un groupe réel ?
 
-Si une information manque :
-Faire une hypothèse raisonnable, l'indiquer clairement, puis avancer si le risque est faible. Demander validation de Stéphanie si le risque est élevé (ex. schéma base de données, nouvelles permissions, coûts imprévus).
+Si une information manque : faire une hypothèse raisonnable, l'indiquer, et avancer si le risque est faible. Demander validation si le risque est élevé (schéma, permissions, déploiement, coûts).
 
-## 16. Définition de terminé
+## 16. Définition de terminé et Journal
 
-La mise à jour V3.3 est considérée terminée quand :
-- ✅ B2 affiche 3 missions (pas 6)
-- ✅ Boussole B2 M1 (Temps 1) fonctionne en aléatoire avec pistes spécifiques
-- ✅ Mini quiz de personnalité B2 M1 (Temps 2) complètement implémenté :
-  - 20 questions, 4 profils A/B/C/D
-  - Scoring automatique côté client
-  - Affichage résultat avec tous les éléments (nom + traduction + apports + valorisation + vigilance + phrase)
-  - Messages obligatoires présents (intro + message de précaution)
-  - Aucun stockage de réponses
-- ✅ B2 M2 et M3 fonctionnent en ateliers guidés (pas de génération de livrable)
-- ✅ Mêmes corrections appliquées aux 3 premières séances PGE2 S1
-- ✅ PGE2 S2 conservé et opérationnel
-- ⏳ B3 crée 3 missions (communication, réunion, synthèse 48h) — codé et testé localement, **non déployé** (voir section 17)
-- ⏳ Mission B3 immersive sans traitement IA — idem, en attente de déploiement
-- ✅ Tous les textes finaux demandent "l'intervenante" (féminin)
-- ✅ Formulaires d'évaluation intégrés (note orale + note groupe) — pour B2/PGE2 ; pour B3, prêt mais non déployé
-- ✅ Univers 1 et 3 non régressés (Univers 3 tourne encore sur l'ancien système en production)
-- ✅ Design cohérent par univers (aventure S1, détective S2, mission B3)
-- ✅ Aucune donnée étudiante collectée ou stockée
+La mission active est terminée quand :
+- ✅ La Mission 1 B3 est jouable de bout en bout, conforme à la section 3.1, et la fiche finale est générée.
+- ✅ Les heuristiques de feedback sont fonctionnelles et documentées, sans aucun appel IA.
+- ✅ La persistance fonctionne en `sessionStorage` seul, sans aucune écriture serveur.
+- ✅ Le scénario de test de la section 11 passe, ainsi que la non-régression U1 et U2.
+- ✅ `tsc` et `eslint` : 0 erreur.
+- ✅ Le Journal est mis à jour et les questions ouvertes restantes sont remontées à Stéphanie.
+- ⏳ Déploiement : uniquement après accord (procédure ci-dessous).
 
 Livrables attendus :
-- Codebase Next.js mise à jour et déployable sur Vercel
-- Composants React pour chaque parcours corrigé / créé
-- CLAUDE.md actualisé (ce fichier)
-- Documentation des modifications (changelog ou résumé)
-- Base Supabase avec contenus V3.3 (questions, pistes, scenarios)
-- Tests de non-régression (U1 et U3 opérationnels)
+- Code de la mission (composant + contenus).
+- Branchement dans le routeur U3 local.
+- Résumé des modifications.
+- Liste des points à valider.
 
-Dernière vérification :
-Vérifier que le résultat correspond à l'objectif V3.3 (corrections ciblées, pas de régression), puis fournir un résumé final avec :
-- Fichiers modifiés
-- Étapes de déploiement (build → Vercel)
-- Prochaines étapes recommandées (test avec groupes réels, ajustements pédagogiques, étapes futures)
+### Journal
 
-## 17. Journal V3.3
+**2026-09-29 — Mission 1 B3 « Se vendre sans se survendre » codée et testée en local, non déployée.**
+- La réécriture locale de `HorizonShell.tsx` était introuvable. Décision de Stéphanie : nouveau routeur `MissionShell.tsx` (M1 Se vendre, M2, M3, M4 à M6 → `shared/MissionAVenir.tsx`). `HorizonShell.tsx` reste intact pour la production.
+- Fichiers : `Mission1SeVendre.tsx`, `MissionShell.tsx`, `shared/MissionAVenir.tsx`, bloc `mission1SeVendre` + `evaluerFormulation` dans `univers3.ts`, 1 ligne dans `Univers3Page.tsx` (HorizonShell → MissionShell).
+- Vérifications : tsc OK, build OK, eslint 0 erreur sur les fichiers de la mission (8 erreurs préexistantes dans les anciens fichiers IA U3, à supprimer au déploiement). Scénario de test joué en local sur `b3-negociation` (mobile 375 px + ordinateur), aucune requête API.
+- Non testé : activation de M4 à M6 via l'admin (écrirait dans la base Supabase partagée avec la production).
+- Point à valider : le seuil « moins de 8 mots = vague » (`MOTS_MIN_FORMULATION`) juge vague « Je peux relancer mes prospects avec régularité » (7 mots), contrairement au scénario de la fiche.
+- Aucun commit.
 
-### 2026-09-07 (suite) — Mini quiz de personnalité professionnelle B2 M1 codé et testé, non déployé
+**2026-09-29 — Mission 1 B3 « Se vendre sans se survendre » : spécifiée, à coder.**
+- Fiche `fiche-mission-b3-m1-se-vendre-v2.docx`.
+- Décision : elle remplace « Communication professionnelle sensible ». B3 reste à 6 missions ; M4 à M6 sont verrouillées « Mission à venir » en attendant leurs contenus.
 
-Implémentation du **mini quiz de personnalité professionnelle** (Temps 2 de B2 M1, Séance 1) à partir de la fiche mission `Fiche_Mission_B2_Seance1_BoussoleQuiz.docx` :
-- `src/lib/content/univers2-quiz.ts` : 20 questions fixes, 4 profils A/B/C/D (Le moteur de l'expédition, Le gardien de la carte, L'éclaireur d'idées, Le créateur de liens) avec traduction professionnelle, apports, valorisation, vigilance et phrase à compléter — messages d'intro et de précaution obligatoires inclus
-- `src/components/univers2/Cours1Quiz.tsx` : composant du quiz (intro → 20 questions → résultat), scoring 100% côté client (comptage par lettre), aucun stockage
-- `src/components/univers2/Cours1Boussole.tsx` : remplacement des anciennes étapes 2 (« Carte profil aventurier ») et 3 (« Mon cap professionnel ») par le nouveau Temps 2 (quiz, mode validation intervenante) — le cours passe de 3 étapes à 2 temps (Boussole puis Quiz), conforme à la section 3.1
-- Suppression de `profilsAventuriers` et `CAP_CHAMPS` dans `univers2-cours1.ts` (devenus obsolètes, plus aucune référence ailleurs)
+**2026-09-07 — Mini quiz B2 M1 codé et testé, non déployé.**
+- Fichiers : `univers2-quiz.ts` et `Cours1Quiz.tsx`.
+- La boussole passe à 2 temps (Boussole → Quiz).
+- Vérifications : tsc et eslint OK, test local sur `b2-groupe-a` OK.
+- Aucun commit.
 
-Vérifications effectuées : `npx tsc --noEmit` (0 erreur), `npx eslint` sur les fichiers modifiés (0 erreur), test navigateur complet en local sur `b2-groupe-a` (boussole 4 directions → quiz 20 questions → résultat profil affiché en entier → écran de présentation à l'intervenante), aucune erreur console.
+**2026-09-07 — B2 et PGE2 déployés en production.**
+- Compteur de missions dynamique (3 pour B2, 6 pour PGE2).
+- Boussole : pistes et relance par question, bouton de tirage aléatoire.
+- Rappel de l'évaluation 50/50 en fin de parcours B2.
+- PGE2 S1 réutilise les cours corrigés ; PGE2 S2 est conservé.
 
-**Statut** : codé et testé localement, **non déployé** (aucun commit) — à la demande implicite de prudence sur cette classe de changement (remplacement d'un flow déjà en production). Décision de déploiement à valider avec Stéphanie.
+**2026-09-07 — Refonte B3 V3.3 codée et testée, volontairement non déployée.**
+- Fichiers locaux non commités : `univers3.ts`, `univers3/shared/`, `Mission1/2/3*.tsx`, réécriture de `HorizonShell.tsx`.
+- Mission 3 testée en local. Missions 1 et 2 non testées.
 
-### 2026-09-07 — B2 et PGE2 déployés en production
+### Procédure de déploiement B3 (sur accord de Stéphanie uniquement)
 
-Fichiers modifiés et déployés (push sur `main`) :
-- `src/components/univers2/Univers2Page.tsx` : le compteur "Mission X / 6" codé en dur est devenu dynamique (`X / 3` pour B2, `X / 6` pour PGE2)
-- `src/lib/content/univers2-cours1.ts` + `src/components/univers2/Cours1Boussole.tsx` : la boussole B2 M1 affiche désormais une aide à la réflexion, des pistes spécifiques et une relance **par question tirée** (au lieu de pistes partagées par direction) ; ajout d'un bouton "Tirer une direction au hasard" et du message de rappel obligatoire
-- `src/components/univers2/Cours3RevelateurIdees.tsx` : ajout du rappel des modalités d'évaluation (50% oral / 50% écrit) à l'écran de fin de parcours B2
-
-Non modifié — déjà conforme à la V3.3 :
-- `Cours2Linkedin.tsx` (atelier guidé, pas de génération de profil) et `Cours3RevelateurIdees.tsx` (révélateur d'idées, pas de génération de post)
-- PGE2 S1 (réutilise automatiquement les Cours 1-3 corrigés via `availableFor` dans `univers2.ts`) et PGE2 S2 (détective, "Qui est en face de moi ?" dans `Cours5PitchProfessionnel.tsx`)
-- Vocabulaire féminin "intervenante" déjà systématique
-
-Vérifications effectuées : `npx tsc --noEmit` (0 erreur), `npx eslint src/` (0 erreur, 4 avertissements pré-existants hors périmètre), test navigateur en local sur B2 Groupe A (boussole aléatoire OK).
-
-### B3 — codé et testé, volontairement NON déployé (à la demande de Stéphanie, 2026-09-07)
-
-La refonte de l'Univers 3 existe en fichiers locaux non commités dans le répertoire de travail, prête à être déployée plus tard :
-- `src/lib/content/univers3.ts` : contenu statique et scénaristique des 3 missions B3 — aucun appel IA
-- `src/components/univers3/shared/` : `ExerciseHeader`, `ModeBadge`, `ExerciseStepper`, `MissionHeader` — thème navy/or propre à l'Univers 3
-- `src/components/univers3/Mission1CommunicationSensible.tsx`, `Mission2ReunionEfficace.tsx`, `Mission3ImmersionControle.tsx` : les 3 missions B3 destinées à remplacer les 6 missions pilotées par IA
-- Une version réécrite de `src/components/univers3/HorizonShell.tsx` (routeur 3 missions statiques) existe aussi en local mais n'a **pas** été appliquée — le fichier déployé est toujours l'original à 6 missions IA
-
-**En production actuellement (non touché)** : `HorizonShell.tsx` (6 missions), `/api/horizon/generate` (appel Anthropic), `/api/simulation/*`, `AlertSession.tsx`, `EventFeed.tsx`, `ScenarioDisplay.tsx`, `SimulationRunner.tsx`, `SimulationLauncher.tsx`, `SimulationFeedbackZone.tsx`, et le compteur admin (`src/app/admin/groupes/[slug]/page.tsx` + `next-mission/route.ts`) toujours plafonné à 6 pour `mission-horizon`.
-
-Vérifications effectuées sur le code B3 en local (non déployé) : `npx tsc --noEmit` (0 erreur), `npx eslint src/` (0 erreur), test navigateur local sur B3 Marketing Digital Mission 3 "48h" (fonctionnel, aucune requête réseau vers une API IA). Non testé : Missions 1 et 2 (même structure de composant que la Mission 3 déjà validée).
-
-**Pour déployer B3 plus tard**, il faudra :
-1. Ré-appliquer la réécriture de `HorizonShell.tsx` (router vers `Mission1/2/3` au lieu de M1-M6 avec IA)
-2. Supprimer les fichiers IA orphelins listés ci-dessus (`AlertSession.tsx`, `/api/horizon/*`, `/api/simulation/*`, etc.)
-3. Replafonner le compteur admin à 3 pour `universe === 'mission-horizon'` dans les 2 fichiers admin listés ci-dessus
-4. Mettre à jour la table Supabase `missions` (titres + suppression des lignes 4-6) :
+1. Vérifier que `Univers3Page.tsx` utilise `MissionShell.tsx` (routeur des missions statiques : Mission 1 = « Se vendre sans se survendre », missions 4 à 6 en « Mission à venir » verrouillées). `HorizonShell.tsx` devient alors orphelin et peut être supprimé avec les fichiers IA.
+2. Supprimer les fichiers IA orphelins : `AlertSession.tsx`, `EventFeed.tsx`, `ScenarioDisplay.tsx`, `SimulationRunner.tsx`, `SimulationLauncher.tsx`, `SimulationFeedbackZone.tsx`, `/api/horizon/*`, `/api/simulation/*`.
+3. **Ne pas modifier le compteur admin** : il reste plafonné à 6 pour `mission-horizon`.
+4. Mettre à jour la table Supabase `missions` : titres des missions 1 à 3 **sans supprimer les lignes 4 à 6**. SQL à faire valider avant exécution :
 ```sql
-UPDATE missions SET title = 'Communication professionnelle sensible' WHERE universe = 'mission-horizon' AND number = 1;
+UPDATE missions SET title = 'Se vendre sans se survendre' WHERE universe = 'mission-horizon' AND number = 1;
 UPDATE missions SET title = 'Conduite de réunion efficace' WHERE universe = 'mission-horizon' AND number = 2;
 UPDATE missions SET title = 'Mission immersive — 48h pour reprendre le contrôle' WHERE universe = 'mission-horizon' AND number = 3;
-DELETE FROM missions WHERE universe = 'mission-horizon' AND number > 3;
+-- Lignes 4 à 6 conservées, titres à mettre à jour quand les missions seront définies.
 ```
-5. Retester B3 Missions 1 et 2 avant mise en ligne
+5. Tester toutes les missions B3 en local, puis faire un build.
+6. Commit, push sur `main`, puis vérifier le déploiement Vercel.
