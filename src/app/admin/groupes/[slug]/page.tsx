@@ -6,6 +6,7 @@ import GroupControls from '@/components/admin/GroupControls'
 import QRCodeDisplay from '@/components/admin/QRCodeDisplay'
 import SchedulePlanning from '@/components/admin/SchedulePlanning'
 import type { Group } from '@/types'
+import { specialisationB3 } from '@/lib/content/univers3'
 
 const UNIVERSE_LABELS: Record<string, string> = {
   'passeport-stage': 'Passeport Stage',
@@ -57,11 +58,17 @@ export default async function GroupePage({ params }: Props) {
 
   // L'Univers 2 (Expédition Professionnelle) réserve les cours 4-6 (univers détective) aux PGE2
   // PGE1 Groupe A suit son propre parcours à 3 checkpoints, distinct des 6 checkpoints B1
+  // L'Univers 3 (B3) suit le parcours de la spécialisation du groupe (6 Négociation, 5 Marketing Digital)
+  const parcoursB3 = group.universe === 'mission-horizon' ? specialisationB3(group.specialization) : null
   const totalMissions =
     (group.universe === 'expedition-professionnelle' && group.track === 'bachelor2') ||
     (group.universe === 'passeport-stage' && group.slug === 'pge1-groupe-a')
       ? Math.min(3, universeMissionCount ?? 1)
-      : universeMissionCount
+      : parcoursB3
+        ? Math.min(parcoursB3.missions.length, universeMissionCount ?? parcoursB3.missions.length)
+        : universeMissionCount
+  // En B3, le titre affiché vient de la configuration des spécialisations (la table `missions` est commune aux 3 parcours).
+  const titreMissionActive = parcoursB3?.missions.find(m => m.numero === group.active_mission)?.titre ?? missions?.title
 
   const qrDataUrl = await generateQRCode(slug)
   const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000'
@@ -117,8 +124,8 @@ export default async function GroupePage({ params }: Props) {
                 <dt className="text-gray-500">Mission active</dt>
                 <dd className="text-indigo-400 font-semibold">
                   #{group.active_mission}
-                  {missions && (
-                    <span className="text-gray-400 font-normal ml-2">— {missions.title}</span>
+                  {titreMissionActive && (
+                    <span className="text-gray-400 font-normal ml-2">— {titreMissionActive}</span>
                   )}
                 </dd>
               </div>

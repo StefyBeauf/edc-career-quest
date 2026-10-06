@@ -416,3 +416,486 @@ export function melanger<T>(liste: T[]): T[] {
   }
   return copie
 }
+
+// ═══════════════════════════════════════════════════════════════════════════
+// Spécialisations B3 — configuration unique (CLAUDE.md, section 3.4)
+// ═══════════════════════════════════════════════════════════════════════════
+// Le routeur (MissionShell.tsx), le compteur de l'admin et les titres affichés lisent
+// cette configuration. Pour ajouter Finance au T2 : remplir `missions`, passer `actif`
+// à true, puis enregistrer ses composants dans MissionShell.tsx.
+
+export type SpecialisationB3Id = 'negociation' | 'marketing-digital' | 'finance'
+
+export interface MissionParcoursB3 {
+  numero: number
+  titre: string
+  thematique: string
+  statut: 'disponible' | 'a-venir'
+}
+
+export interface SpecialisationB3 {
+  id: SpecialisationB3Id
+  label: string
+  actif: boolean
+  // Valeurs du champ `specialization` des groupes (Supabase) qui ouvrent ce parcours.
+  codesGroupe: string[]
+  missions: MissionParcoursB3[]
+}
+
+export const B3_SPECIALISATIONS: SpecialisationB3[] = [
+  {
+    // Configuration de production, inchangée : 6 missions.
+    id: 'negociation',
+    label: 'Négociation',
+    actif: true,
+    codesGroupe: ['negociation'],
+    missions: [
+      { numero: 1, titre: 'Se vendre sans se survendre', thematique: 'Positionnement commercial', statut: 'disponible' },
+      { numero: 2, titre: 'Conduite de réunion efficace', thematique: 'Réunion', statut: 'disponible' },
+      { numero: 3, titre: '48h pour reprendre le contrôle', thematique: 'Mission immersive', statut: 'disponible' },
+      { numero: 4, titre: 'Mission à venir', thematique: 'À définir', statut: 'a-venir' },
+      { numero: 5, titre: 'Mission à venir', thematique: 'À définir', statut: 'a-venir' },
+      { numero: 6, titre: 'Mission à venir', thematique: 'À définir', statut: 'a-venir' },
+    ],
+  },
+  {
+    // 5 missions exactement. Missions 2 à 5 : contenus décidés plus tard par Stéphanie.
+    id: 'marketing-digital',
+    label: 'Marketing Digital',
+    actif: true,
+    codesGroupe: ['marketing', 'marketing-digital'],
+    missions: [
+      { numero: 1, titre: 'Trouver sa signature digitale', thematique: 'Positionnement professionnel et culture marketing digital', statut: 'disponible' },
+      { numero: 2, titre: 'Communication professionnelle', thematique: 'Messages professionnels, relance, clarification, désaccord, feedback', statut: 'a-venir' },
+      { numero: 3, titre: 'Organisation et priorisation', thematique: 'Gestion des tâches, priorités, charge de travail, délais', statut: 'a-venir' },
+      { numero: 4, titre: 'Animation et efficacité collective', thematique: "Réunion, collaboration, suivi d'actions, coordination projet", statut: 'a-venir' },
+      { numero: 5, titre: 'Mission immersive de synthèse', thematique: 'Mise en situation professionnelle globale', statut: 'a-venir' },
+    ],
+  },
+  {
+    // Prévue au T2 : entrée inactive, sans contenu. Les groupes Finance ouvrent le repli.
+    id: 'finance',
+    label: 'Finance',
+    actif: false,
+    codesGroupe: ['finance'],
+    missions: [],
+  },
+]
+
+const SPECIALISATION_B3_REPLI: SpecialisationB3Id = 'negociation'
+
+// Repli sûr : un groupe B3 sans spécialisation reconnue (ou dont le parcours est inactif)
+// ouvre le parcours Négociation, comme en production. Aucune erreur bloquante.
+export function specialisationB3(codeGroupe?: string | null): SpecialisationB3 {
+  const trouvee = B3_SPECIALISATIONS.find(s => s.actif && codeGroupe != null && s.codesGroupe.includes(codeGroupe))
+  if (trouvee) return trouvee
+  if (process.env.NODE_ENV !== 'production') {
+    console.warn(`[B3] Spécialisation « ${codeGroupe ?? 'absente'} » non reconnue ou inactive : repli sur le parcours Négociation.`)
+  }
+  return B3_SPECIALISATIONS.find(s => s.id === SPECIALISATION_B3_REPLI)!
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// B3 Marketing Digital — Mission 1 « Trouver sa signature digitale »
+// ═══════════════════════════════════════════════════════════════════════════
+// Textes repris à l'identique de fiche-mission-b3-marketing-digital-signature-v2.docx.
+// Les contenus rédigés par Claude Code sont signalés « À VALIDER PAR STÉPHANIE ».
+
+export type ProfilDigitalId = 'creatif' | 'stratege' | 'analyste' | 'pilote' | 'explorateur' | 'activateur'
+export interface ProfilDigital { id: ProfilDigitalId; nom: string; traduction: string }
+export interface QuestionQuizDigital { id: number; question: string; reponses: { texte: string; profils: ProfilDigitalId[] }[] }
+export interface FicheProfilDigital {
+  profilId: ProfilDigitalId
+  traduction: string
+  forces: [string, string, string]
+  vigilance: string
+  phrase: string
+  questionReflexion: string
+}
+export interface PhraseVague { texte: string; exemple: string }
+export interface CarteFeedbackPairs { id: string; label: string; signification: string }
+export type VerdictDigital = 'vague' | 'pretentieux' | 'long' | 'clair'
+export type ActionCoach = 'profil' | 'formulation' | 'pitch-tester' | 'pitch-clair' | 'pitch-metier' | 'pitch-reduire'
+export interface ReponseCoach { verdict?: VerdictDigital; message: string; question?: string }
+
+export const mission1SignatureDigitale = {
+  // ILO : hypothèse reprise de Négociation — À VALIDER PAR STÉPHANIE.
+  meta: { ilo: ['C13', 'C7'], duree: '3h', niveau: 'B3', specialisation: 'marketing-digital' } as const,
+  titre: '🎯 Trouver sa signature digitale',
+  // Promesse proposée — À VALIDER PAR STÉPHANIE.
+  promesse: 'Clarifie ton profil marketing digital et construis un pitch crédible',
+
+  microTextes: {
+    lancement: 'Mission lancée. Ton objectif : clarifier ta signature digitale.',
+    apresProfil: "Un bon profil marketing digital ne dit pas seulement « j'aime les réseaux sociaux ». Il sait expliquer ce qu'il peut apporter.",
+    apresForces: "Se positionner, ce n'est pas se survendre. C'est être clair, crédible et concret.",
+    pitch: "Ton pitch doit donner envie d'en savoir plus, pas raconter tout ton parcours.",
+    transversal: 'En marketing digital, une idée doit toujours être reliée à une cible, un canal et un objectif.',
+  },
+  // Invitation à ne saisir aucune donnée identifiante (CLAUDE.md, section 4) — À VALIDER PAR STÉPHANIE.
+  rappelConfidentialite: "N'indique aucun nom de personne ou d'entreprise réelle.",
+
+  // ── Étape 1 — Quiz ──
+  profils: [
+    { id: 'creatif', nom: 'Le créatif de contenu', traduction: 'idées, formats, storytelling, production de contenus.' },
+    { id: 'stratege', nom: 'Le stratège de marque', traduction: 'image, positionnement, cohérence éditoriale, message.' },
+    { id: 'analyste', nom: "L'analyste digital", traduction: 'données, KPI, reporting, performance, optimisation.' },
+    { id: 'pilote', nom: 'Le pilote de projet digital', traduction: 'coordonner, planifier, suivre des actions.' },
+    { id: 'explorateur', nom: "L'explorateur de tendances", traduction: 'veille sur les usages, plateformes, formats et innovations.' },
+    { id: 'activateur', nom: "L'activateur de communauté", traduction: 'réseaux sociaux, engagement, interaction, animation.' },
+  ] satisfies ProfilDigital[],
+  consigneQuiz: "Répondez spontanément. Il n'y a pas de bon ou de mauvais profil. L'objectif est d'identifier votre style professionnel dans le marketing digital et ce que vous pouvez en faire concrètement.",
+
+  // Questions 1 à 10 : fiche mission. Questions 11 à 15 : rédigées par Claude Code — À VALIDER PAR STÉPHANIE.
+  // Matrice de scoring (toutes questions) : rédigée par Claude Code — À VALIDER PAR STÉPHANIE.
+  // Chaque réponse donne 1 point à chacun de ses profils. La matrice est équilibrée :
+  // sur les 15 questions, chaque profil peut recevoir 11 points au maximum.
+  questions: [
+    { id: 1, question: 'Dans un projet digital, tu es plutôt celui/celle qui…', reponses: [
+      { texte: 'propose des idées de contenus', profils: ['creatif'] },
+      { texte: 'structure le planning', profils: ['pilote'] },
+      { texte: 'analyse les résultats', profils: ['analyste'] },
+      { texte: 'anime les échanges', profils: ['activateur'] },
+    ] },
+    { id: 2, question: "Ce qui t'intéresse le plus dans le marketing digital, c'est…", reponses: [
+      { texte: 'créer des formats', profils: ['creatif'] },
+      { texte: 'comprendre une cible', profils: ['stratege'] },
+      { texte: 'mesurer la performance', profils: ['analyste'] },
+      { texte: 'suivre les tendances', profils: ['explorateur'] },
+    ] },
+    { id: 3, question: "Face à une campagne digitale, tu regardes d'abord…", reponses: [
+      { texte: 'le message', profils: ['stratege'] },
+      { texte: 'le visuel', profils: ['creatif'] },
+      { texte: 'les résultats', profils: ['analyste'] },
+      { texte: 'le parcours utilisateur', profils: ['explorateur', 'stratege'] },
+    ] },
+    { id: 4, question: 'Dans un groupe, on peut compter sur toi pour…', reponses: [
+      { texte: 'apporter des idées', profils: ['creatif'] },
+      { texte: 'organiser les étapes', profils: ['pilote'] },
+      { texte: 'vérifier les données', profils: ['analyste'] },
+      { texte: 'créer du lien', profils: ['activateur'] },
+    ] },
+    { id: 5, question: 'Sur les réseaux sociaux, tu fais surtout attention à…', reponses: [
+      { texte: 'la créativité', profils: ['creatif'] },
+      { texte: 'la cohérence de marque', profils: ['stratege'] },
+      { texte: "l'engagement", profils: ['activateur'] },
+      { texte: 'les tendances', profils: ['explorateur'] },
+    ] },
+    { id: 6, question: 'Quand un contenu ne fonctionne pas, tu veux comprendre…', reponses: [
+      { texte: "si l'idée était assez forte", profils: ['creatif'] },
+      { texte: 'si la cible était claire', profils: ['stratege'] },
+      { texte: 'ce que disent les chiffres', profils: ['analyste'] },
+      { texte: 'comment améliorer le format', profils: ['explorateur', 'analyste'] },
+    ] },
+    { id: 7, question: 'Ton point fort naturel est plutôt…', reponses: [
+      { texte: "l'imagination", profils: ['creatif'] },
+      { texte: "l'organisation", profils: ['pilote'] },
+      { texte: "l'analyse", profils: ['analyste'] },
+      { texte: 'la communication', profils: ['activateur'] },
+    ] },
+    { id: 8, question: 'Dans une équipe marketing, tu aimerais contribuer à…', reponses: [
+      { texte: 'créer des contenus', profils: ['creatif'] },
+      { texte: 'piloter un projet', profils: ['pilote'] },
+      { texte: 'analyser une campagne', profils: ['analyste'] },
+      { texte: 'animer une communauté', profils: ['activateur'] },
+    ] },
+    { id: 9, question: "Ce qui te motive le plus, c'est…", reponses: [
+      { texte: 'créer quelque chose', profils: ['creatif'] },
+      { texte: 'voir un projet avancer', profils: ['pilote'] },
+      { texte: 'comprendre ce qui fonctionne', profils: ['analyste'] },
+      { texte: 'engager une audience', profils: ['activateur'] },
+    ] },
+    // Question 10 : chaque axe de progression pointe vers les profils qui en ont le plus souvent besoin.
+    { id: 10, question: 'Ton axe de progression pourrait être…', reponses: [
+      { texte: 'structurer tes idées', profils: ['creatif', 'explorateur'] },
+      { texte: 'oser davantage', profils: ['analyste', 'pilote'] },
+      { texte: 'mieux analyser les données', profils: ['activateur', 'stratege'] },
+      { texte: 'mieux prioriser', profils: ['explorateur'] },
+    ] },
+    { id: 11, question: 'Une marque se lance sur une nouvelle plateforme. Ton premier réflexe…', reponses: [
+      { texte: 'définir le ton et le message de la marque', profils: ['stratege'] },
+      { texte: 'observer les formats qui y fonctionnent déjà', profils: ['explorateur'] },
+      { texte: 'poser un rétroplanning avec les étapes clés', profils: ['pilote'] },
+      { texte: 'repérer les communautés à qui parler', profils: ['activateur'] },
+    ] },
+    { id: 12, question: "Dans un brief, tu lis d'abord…", reponses: [
+      { texte: 'le positionnement de la marque', profils: ['stratege'] },
+      { texte: 'les délais et les livrables', profils: ['pilote'] },
+      { texte: 'les objectifs chiffrés (KPI)', profils: ['analyste'] },
+      { texte: 'les références et exemples du moment', profils: ['explorateur'] },
+    ] },
+    { id: 13, question: 'Un commentaire négatif arrive sous une publication. Tu…', reponses: [
+      { texte: 'réponds vite, avec le bon ton', profils: ['activateur'] },
+      { texte: "vérifies que la réponse reste cohérente avec l'image de la marque", profils: ['stratege'] },
+      { texte: "préviens l'équipe et organises qui fait quoi", profils: ['pilote'] },
+      { texte: "regardes comment d'autres marques ont géré la même situation", profils: ['explorateur'] },
+    ] },
+    { id: 14, question: 'Ton rituel de travail préféré…', reponses: [
+      { texte: 'faire ta veille et partager une découverte', profils: ['explorateur'] },
+      { texte: 'mettre à jour le tableau de suivi du projet', profils: ['pilote'] },
+      { texte: 'échanger avec la communauté ou les abonnés', profils: ['activateur'] },
+      { texte: 'relire la ligne éditoriale avant de publier', profils: ['stratege'] },
+    ] },
+    { id: 15, question: "Ce qu'on retient de toi après un projet…", reponses: [
+      { texte: 'tu as gardé le cap sur le message', profils: ['stratege'] },
+      { texte: "tu as tenu les délais et coordonné l'équipe", profils: ['pilote'] },
+      { texte: 'tu as apporté une idée de format inattendue', profils: ['creatif', 'explorateur'] },
+      { texte: "tu as fait réagir et participer l'audience", profils: ['activateur'] },
+    ] },
+  ] satisfies QuestionQuizDigital[],
+
+  // ── Étape 2 — Fiches profils (base affichée + repli si l'IA est indisponible) ──
+  // Fiche « créatif » : fiche mission (sauf questionReflexion). Les 5 autres fiches et les
+  // 6 questions de réflexion : rédigées par Claude Code — À VALIDER PAR STÉPHANIE.
+  fichesProfils: [
+    {
+      profilId: 'creatif',
+      traduction: "tu sembles à l'aise pour imaginer des idées, trouver des formats et raconter une histoire.",
+      forces: ['créativité', 'storytelling', 'sens du format'],
+      vigilance: "ne pas rester uniquement dans l'idée. Il faut aussi penser objectif, cible et résultat.",
+      phrase: 'Je peux apporter des idées de contenus adaptées à une cible et à un objectif de communication.',
+      questionReflexion: "Quelle idée de contenu as-tu déjà eue, et à quelle cible s'adressait-elle ?",
+    },
+    {
+      profilId: 'stratege',
+      traduction: "tu sembles à l'aise pour clarifier un positionnement, garder un message cohérent et penser l'image d'une marque.",
+      forces: ['sens du message', 'cohérence éditoriale', 'compréhension de la cible'],
+      vigilance: "ne pas rester dans la réflexion. Il faut aussi produire, tester et accepter d'ajuster.",
+      phrase: "Je peux aider à garder un message cohérent avec le positionnement d'une marque et les attentes de sa cible.",
+      questionReflexion: "Quelle marque trouves-tu cohérente dans sa communication, et qu'est-ce qui le montre concrètement ?",
+    },
+    {
+      profilId: 'analyste',
+      traduction: "tu sembles à l'aise pour lire des chiffres, suivre des KPI et comprendre ce qui fonctionne.",
+      forces: ['lecture des données', 'rigueur', "sens de l'optimisation"],
+      vigilance: "ne pas t'arrêter aux chiffres. Il faut aussi les relier à une cible, un message et une décision.",
+      phrase: "Je peux suivre les résultats d'une campagne et proposer des pistes d'optimisation à partir des KPI.",
+      questionReflexion: 'Quel indicateur regarderais-tu en premier pour juger un contenu, et pourquoi celui-là ?',
+    },
+    {
+      profilId: 'pilote',
+      traduction: "tu sembles à l'aise pour organiser un projet, planifier les étapes et suivre l'avancement des actions.",
+      forces: ['organisation', 'coordination', 'suivi des actions'],
+      vigilance: "ne pas te limiter au planning. Il faut aussi comprendre le fond : la cible, le message et l'objectif.",
+      phrase: 'Je peux aider à coordonner un projet digital en suivant les étapes, les délais et les livrables.',
+      questionReflexion: "Dans quel projet as-tu déjà aidé un groupe à tenir ses délais, et comment t'y es-tu pris ?",
+    },
+    {
+      profilId: 'explorateur',
+      traduction: "tu sembles à l'aise pour repérer les nouveaux usages, les plateformes et les formats qui émergent.",
+      forces: ['curiosité', 'veille', 'sens des usages'],
+      vigilance: "ne pas suivre une tendance pour elle-même. Il faut vérifier qu'elle sert une cible et un objectif.",
+      phrase: "Je peux faire de la veille sur les formats et les usages, et proposer comment une marque peut s'en inspirer.",
+      questionReflexion: 'Quelle tendance récente as-tu repérée, et pour quelle marque serait-elle pertinente ?',
+    },
+    {
+      profilId: 'activateur',
+      traduction: "tu sembles à l'aise pour créer du lien, faire réagir une audience et animer les échanges.",
+      forces: ['sens du contact', "écoute de l'audience", 'animation'],
+      vigilance: "ne pas confondre activité et résultat. L'engagement doit servir un objectif de la marque.",
+      phrase: "Je peux contribuer à animer une communauté en adaptant le ton et les formats à l'audience.",
+      questionReflexion: "Quelle communauté en ligne trouves-tu bien animée, et qu'est-ce qui donne envie d'y participer ?",
+    },
+  ] satisfies FicheProfilDigital[],
+  nuanceChamps: [
+    "Qu'est-ce qui te correspond vraiment ?",
+    "Qu'est-ce qui te correspond moins ?",
+    'Quelle phrase veux-tu garder, modifier ou reformuler ?',
+  ],
+
+  // ── Étape 3 — Ce que j'apporte vraiment ──
+  // Seuls les 2 exemples de la fiche mission sont renseignés (aucun exemple inventé).
+  phrasesVagues: [
+    { texte: 'Je suis créatif.', exemple: 'Je peux proposer des idées de contenus adaptées à une cible, un message et un canal.' },
+    { texte: "Je suis à l'aise avec les réseaux sociaux.", exemple: '' },
+    { texte: 'Je suis organisé.', exemple: '' },
+    { texte: 'Je suis curieux.', exemple: '' },
+    { texte: 'Je suis dynamique.', exemple: '' },
+    { texte: 'Je sais communiquer.', exemple: '' },
+    { texte: 'Je connais TikTok.', exemple: 'Je peux analyser les formats qui fonctionnent sur TikTok et réfléchir à leur adaptation pour une marque.' },
+    { texte: 'Je suis fait pour le marketing.', exemple: '' },
+    { texte: "Je peux gérer toute la communication d'une marque.", exemple: '' },
+    { texte: 'Je suis meilleur que les autres en digital.', exemple: '' },
+  ] satisfies PhraseVague[],
+  formulationAmorce: 'Cette qualité peut se traduire professionnellement par…',
+  verdictsLabels: { vague: 'Trop vague', pretentieux: 'Trop prétentieux', long: 'Trop long', clair: 'Clair' } satisfies Record<VerdictDigital, string>,
+  // Messages de référence : affichés tels quels quand l'IA est indisponible.
+  feedbacksVerdict: {
+    vague: { type: 'alert', message: "C'est encore trop général. Ajoute une action concrète, un canal, une cible ou un objectif." },
+    pretentieux: { type: 'alert', message: 'La formulation manque de nuance. Rends-la plus crédible et plus professionnelle.' },
+    long: { type: 'alert', message: 'Ton idée est intéressante, mais ton message doit être plus direct.' },
+    clair: { type: 'success', message: 'Bonne formulation : tu relies une qualité à une contribution professionnelle concrète.' },
+  } satisfies Record<VerdictDigital, FeedbackMission>,
+
+  // ── Étape 4 — Pitch 45 secondes ──
+  amorcesPitch: [
+    { id: 'presentation', amorce: 'Je suis étudiant en B3 Marketing Digital.' },
+    { id: 'profil', amorce: 'Mon profil est plutôt…' },
+    { id: 'apport', amorce: 'Je peux apporter…' },
+    { id: 'progression', amorce: 'Je souhaite progresser sur…' },
+    { id: 'experience', amorce: 'Je recherche une expérience où je pourrai…' },
+  ] satisfies AmorcePitch[],
+  pitchMotsCible: [90, 120] as [number, number],
+  pitchMotsParMinute: 130,
+  pitchTropCourt: 'Un peu court : ajoute une contribution concrète, une cible ou un canal.',
+  pitchTropLong: "Trop long pour 45 s : coupe ce qui n'apporte pas de valeur.",
+  boutonsCoachPitch: [
+    { action: 'pitch-tester', label: 'Tester mon pitch' },
+    { action: 'pitch-clair', label: 'Rendre mon pitch plus clair' },
+    { action: 'pitch-metier', label: 'Rendre mon pitch plus métier' },
+    { action: 'pitch-reduire', label: 'Réduire mon pitch à 45 secondes' },
+  ] satisfies { action: ActionCoach; label: string }[],
+
+  // ── Étape 5 — Feedback entre pairs ──
+  cartesFeedback: [
+    { id: 'clair', label: 'Clair', signification: "j'ai compris ton positionnement" },
+    { id: 'credible', label: 'Crédible', signification: 'tu ne te survends pas' },
+    { id: 'metier', label: 'Métier', signification: 'on comprend ton lien avec le marketing digital' },
+    { id: 'a-preciser', label: 'À préciser', signification: 'il manque un exemple, une cible, un canal ou une compétence' },
+    { id: 'trop-vague', label: 'Trop vague', signification: "on pourrait dire la même chose de beaucoup d'étudiants" },
+    { id: 'trop-long', label: 'Trop long', signification: "va plus vite à l'essentiel" },
+  ] satisfies CarteFeedbackPairs[],
+  cartesMinimum: 2,
+
+  // ── Étape 6 — Axe de progression et fiche finale ──
+  axesProgression: [
+    'stratégie de contenu', 'storytelling', 'création de visuels', 'rédaction web', 'réseaux sociaux',
+    'community management', 'veille digitale', 'analyse des KPI', 'reporting', 'SEO',
+    'acquisition digitale', 'CRM', 'e-commerce', 'gestion de projet', 'organisation',
+    'prise de parole', 'posture professionnelle', 'brief créatif', 'compréhension de la cible',
+    'coordination avec une équipe',
+  ] satisfies string[],
+  axeChamps: [
+    { cle: 'progresser', label: 'Cette année, je veux progresser sur…' },
+    { cle: 'pourquoi', label: 'Parce que…' },
+    { cle: 'action', label: 'Ma première action sera…' },
+  ] as const,
+  ficheTitre: 'Mon positionnement marketing digital',
+  ficheRubriques: [
+    'Mon profil digital dominant',
+    'Mes 3 forces professionnelles',
+    'Ce que je peux apporter à une équipe marketing / communication',
+    'Mon pitch professionnel en 45 secondes',
+    'Mon axe de progression cette année',
+    'Le feedback que je retiens',
+  ],
+  messageFin: "Présente ta fiche à ton intervenante. Rappel de l'évaluation : 50 % note orale individuelle + 50 % note groupe écrite.",
+
+  // Limite d'appels au coach IA par étudiant et par étape : au-delà, le feedback heuristique prend le relais.
+  limiteAppelsCoach: 5,
+}
+
+// ─── Scoring du quiz (côté client, déterministe sauf tirage final) ──────────
+// 1. Chaque réponse donne 1 point à chacun de ses profils.
+// 2. Égalité en tête : on garde le profil le plus présent dans les 3 dernières réponses.
+// 3. Égalité persistante : tirage au sort avec Math.random().
+// `reponses[i]` = index de la réponse choisie à la question i.
+export function scoresQuizDigital(reponses: number[]): Record<ProfilDigitalId, number> {
+  const M = mission1SignatureDigitale
+  const scores = Object.fromEntries(M.profils.map(p => [p.id, 0])) as Record<ProfilDigitalId, number>
+  reponses.forEach((r, i) => {
+    M.questions[i]?.reponses[r]?.profils.forEach(p => { scores[p] += 1 })
+  })
+  return scores
+}
+
+export function profilDominantDigital(reponses: number[]): ProfilDigitalId {
+  const scores = scoresQuizDigital(reponses)
+  const max = Math.max(...Object.values(scores))
+  let candidats = (Object.keys(scores) as ProfilDigitalId[]).filter(p => scores[p] === max)
+  if (candidats.length > 1) {
+    const debut = Math.max(0, reponses.length - 3)
+    const recents = scoresQuizDigital(reponses.map((r, i) => (i >= debut ? r : -1)))
+    const maxRecent = Math.max(...candidats.map(p => recents[p]))
+    candidats = candidats.filter(p => recents[p] === maxRecent)
+  }
+  return candidats[Math.floor(Math.random() * candidats.length)]
+}
+
+// ─── Heuristiques de repli (côté client, sans IA) ───────────────────────────
+// Utilisées quand le coach IA est indisponible, trop lent, renvoie une réponse invalide,
+// ou quand la limite d'appels est atteinte. Listes et seuils : première version rédigée
+// par Claude Code — À VALIDER PAR STÉPHANIE après la première séance.
+// Les textes sont comparés après normalisation (minuscules, accents retirés).
+
+// Marqueurs de survente → verdict « trop prétentieux » (prioritaire).
+export const MARQUEURS_SURVENTE_DIGITAL = [
+  'toute la communication', 'toute la strategie', 'tous les reseaux', 'tous les outils', 'tous les canaux',
+  'meilleur que', 'meilleure que', 'le meilleur', 'la meilleure', 'parfaitement', 'parfait', 'excellent',
+  'expert', 'imbattable', 'incontournable', "n'importe quel", 'aucun defaut', 'maitrise tout', 'sans effort',
+]
+
+// Racines d'action : la formulation doit dire ce que l'étudiant FAIT.
+export const RACINES_ACTION_DIGITAL = [
+  'propos', 'analys', 'creer', 'creation', 'concevoir', 'concoi', 'redig', 'redaction', 'anim', 'suivre', 'suivi',
+  'coordon', 'planifi', 'organis', 'mesur', 'optimis', 'adapt', 'produi', 'reper', 'identifi', 'contribu',
+  'aider a', 'realis', 'publi', 'tester', 'structur', 'veille', 'imagin', 'declin', 'compar', 'constru', 'prepar',
+]
+
+// Repères métier : la formulation doit être reliée à une cible, un canal, un format ou un objectif.
+export const REPERES_METIER_DIGITAL = [
+  'contenu', 'cible', 'canal', 'canaux', 'format', 'audience', 'communaut', 'engagement', 'kpi', 'campagne',
+  'marque', 'reseau', 'brief', 'editorial', 'tendance', 'donnee', 'reporting', 'seo', 'crm', 'newsletter',
+  'publication', 'post', 'video', 'visuel', 'storytelling', 'message', 'planning', 'calendrier', 'projet',
+  'objectif', 'tiktok', 'instagram', 'linkedin', 'youtube', 'site', 'e-commerce', 'acquisition', 'equipe',
+]
+
+export const MOTS_MIN_FORMULATION_DIGITAL = 8
+export const MOTS_MAX_FORMULATION_DIGITAL = 40
+export const MOTS_MAX_PITCH_DIGITAL = 130
+
+export function contientSurventeDigital(texte: string): boolean {
+  const t = normaliserTexte(texte)
+  return MARQUEURS_SURVENTE_DIGITAL.some(m => t.includes(m))
+}
+
+export function compterReperesMetier(texte: string): number {
+  const t = normaliserTexte(texte)
+  return REPERES_METIER_DIGITAL.filter(r => t.includes(r)).length
+}
+
+// Ordre des règles : prétentieux → trop long → vague (trop court, sans action ou sans repère métier) → clair.
+export function evaluerFormulationDigital(texte: string, motsMax = MOTS_MAX_FORMULATION_DIGITAL): VerdictDigital {
+  if (contientSurventeDigital(texte)) return 'pretentieux'
+  if (compterMots(texte) > motsMax) return 'long'
+  const t = normaliserTexte(texte)
+  if (compterMots(texte) < MOTS_MIN_FORMULATION_DIGITAL) return 'vague'
+  if (!RACINES_ACTION_DIGITAL.some(r => t.includes(r))) return 'vague'
+  if (compterReperesMetier(texte) === 0) return 'vague'
+  return 'clair'
+}
+
+export function dureePitchSecondes(nbMots: number): number {
+  return Math.round((nbMots / mission1SignatureDigitale.pitchMotsParMinute) * 60)
+}
+
+// Repli des 4 boutons de coaching du pitch : diagnostic ou question, jamais de réécriture.
+// Messages rédigés par Claude Code — À VALIDER PAR STÉPHANIE.
+export function coachPitchHeuristique(action: ActionCoach, pitch: string, apport: string): ReponseCoach {
+  const M = mission1SignatureDigitale
+  const nbMots = compterMots(pitch)
+  const duree = dureePitchSecondes(nbMots)
+
+  if (action === 'pitch-clair') {
+    const phrases = pitch.split(/(?<=[.!?…])\s+/).filter(Boolean)
+    const plusLongue = Math.max(0, ...phrases.map(compterMots))
+    if (plusLongue > 25) return { message: `Ta phrase la plus longue fait ${plusLongue} mots. Coupe-la en deux idées.` }
+    return { message: 'Tes phrases sont courtes : bon point.', question: "Qu'est-ce qu'une personne qui ne te connaît pas retiendrait en une phrase ?" }
+  }
+  if (action === 'pitch-metier') {
+    if (compterReperesMetier(pitch) < 2) return { message: 'Ton pitch contient peu de vocabulaire métier. Ajoute une cible, un canal, un format ou un KPI.' }
+    return { message: 'Tu utilises déjà du vocabulaire métier.', question: 'Chaque terme est-il relié à une action que tu peux réaliser ?' }
+  }
+  if (action === 'pitch-reduire') {
+    if (nbMots > M.pitchMotsCible[1]) {
+      return { message: `Ton pitch fait ${nbMots} mots, soit environ ${duree} secondes. Retire environ ${nbMots - M.pitchMotsCible[1]} mots, en commençant par les détails de ton parcours.` }
+    }
+    return { message: `Ton pitch tient déjà dans le temps (environ ${duree} secondes).`, question: "Quelle phrase pourrais-tu retirer sans perdre l'essentiel ?" }
+  }
+  // pitch-tester : mêmes verdicts que les formulations.
+  let verdict: VerdictDigital = 'clair'
+  if (contientSurventeDigital(pitch)) verdict = 'pretentieux'
+  else if (nbMots > MOTS_MAX_PITCH_DIGITAL) verdict = 'long'
+  else if (evaluerFormulationDigital(apport, MOTS_MAX_PITCH_DIGITAL) === 'vague') verdict = 'vague'
+  return { verdict, message: M.feedbacksVerdict[verdict].message }
+}

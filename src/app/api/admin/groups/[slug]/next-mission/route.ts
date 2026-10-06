@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createAdminClient } from '@/lib/supabase/server'
+import { specialisationB3 } from '@/lib/content/univers3'
 
 export async function POST(
   _request: NextRequest,
@@ -11,7 +12,7 @@ export async function POST(
 
     const { data: group, error: groupError } = await supabase
       .from('groups')
-      .select('id, slug, universe, track, active_mission')
+      .select('id, slug, universe, track, specialization, active_mission')
       .eq('slug', slug)
       .single()
 
@@ -27,11 +28,14 @@ export async function POST(
     const universeMax = count ?? 1
     // L'Univers 2 (Expédition Professionnelle) réserve les cours 4-6 (univers détective) aux PGE2
     // PGE1 Groupe A suit son propre parcours à 3 checkpoints, distinct des 6 checkpoints B1
+    // L'Univers 3 (B3) suit le parcours de la spécialisation du groupe (6 Négociation, 5 Marketing Digital)
     const maxMission =
       (group.universe === 'expedition-professionnelle' && group.track === 'bachelor2') ||
       (group.universe === 'passeport-stage' && group.slug === 'pge1-groupe-a')
         ? Math.min(3, universeMax)
-        : universeMax
+        : group.universe === 'mission-horizon'
+          ? Math.min(specialisationB3(group.specialization).missions.length, universeMax)
+          : universeMax
     const nextMission = Math.min(group.active_mission + 1, maxMission)
 
     const { error } = await supabase
