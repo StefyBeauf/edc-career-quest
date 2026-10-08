@@ -47,7 +47,7 @@ Spécialisations B3 (Univers 3) :
 ### ▶ Tâche en cours
 
 **Créer le parcours B3 Marketing Digital à 5 missions et sa Mission 1 « 🎯 Trouver sa signature digitale »**, en différenciant clairement les spécialisations B3.
-- **Statut (2026-10-06)** : codée, testée en local et déployée en production. Reste à faire : recharger le crédit du compte Anthropic (le coach IA tourne sur le repli heuristique tant que le solde est à zéro) et relire les contenus « à valider ».
+- **Statut (2026-10-08)** : codée, testée et déployée en production. Coach IA testé en conditions réelles après recharge du crédit Anthropic. Reste à faire : relire les contenus « à valider ».
 - Spécification complète : section 3.2. Différenciation des spécialisations : section 3.4.
 - Fiche mission : `fiche-mission-b3-marketing-digital-signature-v2.docx`.
 - **Décisions (2026-10-06)** :
@@ -524,6 +524,11 @@ Livrables attendus :
 - Liste des points et contenus à valider.
 
 ### Journal
+
+**2026-10-08 — Coach IA Marketing Digital testé en conditions réelles (crédit Anthropic rechargé) + correctif déployé.**
+- Tests en production puis en local : les 4 verdicts, les 4 boutons du pitch, la personnalisation du profil, la tentative « écris mon pitch à ma place » (refus + question). Temps de réponse constaté : 1,5 à 3 s.
+- Défaut corrigé : le modèle classait « trop vague » des phrases survendues (« toute la communication d'une marque »). Prompt système passé en v2 (ordre de priorité des verdicts, « prétentieux » d'abord) et garde-fou serveur ajouté dans `garde-fous.ts` (même liste `MARQUEURS_SURVENTE_DIGITAL` que le repli).
+- À surveiller en séance : le coach est exigeant sur le pitch (il peut juger « vague » un pitch correct mais sans réalisation concrète) et ses messages approchent parfois 50 mots.
 
 **2026-10-06 — Parcours B3 Marketing Digital + Mission 1 « Trouver sa signature digitale » : codés, testés, déployés (accord de Stéphanie).**
 - Spécialisations : configuration unique `B3_SPECIALISATIONS` + `specialisationB3()` dans `univers3.ts`, lue par `MissionShell.tsx` et par l'admin. Elle s'appuie sur le champ `specialization` déjà présent dans Supabase : aucune écriture en base, aucun changement de schéma. Finance (inactive) et tout groupe non reconnu ouvrent Négociation.

@@ -29,7 +29,7 @@ const repli = (status: number) => NextResponse.json({ repli: true }, { status })
 
 // ─── Validation de l'entrée ────────────────────────────────────────────────
 // Renvoie le message utilisateur à envoyer au modèle, ou null si la requête est hors format.
-function construireMessage(corps: Record<string, unknown>): { action: ActionCoach; contenu: string; nbMots: number } | null {
+function construireMessage(corps: Record<string, unknown>): { action: ActionCoach; contenu: string; nbMots: number; texte: string } | null {
   const action = corps.action as ActionCoach
   if (!ACTIONS.includes(action)) return null
 
@@ -44,7 +44,7 @@ function construireMessage(corps: Record<string, unknown>): { action: ActionCoac
     const scores = scoresQuizDigital(reponses as number[])
     const detail = M.profils.map(p => `${p.nom} : ${scores[p.id]}`).join(' ; ')
     const nom = M.profils.find(p => p.id === profilId)!.nom
-    return { action, contenu: `${CONSIGNES_COACH.profil}\n\nProfil dominant : ${nom}\nScores : ${detail}\nRéponses au quiz :\n${choix}`, nbMots: 0 }
+    return { action, contenu: `${CONSIGNES_COACH.profil}\n\nProfil dominant : ${nom}\nScores : ${detail}\nRéponses au quiz :\n${choix}`, nbMots: 0, texte: '' }
   }
 
   if (action === 'formulation') {
@@ -57,13 +57,14 @@ function construireMessage(corps: Record<string, unknown>): { action: ActionCoac
       action,
       contenu: `${CONSIGNES_COACH.formulation}\n\nPhrase vague de départ : « ${phrase} »\nAmorce : « ${M.formulationAmorce} »\n<texte_etudiant>\n${texte}\n</texte_etudiant>`,
       nbMots: compterMots(texte),
+      texte,
     }
   }
 
   const pitch = typeof corps.pitch === 'string' ? corps.pitch.trim() : ''
   if (!pitch || pitch.length > MAX_CARACTERES_PITCH) return null
   const nbMots = compterMots(pitch)
-  return { action, contenu: `${CONSIGNES_COACH[action]}\n\nNombre de mots : ${nbMots}\n<texte_etudiant>\n${pitch}\n</texte_etudiant>`, nbMots }
+  return { action, contenu: `${CONSIGNES_COACH[action]}\n\nNombre de mots : ${nbMots}\n<texte_etudiant>\n${pitch}\n</texte_etudiant>`, nbMots, texte: pitch }
 }
 
 export async function POST(req: Request) {
@@ -91,7 +92,7 @@ export async function POST(req: Request) {
     )
     if (message.stop_reason !== 'end_turn') return repli(502)
     const texte = message.content.map(b => (b.type === 'text' ? b.text : '')).join('')
-    const reponse = validerSortie(demande.action, texte, demande.nbMots)
+    const reponse = validerSortie(demande.action, texte, demande.nbMots, demande.texte)
     return reponse ? NextResponse.json(reponse) : repli(422)
   } catch {
     // Erreur réseau, délai dépassé, clé absente… : le navigateur bascule sur les heuristiques.

@@ -4,7 +4,7 @@
 // Seuils et listes rédigés par Claude Code — À VALIDER PAR STÉPHANIE.
 
 import {
-  mission1SignatureDigitale as M, compterMots, normaliserTexte,
+  mission1SignatureDigitale as M, compterMots, normaliserTexte, contientSurventeDigital,
   MOTS_MAX_FORMULATION_DIGITAL, MOTS_MAX_PITCH_DIGITAL,
   type ActionCoach, type ReponseCoach, type VerdictDigital,
 } from '@/lib/content/univers3'
@@ -34,7 +34,7 @@ function ressembleAUnTexteRedige(texte: string): boolean {
   return citations.some(c => compterMots(c) > 8)
 }
 
-export function validerSortie(action: ActionCoach, brut: string, nbMots: number): ReponseCoach | null {
+export function validerSortie(action: ActionCoach, brut: string, nbMots: number, texteEtudiant = ''): ReponseCoach | null {
   const debut = brut.indexOf('{')
   const fin = brut.lastIndexOf('}')
   if (debut === -1 || fin <= debut) return null
@@ -58,6 +58,11 @@ export function validerSortie(action: ActionCoach, brut: string, nbMots: number)
   if (ACTIONS_AVEC_VERDICT.includes(action)) {
     if (!VERDICTS.includes(donnees.verdict as VerdictDigital)) return null
     reponse.verdict = donnees.verdict as VerdictDigital
+    // La survente se repère avec la même liste de marqueurs que le repli (MARQUEURS_SURVENTE_DIGITAL) :
+    // le modèle a tendance à la classer « vague ». Le verdict et le message doivent rester cohérents.
+    if (reponse.verdict !== 'pretentieux' && contientSurventeDigital(texteEtudiant)) {
+      return { verdict: 'pretentieux', message: M.feedbacksVerdict.pretentieux.message }
+    }
     // La longueur se mesure, elle ne s'estime pas : un texte trop long ne peut pas être « clair ».
     const motsMax = action === 'formulation' ? MOTS_MAX_FORMULATION_DIGITAL : MOTS_MAX_PITCH_DIGITAL
     if (reponse.verdict === 'clair' && nbMots > motsMax) {
