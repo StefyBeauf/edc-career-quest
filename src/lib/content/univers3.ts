@@ -459,14 +459,15 @@ export const B3_SPECIALISATIONS: SpecialisationB3[] = [
     ],
   },
   {
-    // 5 missions exactement. Missions 2 à 5 : contenus décidés plus tard par Stéphanie.
+    // 5 missions exactement. Missions 3 à 5 : contenus décidés plus tard par Stéphanie.
     id: 'marketing-digital',
     label: 'Marketing Digital',
     actif: true,
     codesGroupe: ['marketing', 'marketing-digital'],
     missions: [
       { numero: 1, titre: 'Trouver sa signature digitale', thematique: 'Positionnement professionnel et culture marketing digital', statut: 'disponible' },
-      { numero: 2, titre: 'Communication professionnelle', thematique: 'Messages professionnels, relance, clarification, désaccord, feedback', statut: 'a-venir' },
+      // M2 (2026-11-24) : remplace « Communication professionnelle », thématique supprimée du parcours.
+      { numero: 2, titre: 'Marketing Under Pressure', thematique: 'Garder le contrôle sous pression — business game STRYDE', statut: 'disponible' },
       { numero: 3, titre: 'Organisation et priorisation', thematique: 'Gestion des tâches, priorités, charge de travail, délais', statut: 'a-venir' },
       { numero: 4, titre: 'Animation et efficacité collective', thematique: "Réunion, collaboration, suivi d'actions, coordination projet", statut: 'a-venir' },
       { numero: 5, titre: 'Mission immersive de synthèse', thematique: 'Mise en situation professionnelle globale', statut: 'a-venir' },

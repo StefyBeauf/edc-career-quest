@@ -3,6 +3,7 @@ import { generateQRCode } from '@/lib/qrcode'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import GroupControls from '@/components/admin/GroupControls'
+import PilotageM2 from '@/components/admin/PilotageM2'
 import QRCodeDisplay from '@/components/admin/QRCodeDisplay'
 import SchedulePlanning from '@/components/admin/SchedulePlanning'
 import type { Group } from '@/types'
@@ -145,6 +146,15 @@ export default async function GroupePage({ params }: Props) {
             locked={group.locked}
             activeMission={group.active_mission}
           />
+          {/* Pilotage de la M2 Marketing Digital (phase 2, temps, fermeture), visible pendant la M2 uniquement. */}
+          {parcoursB3?.id === 'marketing-digital' && group.active_mission === 2 && (
+            <PilotageM2
+              slug={group.slug}
+              phase2Ouverte={group.m2_phase2_ouverte === true}
+              minutesBonus={group.m2_minutes_bonus ?? 0}
+              disponible={'m2_phase2_ouverte' in data}
+            />
+          )}
           <SchedulePlanning
             slug={group.slug}
             totalMissions={totalMissions ?? 6}

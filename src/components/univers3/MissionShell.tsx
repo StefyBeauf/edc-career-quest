@@ -5,6 +5,7 @@ import type { Group } from '@/types'
 import { specialisationB3, type SpecialisationB3Id } from '@/lib/content/univers3'
 import Mission1SeVendre from './Mission1SeVendre'
 import Mission1SignatureDigitale from './Mission1SignatureDigitale'
+import Mission2MarketingUnderPressure from './Mission2MarketingUnderPressure'
 import Mission2ReunionEfficace from './Mission2ReunionEfficace'
 import Mission3ImmersionControle from './Mission3ImmersionControle'
 import MissionAVenir from './shared/MissionAVenir'
@@ -23,6 +24,7 @@ const COMPOSANTS: Record<SpecialisationB3Id, Record<number, RenduMission>> = {
   },
   'marketing-digital': {
     1: p => <Mission1SignatureDigitale total={p.total} slug={p.slug} />,
+    2: p => <Mission2MarketingUnderPressure total={p.total} slug={p.slug} />,
   },
   finance: {}, // prévue au T2
 }

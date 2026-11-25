@@ -17,6 +17,11 @@ export interface Group {
   active_mission: number
   locked: boolean
   created_at: string
+  // Pilotage de la Mission 2 B3 Marketing Digital (aucun contenu étudiant).
+  // Facultatifs : absents tant que la migration 004 n'est pas exécutée.
+  m2_phase2_ouverte?: boolean
+  m2_minutes_bonus?: number
+  m2_session?: string | null
 }
 
 export interface Mission {

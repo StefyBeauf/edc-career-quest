@@ -111,6 +111,31 @@ L'espace admin est accessible sur `/admin/login`.
 
 ---
 
+## Piloter la Mission 2 B3 Marketing Digital « Marketing Under Pressure »
+
+Business game STRYDE : 6 épreuves chronométrées, une connexion par équipe (ordinateur ou tablette).
+
+**Avant la séance**
+1. Admin → page du groupe Marketing Digital → « Mission suivante » jusqu'à la mission active #2.
+2. Le bloc orange **« Pilotage M2 »** apparaît sous les contrôles.
+
+**Pendant la séance** (chaque bouton agit sur toutes les équipes du groupe)
+- **Ouvrir la phase 2** : à la fin de la pause. Les écrans de pause se déverrouillent en 10 s au plus.
+- **+1 / +2 / +5 min** : ajoute du temps à l'épreuve en cours de chaque équipe (visible en 20 s au plus, 60 min maximum au total).
+- **Refermer la phase 2** : en cas de clic par erreur ; n'agit que sur les équipes encore en pause.
+- Une analyse IA « en attente » se relance depuis le poste de l'équipe (bouton « Relancer l'analyse »).
+
+**Après la séance**
+- **Fermer la mission et effacer les parties** : remet le pilotage à zéro ; chaque navigateur efface la partie de son équipe au prochain chargement. Sans cette action, une partie est effacée automatiquement 24 h après sa création.
+
+**À savoir**
+- Les parties sont enregistrées uniquement dans le navigateur de chaque équipe (`localStorage`) : reprise possible sur le même navigateur seulement. Aucun texte d'équipe n'est stocké côté serveur.
+- Si l'admin affiche « Session expirée », se reconnecter en tapant l'e-mail en minuscules.
+- Contenus de la mission : `src/lib/content/univers3-marketing-m2.ts`. Prompts de l'analyse IA : `src/app/api/mission/analyse/prompt.ts` (coach M1 : `src/app/api/mission/coach/prompt.ts`).
+- Visuels STRYDE à déposer dans `public/univers3/stryde/` : `collection.jpg`, `origin.jpg`, `impact.jpg`, `shadow.jpg`.
+
+---
+
 ## Structure des dossiers
 
 ```
