@@ -1,10 +1,10 @@
 'use client'
 
+import Image from 'next/image'
 import { useEffect, useRef, useState, type ReactNode } from 'react'
 import { createPortal } from 'react-dom'
 import { dossierClient as D } from '@/lib/content/univers3-marketing-m2'
 import { STRYDE } from './theme'
-import PortraitCeo from './PortraitCeo'
 import VisuelStryde from './VisuelStryde'
 
 // Dossier client STRYDE, consultable à tout moment dans un tiroir latéral.
@@ -73,7 +73,14 @@ function Contenu({ onglet }: { onglet: OngletId }) {
               {D.equipeDirigeante.map(f => (
                 <li key={f.nom} className="flex gap-3 text-sm">
                   {f.portrait ? (
-                    <PortraitCeo taille={40} />
+                    <Image
+                      src={f.portrait}
+                      alt={`Portrait ${/^[AEIOUYÉÈÊÎ]/i.test(f.nom) ? 'd’' : 'de '}${f.nom}`}
+                      width={56}
+                      height={56}
+                      className="shrink-0 h-14 w-14 rounded-full object-cover"
+                      style={{ border: `2px solid ${STRYDE.orange}` }}
+                    />
                   ) : (
                     // Avatar à initiales pour les autres membres de l'équipe.
                     <span aria-hidden="true" className="shrink-0 h-10 w-10 rounded-full flex items-center justify-center font-black text-xs" style={{ background: STRYDE.anthraciteClair, color: STRYDE.orange }}>

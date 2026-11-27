@@ -13,6 +13,9 @@ export const VISUELS_STRYDE = {
   impact: '/univers3/stryde/impact.webp',
   shadow: '/univers3/stryde/shadow.webp',
   portraitCeo: '/univers3/stryde/portrait-ceo.webp',
+  portraitInes: '/univers3/stryde/portrait-ines-ferrand.webp',
+  portraitMalik: '/univers3/stryde/portrait-malik-benhamou.webp',
+  portraitClara: '/univers3/stryde/portrait-clara-nguyen.webp',
 } as const
 
 // Écran d'activation (centre de contrôle Mission Horizon) : mot pour mot (fiche v3).
@@ -293,16 +296,19 @@ export const dossierClient: DossierClient = {
       nom: 'Inès Ferrand',
       role: 'Directrice marketing & communication',
       parcours: 'Stratégie marketing, notoriété, acquisition, influence et image de marque.',
+      portrait: VISUELS_STRYDE.portraitInes,
     },
     {
       nom: 'Malik Benhamou',
       role: 'Directeur artistique & innovation produit',
       parcours: 'Design des sneakers, créativité, identité visuelle et développement des collections. Il dessine tous les modèles STRYDE.',
+      portrait: VISUELS_STRYDE.portraitMalik,
     },
     {
       nom: 'Clara Nguyen',
       role: 'Directrice financière & opérations',
       parcours: 'Gestion budgétaire, rentabilité, production, logistique et distribution.',
+      portrait: VISUELS_STRYDE.portraitClara,
     },
   ],
   valeurs: [
