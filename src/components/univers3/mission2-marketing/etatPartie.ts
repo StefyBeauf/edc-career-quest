@@ -1,6 +1,8 @@
 'use client'
 
-import { DUREE_VIE_PARTIE_MS, profilsCreateurs, variantesCrise } from '@/lib/content/univers3-marketing-m2'
+import {
+  DERNIERE_EPREUVE_PHASE_1, DUREE_VIE_PARTIE_MS, NB_EPREUVES, NUMEROS_EPREUVES, profilsCreateurs, variantesCrise,
+} from '@/lib/content/univers3-marketing-m2'
 import { maintenant } from './usePilotage'
 
 // ─── État de partie de la M2 (CLAUDE.md, sections 3.2 et 7) ─────────────────
@@ -10,31 +12,34 @@ import { maintenant } from './usePilotage'
 //   Pointeur        : b3-marketing-digital-m2:<slug>:courante  → partieId en cours
 // Purge automatique : 24 h après la création, ou quand l'intervenante ferme la mission
 // (le repère de session du groupe change). Reprise possible sur le même navigateur seulement.
+// Version 3 (refonte à 4 épreuves) : un état d'une autre version (v2 à 6 épreuves, enregistré
+// avec `version: 1`) n'est JAMAIS interprété : il est effacé et l'équipe relance sa partie.
 
 export type IndicateurId = 'pertinence' | 'confiance' | 'cohesion' | 'credibilite'
 export type Scores = Record<IndicateurId, number>
 
+/** Retour d'Alex Morgan après une épreuve (sortie IA validée par le serveur). */
 export interface Analyse {
   variations: Scores
+  reaction_ceo: string
   consequence: string
-  point_fort: string
-  point_vigilance: string
   resume_decision: string
-  competences_mobilisees: string[]
+  informations_manquantes: string[]
 }
 
-export interface BilanFinal {
-  points_forts: string[]
-  points_vigilance: string[]
-  competences_mobilisees: string[]
-  recommandation: string
+/** Dernier message du CEO (le statut du contrat, lui, est calculé par le code). */
+export interface VerdictCeo {
+  message_final_ceo: string
+  verdict_narratif: string
 }
 
-/** 1 à 6 = épreuves ; 'pause' entre les phases ; 'bilan' en fin de partie. */
-export type Etape = 1 | 2 | 3 | 4 | 5 | 6 | 'pause' | 'bilan'
+/** 1 à 4 = épreuves ; 'pause' entre les phases ; 'verdict' puis 'retour' (centre de contrôle). */
+export type Etape = 1 | 2 | 3 | 4 | 'pause' | 'verdict' | 'retour'
+
+export const VERSION_ETAT = 3
 
 export interface EtatPartie {
-  version: 1
+  version: typeof VERSION_ETAT
   partieId: string
   agence: string
   creeLe: number
@@ -53,20 +58,22 @@ export interface EtatPartie {
   soumisAuto?: Partial<Record<number, boolean>>
   /** Alertes du chronomètre déjà affichées (minutes restantes), pour ne pas les répéter au rechargement. */
   alertesVues?: Partial<Record<number, number[]>>
+  /** Rebondissements déjà déclenchés par épreuve ('R1'…'R4', 'ultimatum') : jamais deux fois. */
+  alertesDeclenchees: Partial<Record<number, string[]>>
   /** Dernier cumul de minutes ajoutées connu : sert si le pilotage est injoignable après un rechargement. */
   dernierBonus?: number
   decisionsResume: Partial<Record<number, string>>
-  /** Tirages aléatoires, faits une seule fois puis mémorisés (épreuves 4 et 5). */
+  /** Tirages aléatoires, faits une seule fois puis mémorisés (créateur : épreuve 2 ; crise : épreuve 3). */
   variantes: { createur?: string; crise?: string }
   /** L'agence part du maximum : 25 points par indicateur. */
   scores: Scores
   analyses: Partial<Record<number, Analyse | 'en-attente'>>
   /** Nombre d'appels d'analyse lancés par épreuve (1 automatique + relances limitées). */
   tentativesAnalyse?: Partial<Record<number, number>>
-  /** Bilan final rédigé par l'IA (ou « en attente »), avec les épreuves analysées qu'il prend en compte. */
-  bilan?: BilanFinal | 'en-attente'
-  bilanEpreuves?: number[]
-  tentativesBilan?: number
+  /** Dernier message du CEO (ou « en attente »), avec les épreuves analysées qu'il prend en compte. */
+  verdict?: VerdictCeo | 'en-attente'
+  verdictEpreuves?: number[]
+  tentativesVerdict?: number
   termine: boolean
 }
 
@@ -90,7 +97,7 @@ export const formaterCode = (partieId: string) => `${partieId.slice(0, 3)}-${par
 function estEtatValide(e: unknown): e is EtatPartie {
   if (!e || typeof e !== 'object') return false
   const x = e as Partial<EtatPartie>
-  return x.version === 1
+  return x.version === VERSION_ETAT
     && typeof x.partieId === 'string' && /^[A-Z0-9]{6}$/.test(x.partieId)
     && typeof x.agence === 'string'
     && typeof x.creeLe === 'number'
@@ -120,12 +127,30 @@ export function ecrirePartie(slug: string, etat: EtatPartie) {
   }
 }
 
+/** Vrai si la valeur stockée est une partie d'une AUTRE version (ex. v2 à 6 épreuves). */
+function estAncienneVersion(cle: string): boolean {
+  try {
+    const brut = window.localStorage.getItem(cle)
+    const e: unknown = brut ? JSON.parse(brut) : null
+    return !!e && typeof e === 'object' && (e as { version?: unknown }).version !== VERSION_ETAT
+  } catch {
+    return false
+  }
+}
+
+/** Relit une partie stockée (synchronisation entre onglets) ; null si absente ou invalide. */
+export function relirePartie(slug: string, partieId: string): EtatPartie | null {
+  return lire(clePartie(slug, partieId))
+}
+
 /**
  * Purge des parties de ce groupe sur ce navigateur.
  * @param sessionCourante repère lu dans le pilotage ; `undefined` si le serveur n'a pas répondu
  *        (dans ce cas, seule la règle des 24 h s'applique, pour ne jamais effacer par erreur).
+ * @returns vrai si une partie d'une ancienne version a été effacée (message neutre à afficher).
  */
-export function purgerParties(slug: string, sessionCourante: string | null | undefined) {
+export function purgerParties(slug: string, sessionCourante: string | null | undefined): boolean {
+  let ancienneVersion = false
   try {
     const prefixe = prefixeGroupe(slug)
     const pointeur = clePointeur(slug)
@@ -134,6 +159,7 @@ export function purgerParties(slug: string, sessionCourante: string | null | und
       const cle = window.localStorage.key(i)
       if (!cle || !cle.startsWith(prefixe) || cle === pointeur) continue
       const e = lire(cle)
+      if (!e && estAncienneVersion(cle)) ancienneVersion = true
       const perimee = !e
         || maintenant() - e.creeLe > DUREE_VIE_PARTIE_MS
         || (sessionCourante !== undefined && !e.sessionInconnue && e.session !== sessionCourante)
@@ -145,6 +171,7 @@ export function purgerParties(slug: string, sessionCourante: string | null | und
   } catch {
     // stockage indisponible : rien à purger
   }
+  return ancienneVersion
 }
 
 /** Partie en cours de ce groupe sur ce navigateur (après purge), ou null. */
@@ -161,7 +188,7 @@ export function lirePartieCourante(slug: string): EtatPartie | null {
 export function nouvellePartie(agence: string, session: string | null | undefined, minutesBonus: number): EtatPartie {
   const debut = maintenant()
   return {
-    version: 1,
+    version: VERSION_ETAT,
     partieId: genererPartieId(),
     agence,
     creeLe: debut,
@@ -173,6 +200,7 @@ export function nouvellePartie(agence: string, session: string | null | undefine
     bonusAuDebut: { 1: minutesBonus },
     reponses: {},
     soumisLe: {},
+    alertesDeclenchees: {},
     decisionsResume: {},
     variantes: {},
     scores: { ...SCORES_DEPART },
@@ -196,21 +224,41 @@ export function soumettreEpreuve(e: EtatPartie, n: number, auto: boolean): EtatP
 }
 
 /**
- * Après les « Conséquences » d'une épreuve soumise : épreuve suivante, pause ou bilan.
- * L'équipe avance uniquement dans sa phase : après l'épreuve 3, elle attend à la pause.
+ * Après le retour du CEO sur une épreuve soumise : épreuve suivante, pause ou verdict.
+ * L'équipe avance uniquement dans sa phase : après l'épreuve 2, elle attend à la pause.
  * Le temps non utilisé n'est jamais reporté sur l'épreuve suivante.
  */
 export function passerALaSuite(e: EtatPartie, minutesBonus: number): EtatPartie {
   const n = e.etape
   if (typeof n !== 'number' || e.soumisLe[n] === undefined) return e
-  if (n === 3) return { ...e, etape: 'pause' }
-  if (n === 6) return { ...e, etape: 'bilan', termine: true }
+  if (n === DERNIERE_EPREUVE_PHASE_1) return { ...e, etape: 'pause' }
+  if (n === NB_EPREUVES) return { ...e, etape: 'verdict', termine: true }
   return demarrerEpreuve(e, n + 1, minutesBonus)
 }
 
 /** Début de la phase 2, seulement depuis la pause (le verrou est vérifié par l'appelant). */
 export function demarrerPhase2(e: EtatPartie, minutesBonus: number): EtatPartie {
-  return e.etape === 'pause' ? demarrerEpreuve(e, 4, minutesBonus) : e
+  return e.etape === 'pause' ? demarrerEpreuve(e, DERNIERE_EPREUVE_PHASE_1 + 1, minutesBonus) : e
+}
+
+/** Verdict → écran de retour au centre de contrôle (et inversement pour revoir le verdict). */
+export function allerAuRetour(e: EtatPartie): EtatPartie {
+  return e.etape === 'verdict' ? { ...e, etape: 'retour' } : e
+}
+export function revenirAuVerdict(e: EtatPartie): EtatPartie {
+  return e.etape === 'retour' ? { ...e, etape: 'verdict' } : e
+}
+
+// ─── Rebondissements ─────────────────────────────────────────────────────────
+// Un rebondissement est marqué « déclenché » dès son premier affichage. L'état de partie est
+// sauvegardé aussitôt : un rafraîchissement ou une reprise ne le redéclenche jamais.
+export const alertesRecues = (e: EtatPartie, n: number) => e.alertesDeclenchees?.[n] ?? []
+
+export function marquerRebondissements(e: EtatPartie, n: number, ids: string[]): EtatPartie {
+  const deja = alertesRecues(e, n)
+  const nouveaux = ids.filter(id => !deja.includes(id))
+  if (nouveaux.length === 0) return e
+  return { ...e, alertesDeclenchees: { ...e.alertesDeclenchees, [n]: [...deja, ...nouveaux] } }
 }
 
 // Tirage aléatoire (Math.random, côté client) fait UNE SEULE FOIS, au premier démarrage de
@@ -221,15 +269,15 @@ function tirer<T extends { id: string }>(liste: T[]): string {
 
 function avecTirages(e: EtatPartie, n: number): EtatPartie['variantes'] {
   const variantes = { ...e.variantes }
-  if (n >= 4 && !variantes.createur) variantes.createur = tirer(profilsCreateurs)
-  if (n >= 5 && !variantes.crise) variantes.crise = tirer(variantesCrise)
+  if (n >= 2 && !variantes.createur) variantes.createur = tirer(profilsCreateurs)
+  if (n >= 3 && !variantes.crise) variantes.crise = tirer(variantesCrise)
   return variantes
 }
 
 /** Filet de sécurité : complète un tirage manquant pour l'épreuve en cours (sans jamais retirer). */
 export function assurerTirages(e: EtatPartie): EtatPartie {
-  if (typeof e.etape !== 'number' || e.etape < 4) return e
-  const manque = !e.variantes.createur || (e.etape >= 5 && !e.variantes.crise)
+  if (typeof e.etape !== 'number' || e.etape < 2) return e
+  const manque = !e.variantes.createur || (e.etape >= 3 && !e.variantes.crise)
   return manque ? { ...e, variantes: avecTirages(e, e.etape) } : e
 }
 
@@ -297,29 +345,33 @@ export function marquerAnalyseEnAttente(e: EtatPartie, n: number): EtatPartie {
   return { ...e, analyses: { ...e.analyses, [n]: 'en-attente' } }
 }
 
-// ─── Bilan final (1 appel IA, relances limitées) ────────────────────────────
-/** 1 bilan automatique + 2 relances / mises à jour au maximum. */
-export const MAX_TENTATIVES_BILAN = 3
+// ─── Verdict final (1 appel IA, relances limitées) ──────────────────────────
+// L'IA rédige seulement le dernier message du CEO ; le statut du contrat est calculé par le code.
+/** 1 message automatique + 2 relances / mises à jour au maximum. */
+export const MAX_TENTATIVES_VERDICT = 3
 
-/** Épreuves dont l'analyse est appliquée (base du bilan). */
-export const epreuvesAnalysees = (e: EtatPartie) => [1, 2, 3, 4, 5, 6].filter(n => analyseAppliquee(e, n))
+/** Épreuves dont l'analyse est appliquée (base du message final). */
+export const epreuvesAnalysees = (e: EtatPartie) => NUMEROS_EPREUVES.filter(n => analyseAppliquee(e, n))
 
-/** Le bilan est à (re)demander : absent, en échec, ou rédigé avant l'arrivée de nouvelles analyses. */
-export function bilanAJour(e: EtatPartie): boolean {
-  if (typeof e.bilan !== 'object') return false
-  const base = e.bilanEpreuves ?? []
+/** Le message est à jour : rédigé après la dernière analyse arrivée. */
+export function verdictAJour(e: EtatPartie): boolean {
+  if (typeof e.verdict !== 'object') return false
+  const base = e.verdictEpreuves ?? []
   return epreuvesAnalysees(e).every(n => base.includes(n))
 }
 
-export function compterTentativeBilan(e: EtatPartie): EtatPartie {
-  return { ...e, tentativesBilan: (e.tentativesBilan ?? 0) + 1 }
+export function compterTentativeVerdict(e: EtatPartie): EtatPartie {
+  return { ...e, tentativesVerdict: (e.tentativesVerdict ?? 0) + 1 }
 }
 
-export function appliquerBilan(e: EtatPartie, b: BilanFinal, epreuves: number[]): EtatPartie {
-  return { ...e, bilan: b, bilanEpreuves: epreuves }
+export function appliquerVerdict(e: EtatPartie, v: VerdictCeo, epreuves: number[]): EtatPartie {
+  return { ...e, verdict: v, verdictEpreuves: epreuves }
 }
 
-/** Échec du bilan : on garde un bilan précédent s'il existe, sinon « en attente ». */
-export function marquerBilanEnAttente(e: EtatPartie): EtatPartie {
-  return typeof e.bilan === 'object' ? e : { ...e, bilan: 'en-attente' }
+/** Échec : on garde un message précédent s'il existe, sinon « en attente ». */
+export function marquerVerdictEnAttente(e: EtatPartie): EtatPartie {
+  return typeof e.verdict === 'object' ? e : { ...e, verdict: 'en-attente' }
 }
+
+/** Total sur 100. */
+export const totalScores = (s: Scores) => s.pertinence + s.confiance + s.cohesion + s.credibilite

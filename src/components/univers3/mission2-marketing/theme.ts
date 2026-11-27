@@ -12,3 +12,15 @@ export const STRYDE = {
   orangeDoux: 'rgba(255,91,20,0.12)',
   bordure: 'rgba(242,238,230,0.12)',
 } as const
+
+// Identité du centre de contrôle Mission Horizon (coquille U3 navy / or), utilisée pour les
+// écrans d'activation et de retour qui encadrent le simulateur STRYDE (fiche v3).
+// Contrastes (WCAG AA) : crème sur navy ≈ 16:1 · or sur navy ≈ 8:1 · navy sur or ≈ 8:1.
+export const HORIZON = {
+  fond: '#050a1a',
+  panneau: '#0d1f3c',
+  or: '#c9a84c',
+  creme: '#f5ecd0',
+  texteSecondaire: '#b9c2d3',
+  bordure: 'rgba(201,168,76,0.35)',
+} as const

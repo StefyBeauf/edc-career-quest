@@ -1,9 +1,9 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import {
-  accueilM2 as A, ALERTES_CHRONO_MIN, DUREES_EPREUVES_MIN, epreuves, textesAnalyse, textesChrono as T,
+  accueilM2 as A, ALERTES_CHRONO_MIN, DERNIERE_EPREUVE_PHASE_1, DUREES_EPREUVES_MIN, epreuves, NB_EPREUVES, textesAnalyse, textesChrono as T,
 } from '@/lib/content/univers3-marketing-m2'
 import DossierClient from './DossierClient'
 import EcranEpreuve from './EcranEpreuve'
@@ -11,23 +11,24 @@ import EcranPause from './EcranPause'
 import Consequences, { BoutonRelancer } from './Consequences'
 import Jauges from './Jauges'
 import { useAnalyses } from './useAnalyses'
-import { useBilan } from './useBilan'
-import EcranBilan from './EcranBilan'
+import { useVerdict } from './useVerdict'
+import EcranVerdict from './EcranVerdict'
+import { AlertePrioritaire } from './Rebondissements'
 import AlertesUltimatum from './AlertesUltimatum'
 import FicheCreateur from './FicheCreateur'
 import FilSocial from './FilSocial'
 import { contexteUltimatum, createurTire, criseTiree, decisionPartenariat } from './contexteNarratif'
 import Chronometre from './Chronometre'
 import {
-  assurerTirages, demarrerPhase2, formaterCode, marquerAlerte, modifierReponse, passerALaSuite, soumettreEpreuve, type EtatPartie,
+  alertesRecues, allerAuRetour, assurerTirages, demarrerPhase2, formaterCode, marquerAlerte, marquerRebondissements, modifierReponse,
+  passerALaSuite, soumettreEpreuve, type EtatPartie,
 } from './etatPartie'
 import { STRYDE } from './theme'
-import { formaterTemps, tempsRestantMs, useMaintenant } from './useChrono'
+import { formaterTemps, minutesMs, rebondissementsDus, tempsRestantMs, tousRebondissementsRecus, useMaintenant } from './useChrono'
 import { usePilotage } from './usePilotage'
 
-// Partie en cours : chronomètre, alertes, soumission (anticipée ou automatique), enchaînement
-// épreuve → conséquences → épreuve suivante / pause / bilan.
-// Le tableau de bord, les variantes (épreuves 4-6) et l'analyse IA arrivent aux lots suivants.
+// Partie en cours (v3) : chronomètre, rebondissements, alertes de temps, soumission (anticipée ou
+// automatique), enchaînement épreuve → retour du CEO → épreuve suivante / pause / verdict.
 
 interface Props {
   slug: string
@@ -53,15 +54,18 @@ export default function Partie({ slug, etat, reprise, mettreAJour, sauverMainten
 
   const t = useMaintenant(enCours)
   // t = 0 tant que l'horloge n'a pas tourné une première fois : aucune expiration possible avant.
-  const restant = n !== null && t > 0 ? tempsRestantMs(etat, n, bonusCourant, t) : (n !== null ? DUREES_EPREUVES_MIN[n] * 60_000 : 0)
+  const restant = n !== null && t > 0 ? tempsRestantMs(etat, n, bonusCourant, t) : (n !== null ? minutesMs(DUREES_EPREUVES_MIN[n]) : 0)
 
   const [message, setMessage] = useState<string | null>(null)
   const [dossierOuvert, setDossierOuvert] = useState(false)
+  // Rebondissements à afficher en alerte prioritaire (uniquement au moment où ils se déclenchent).
+  const [alerte, setAlerte] = useState<string[] | null>(null)
+  const fermerAlerte = useCallback(() => setAlerte(null), [])
   const { enCours: analysesEnCours, relancer } = useAnalyses(etat, mettreAJour)
-  // Analyses en échec relançables, signalées hors de l'écran de conséquences de l'épreuve concernée.
-  const { enCours: bilanEnCours, relancer: relancerBilan } = useBilan(etat, mettreAJour, analysesEnCours)
-  // (L'écran de bilan affiche ses propres boutons de relance.)
-  const enAttenteAilleurs = etat.etape === 'bilan' ? [] : Object.keys(etat.analyses).map(Number)
+  const { enCours: verdictEnCours, relancer: relancerVerdict } = useVerdict(etat, mettreAJour, analysesEnCours)
+  // Analyses en échec relançables, signalées hors de l'écran de retour de l'épreuve concernée.
+  // (L'écran de verdict affiche ses propres boutons de relance.)
+  const enAttenteAilleurs = etat.etape === 'verdict' ? [] : Object.keys(etat.analyses).map(Number)
     .filter(k => etat.analyses[k] === 'en-attente' && !(k === n && soumis))
 
   // Chronomètre toujours visible : quand le bandeau sort de l'écran au défilement, une barre
@@ -104,11 +108,28 @@ export default function Partie({ slug, etat, reprise, mettreAJour, sauverMainten
     }
   }, [n, enCours, t, restant, mettreAJour])
 
+  // Rebondissements (même principe que les alertes de temps, calculés depuis le début de l'épreuve) :
+  // chacun est marqué « déclenché » et sauvegardé aussitôt, puis affiché en alerte prioritaire.
+  // Une équipe qui revient après l'heure d'un rebondissement le reçoit immédiatement.
+  // L'épreuve 4 ouvre directement sur ses 3 alertes simultanées (« ultimatum »).
+  useEffect(() => {
+    if (n === null || !enCours || t <= 0) return
+    const recus = alertesRecues(etat, n)
+    const attendus = [...rebondissementsDus(etat, n, t), ...(n === NB_EPREUVES ? ['ultimatum'] : [])]
+    const nouveaux = attendus.filter(id => !recus.includes(id))
+    if (nouveaux.length === 0) return
+    mettreAJour(e => marquerRebondissements(e, n, nouveaux))
+    setAlerte(a => [...(a ?? []), ...nouveaux.filter(id => !(a ?? []).includes(id))])
+    // Écriture immédiate (sans attendre la sauvegarde différée) : un rafraîchissement juste après
+    // l'affichage ne redéclenche pas le rebondissement.
+    setTimeout(sauverMaintenant, 50)
+  }, [n, enCours, t, etat, mettreAJour, sauverMaintenant])
+
   // Alertes à 5 min et à 1 min, une seule fois chacune (mémorisées dans l'état de partie).
   useEffect(() => {
     if (n === null || !enCours || t <= 0 || restant <= 0) return
     const vues = etat.alertesVues?.[n] ?? []
-    const franchies = ALERTES_CHRONO_MIN.filter(m => restant <= m * 60_000 && !vues.includes(m))
+    const franchies = ALERTES_CHRONO_MIN.filter(m => restant <= minutesMs(m) && !vues.includes(m))
     if (franchies.length === 0) return
     mettreAJour(e => franchies.reduce((acc, m) => marquerAlerte(acc, n, m), e))
     // Après un rechargement tardif, seule l'alerte la plus urgente s'affiche.
@@ -117,7 +138,7 @@ export default function Partie({ slug, etat, reprise, mettreAJour, sauverMainten
 
   // Filet de sécurité : tirage manquant pour l'épreuve en cours (ne retire jamais un tirage existant).
   useEffect(() => {
-    if (n !== null && n >= 4 && (!etat.variantes.createur || (n >= 5 && !etat.variantes.crise))) mettreAJour(assurerTirages)
+    if (n !== null && n >= 2 && (!etat.variantes.createur || (n >= 3 && !etat.variantes.crise))) mettreAJour(assurerTirages)
   }, [n, etat.variantes.createur, etat.variantes.crise, mettreAJour])
 
   /* eslint-enable react-hooks/set-state-in-effect */
@@ -159,7 +180,7 @@ export default function Partie({ slug, etat, reprise, mettreAJour, sauverMainten
 
       {!bandeauVisible && n !== null && createPortal(
         <div className="fixed top-0 inset-x-0 z-40 flex items-center justify-between gap-3 px-4 py-2 motion-safe:animate-in motion-safe:slide-in-from-top" style={{ background: STRYDE.noir, borderBottom: `1px solid ${STRYDE.bordure}`, color: STRYDE.blancCasse }} data-testid="m2-barre-compacte">
-          <p className="text-sm font-black uppercase tracking-tight truncate">{etat.agence} · Épreuve {n} / 6</p>
+          <p className="text-sm font-black uppercase tracking-tight truncate">{etat.agence} · Épreuve {n} / {NB_EPREUVES}</p>
           <div className="flex items-center gap-3 shrink-0">
             <button type="button" onClick={() => setDossierOuvert(true)} aria-haspopup="dialog" className="rounded-lg px-3 py-1.5 text-xs font-black uppercase tracking-wider" style={{ border: `1px solid ${STRYDE.orange}`, color: STRYDE.orange }}>
               Dossier client
@@ -205,6 +226,7 @@ export default function Partie({ slug, etat, reprise, mettreAJour, sauverMainten
           onBlur={sauverMaintenant}
           onValider={() => mettreAJour(e => soumettreEpreuve(e, n, false))}
           onOuvrirDossier={() => setDossierOuvert(true)}
+          validationBloquee={!tousRebondissementsRecus(etat, n)}
           annexe={annexeEpreuve(n, etat)}
           consequences={<Consequences etat={etat} n={n} enCours={analysesEnCours.includes(n)} onRelancer={() => void relancer(n)} />}
           suite={(
@@ -214,7 +236,7 @@ export default function Partie({ slug, etat, reprise, mettreAJour, sauverMainten
               className="rounded-xl px-6 py-3.5 font-black uppercase tracking-[0.12em]"
               style={{ background: STRYDE.orange, color: STRYDE.noir }}
             >
-              {n === 3 ? T.versPause : n === 6 ? T.versBilan : T.epreuveSuivante} →
+              {n === DERNIERE_EPREUVE_PHASE_1 ? T.versPause : n === NB_EPREUVES ? T.versVerdict : T.epreuveSuivante} →
             </button>
           )}
         />
@@ -234,31 +256,35 @@ export default function Partie({ slug, etat, reprise, mettreAJour, sauverMainten
 
       <DossierClient ouvert={dossierOuvert} onFermer={() => setDossierOuvert(false)} />
 
-      {etat.etape === 'bilan' && (
-        <EcranBilan
+      {etat.etape === 'verdict' && (
+        <EcranVerdict
           etat={etat}
-          bilanEnCours={bilanEnCours}
-          onRelancerBilan={() => void relancerBilan()}
+          verdictEnCours={verdictEnCours}
+          onRelancerVerdict={() => void relancerVerdict()}
           analysesEnCours={analysesEnCours}
           onRelancerAnalyse={k => void relancer(k)}
+          onRetour={() => mettreAJour(allerAuRetour)}
         />
       )}
+
+      {alerte && alerte.length > 0 && <AlertePrioritaire ids={alerte} etat={etat} onFermer={fermerAlerte} />}
     </div>
   )
 }
 
-// Contenu propre aux épreuves 4 à 6, nourri par les tirages et les décisions précédentes.
+// Contenu propre aux épreuves 2 à 4, nourri par les tirages et les décisions précédentes.
 function annexeEpreuve(n: number, etat: EtatPartie) {
-  if (n === 4) {
+  if (n === 2) {
+    // Le créateur tiré au démarrage de l'épreuve n'est révélé qu'avec le rebondissement R2.
     const p = createurTire(etat)
-    return p ? <FicheCreateur profil={p} /> : null
+    return p && alertesRecues(etat, 2).includes('R2') ? <FicheCreateur profil={p} /> : null
   }
-  if (n === 5) {
+  if (n === 3) {
     const v = criseTiree(etat)
-    // Un partenariat ACCEPTÉ à l'épreuve 4 rend le créateur visible dans la polémique.
+    // Un partenariat ACCEPTÉ à l'épreuve 2 rend le créateur visible dans la polémique.
     const partenaire = decisionPartenariat(etat) === 'accepter' ? createurTire(etat) : undefined
     return v ? <FilSocial variante={v} createurPartenaire={partenaire} /> : null
   }
-  if (n === 6) return <AlertesUltimatum contexte={contexteUltimatum(etat)} />
+  if (n === 4) return <AlertesUltimatum contexte={contexteUltimatum(etat)} />
   return null
 }

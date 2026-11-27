@@ -48,5 +48,23 @@ export function useAnalyses(etat: EtatPartie, mettreAJour: (f: (e: EtatPartie) =
 
   const relancer = useCallback((n: number) => lancer(n, true), [lancer])
 
+  // Mode dégradé : relance AUTOMATIQUE des analyses « en attente » au retour du réseau et à chaque
+  // changement d'étape (épreuve suivante, pause, verdict), dans la limite des tentatives.
+  // L'équipe peut aussi relancer elle-même (bouton). Aucun score n'est estimé entre-temps.
+  const relancerEnAttente = useCallback(() => {
+    const e = dernierEtat.current
+    for (const cle of Object.keys(e.analyses)) {
+      const n = Number(cle)
+      if (e.analyses[n] === 'en-attente' && peutLancerAnalyse(e, n)) void lancer(n, true)
+    }
+  }, [lancer])
+
+  useEffect(() => {
+    window.addEventListener('online', relancerEnAttente)
+    return () => window.removeEventListener('online', relancerEnAttente)
+  }, [relancerEnAttente])
+
+  useEffect(() => { relancerEnAttente() }, [etat.etape, relancerEnAttente])
+
   return { enCours, relancer }
 }

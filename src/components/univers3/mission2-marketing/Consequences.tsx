@@ -1,11 +1,15 @@
 'use client'
 
-import { INDICATEURS, textesAnalyse as T } from '@/lib/content/univers3-marketing-m2'
+import { CEO, INDICATEURS, textesAnalyse as T } from '@/lib/content/univers3-marketing-m2'
 import { MAX_TENTATIVES_ANALYSE, type EtatPartie } from './etatPartie'
+import PortraitCeo from './PortraitCeo'
 import { STRYDE } from './theme'
 
-// Étape « Conséquences » d'une épreuve : variations RÉELLEMENT appliquées (ou « Analyse en
-// attente »), conséquence simulée, point fort, point de vigilance. Jamais de score estimé.
+// Retour d'Alex Morgan après une épreuve (fiche v3) : portrait et identité, réaction (2 à 4
+// phrases), variations RÉELLEMENT appliquées et conséquence simulée. `informations_manquantes`
+// reste dans l'état de partie mais n'est PAS affiché : la liste ressemblerait à un corrigé. Écran de restitution
+// uniquement : aucune messagerie ni conversation avec le CEO.
+// Mode dégradé : message neutre, aucun score estimé, relance possible.
 
 interface Props {
   etat: EtatPartie
@@ -30,6 +34,18 @@ export function BoutonRelancer({ etat, n, enCours, onRelancer }: Props) {
   )
 }
 
+function Identite() {
+  return (
+    <div className="flex items-center gap-3">
+      <PortraitCeo />
+      <div>
+        <p className="font-black">{CEO.nom}</p>
+        <p className="text-xs" style={{ color: STRYDE.texteSecondaire }}>{CEO.fonction}</p>
+      </div>
+    </div>
+  )
+}
+
 export default function Consequences(props: Props) {
   const { etat, n, enCours } = props
   const a = etat.analyses[n]
@@ -46,7 +62,9 @@ export default function Consequences(props: Props) {
   if (a === 'en-attente') {
     return (
       <div role="status" className="rounded-xl p-4 space-y-3" style={{ background: STRYDE.anthracite, border: `1px dashed ${STRYDE.bordure}` }} data-testid="m2-analyse-attente">
-        <p className="text-sm">{T.enAttente}</p>
+        <Identite />
+        <p className="text-[15px] font-semibold">{T.enAttente}</p>
+        <p className="text-xs" style={{ color: STRYDE.texteSecondaire }}>{T.enAttenteDetail}</p>
         <BoutonRelancer {...props} />
       </div>
     )
@@ -54,29 +72,35 @@ export default function Consequences(props: Props) {
 
   return (
     <div className="rounded-xl p-4 space-y-4 motion-safe:animate-in motion-safe:fade-in motion-safe:duration-500" style={{ background: STRYDE.anthracite, border: '1px solid rgba(255,91,20,0.45)' }} data-testid="m2-analyse">
-      <ul className="flex flex-wrap gap-2" aria-label="Variations des indicateurs">
-        {INDICATEURS.map(i => {
-          const v = a.variations[i.id]
-          return (
-            <li
-              key={i.id}
-              className="rounded-full px-3 py-1 text-xs font-bold tabular-nums"
-              style={v > 0
-                ? { background: STRYDE.orange, color: STRYDE.noir }
-                : v < 0
-                  ? { background: STRYDE.blancCasse, color: STRYDE.noir }
-                  : { border: `1px solid ${STRYDE.bordure}`, color: STRYDE.texteSecondaire }}
-            >
-              {i.label} {v > 0 ? `+${v}` : v}
-            </li>
-          )
-        })}
-      </ul>
-      <p className="text-[15px] font-semibold">{a.consequence}</p>
-      <dl className="grid gap-3 sm:grid-cols-2 text-sm">
-        <div><dt className="text-xs font-black uppercase tracking-wider" style={{ color: STRYDE.orange }}>{T.pointFort}</dt><dd>{a.point_fort}</dd></div>
-        <div><dt className="text-xs font-black uppercase tracking-wider" style={{ color: STRYDE.texteSecondaire }}>{T.pointVigilance}</dt><dd>{a.point_vigilance}</dd></div>
-      </dl>
+      <Identite />
+      <blockquote className="text-[15px] leading-relaxed font-semibold pl-4" style={{ borderLeft: `3px solid ${STRYDE.orange}` }} data-testid="m2-reaction-ceo">
+        « {a.reaction_ceo} »
+      </blockquote>
+      <div className="space-y-2">
+        <p className="text-[11px] font-black uppercase tracking-[0.2em]" style={{ color: STRYDE.texteSecondaire }}>{T.variations}</p>
+        <ul className="flex flex-wrap gap-2" aria-label="Variations des indicateurs">
+          {INDICATEURS.map(i => {
+            const v = a.variations[i.id]
+            return (
+              <li
+                key={i.id}
+                className="rounded-full px-3 py-1 text-xs font-bold tabular-nums"
+                style={v > 0
+                  ? { background: STRYDE.orange, color: STRYDE.noir }
+                  : v < 0
+                    ? { background: STRYDE.blancCasse, color: STRYDE.noir }
+                    : { border: `1px solid ${STRYDE.bordure}`, color: STRYDE.texteSecondaire }}
+              >
+                {i.label} {v > 0 ? `+${v}` : v}
+              </li>
+            )
+          })}
+        </ul>
+      </div>
+      <div className="text-sm">
+        <p className="text-[11px] font-black uppercase tracking-[0.2em]" style={{ color: STRYDE.orange }}>{T.consequence}</p>
+        <p data-testid="m2-consequence">{a.consequence}</p>
+      </div>
     </div>
   )
 }

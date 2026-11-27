@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react'
 import {
-  ecrirePartie, lirePartieCourante, nouvellePartie, purgerParties, type EtatPartie,
+  clePartie, ecrirePartie, lirePartieCourante, nouvellePartie, purgerParties, relirePartie, type EtatPartie,
 } from './etatPartie'
 
 /**
@@ -14,12 +14,14 @@ export function usePartie(slug: string, pret: boolean, session: string | null | 
   const [etat, setEtat] = useState<EtatPartie | null>(null)
   const [charge, setCharge] = useState(false)
   const [reprise, setReprise] = useState(false)
+  // Vrai si une partie de l'ancienne version (6 épreuves) a été effacée au chargement.
+  const [misAJour, setMisAJour] = useState(false)
   const dernierEtat = useRef<EtatPartie | null>(null)
 
   /* eslint-disable react-hooks/set-state-in-effect -- lecture unique de localStorage au montage, nécessaire pour éviter un écart de rendu serveur/client */
   useEffect(() => {
     if (!pret || charge) return
-    purgerParties(slug, session)
+    setMisAJour(purgerParties(slug, session))
     const e = lirePartieCourante(slug)
     setEtat(e)
     setReprise(e !== null)
@@ -41,6 +43,22 @@ export function usePartie(slug: string, pret: boolean, session: string | null | 
     const t = setTimeout(() => ecrirePartie(slug, etat), 300)
     return () => clearTimeout(t)
   }, [etat, slug])
+
+  // Même partie ouverte dans deux onglets du même navigateur : chaque onglet adopte l'état
+  // enregistré par l'autre (l'événement « storage » ne se déclenche que si la valeur a changé,
+  // donc pas de va-et-vient). appliquerAnalyse() reste idempotente : jamais de double comptage.
+  const partieId = etat?.partieId
+  useEffect(() => {
+    if (!partieId) return
+    const cle = clePartie(slug, partieId)
+    const surStockage = (ev: StorageEvent) => {
+      if (ev.key !== cle || !ev.newValue) return
+      const e = relirePartie(slug, partieId)
+      if (e) setEtat(e)
+    }
+    window.addEventListener('storage', surStockage)
+    return () => window.removeEventListener('storage', surStockage)
+  }, [slug, partieId])
 
   // Écriture immédiate si l'onglet est masqué ou fermé (le délai de 300 ms n'aurait pas expiré).
   useEffect(() => {
@@ -70,5 +88,5 @@ export function usePartie(slug: string, pret: boolean, session: string | null | 
     if (dernierEtat.current) ecrirePartie(slug, dernierEtat.current)
   }, [slug])
 
-  return { etat, charge, reprise, demarrer, mettreAJour, sauverMaintenant }
+  return { etat, charge, reprise, misAJour, demarrer, mettreAJour, sauverMaintenant }
 }

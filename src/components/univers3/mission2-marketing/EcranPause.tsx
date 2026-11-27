@@ -1,12 +1,15 @@
 'use client'
 
-import { epreuves, textesPause as T } from '@/lib/content/univers3-marketing-m2'
+import { CEO, DERNIERE_EPREUVE_PHASE_1, epreuves, textesAnalyse, textesPause as T } from '@/lib/content/univers3-marketing-m2'
 import type { EtatPartie } from './etatPartie'
 import Jauges from './Jauges'
+import PortraitCeo from './PortraitCeo'
 import { STRYDE } from './theme'
 import type { StatutPilotage } from './usePilotage'
 
-// Écran de pause entre les deux phases (20 min). Les équipes en avance attendent ici.
+// Écran de fin de phase 1 (pause de 20 min, hors chronomètre). Les équipes en avance attendent ici.
+// Il affiche les 4 indicateurs, le dernier message d'Alex Morgan (sa réaction à l'épreuve 2,
+// aucun appel IA supplémentaire) puis le texte de transition mot pour mot.
 // Verrou : la phase 2 ne démarre que si l'intervenante l'a ouverte depuis l'admin
 // (statut relu toutes les 10 s par Partie.tsx). Tant que le statut est inconnu
 // (serveur injoignable), le verrou reste fermé.
@@ -20,12 +23,27 @@ interface Props {
 
 export default function EcranPause({ etat, phase2Ouverte, statut, onCommencer }: Props) {
   const phase1 = epreuves.filter(e => e.phase === 1)
+  const derniere = etat.analyses[DERNIERE_EPREUVE_PHASE_1]
   return (
     <div className="space-y-6 motion-safe:animate-in motion-safe:fade-in motion-safe:duration-500" data-testid="m2-pause">
       <div className="text-center space-y-3 py-4">
-        <p className="text-[11px] font-bold uppercase tracking-[0.3em]" style={{ color: STRYDE.orange }}>Pause · 20 minutes</p>
-        <h2 className="text-2xl sm:text-3xl font-black max-w-3xl mx-auto leading-tight">{T.titre}</h2>
+        <p className="text-[11px] font-bold uppercase tracking-[0.3em]" style={{ color: STRYDE.orange }}>{T.surtitre} · Pause</p>
       </div>
+
+      <section className="rounded-2xl p-5 space-y-3 max-w-3xl mx-auto" style={{ background: STRYDE.anthracite, border: '1px solid rgba(255,91,20,0.45)' }} aria-label={T.messageCeo} data-testid="m2-message-ceo-pause">
+        <div className="flex items-center gap-3">
+          <PortraitCeo />
+          <div>
+            <p className="text-[11px] font-black uppercase tracking-[0.2em]" style={{ color: STRYDE.orange }}>{T.messageCeo}</p>
+            <p className="font-black">{CEO.nom}</p>
+          </div>
+        </div>
+        <p className="text-[15px] font-semibold leading-relaxed">
+          {typeof derniere === 'object' ? `« ${derniere.reaction_ceo} »` : textesAnalyse.enAttente}
+        </p>
+      </section>
+
+      <h2 className="text-2xl sm:text-3xl font-black max-w-3xl mx-auto leading-tight text-center" data-testid="m2-transition">{T.titre}</h2>
 
       <div className="grid gap-6 lg:grid-cols-[1.4fr_1fr]">
         <section className="rounded-2xl p-5 space-y-4" style={{ background: STRYDE.anthracite, border: `1px solid ${STRYDE.bordure}` }} aria-labelledby="m2-bilan-phase1">

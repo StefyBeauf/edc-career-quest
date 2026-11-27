@@ -1,6 +1,6 @@
 // ═══════════════════════════════════════════════════════════════════════════
-// B3 Marketing Digital — Mission 2 « MARKETING UNDER PRESSURE »
-// Contenus de la mission (fiche `fiche-mission-mission2-marketing-under-pressure-v2.docx`).
+// B3 Marketing Digital — Mission 2 « MARKETING UNDER PRESSURE » (v3)
+// Contenus de la mission (fiche `fiche-mission-horizon-stryde-m2.docx`, v3).
 // Les textes marqués « mot pour mot » viennent de la fiche et ne doivent pas être reformulés.
 // Les compléments rédigés par Claude Code sont marqués « à valider par Stéphanie ».
 // ═══════════════════════════════════════════════════════════════════════════
@@ -14,12 +14,45 @@ export const VISUELS_STRYDE = {
   shadow: '/univers3/stryde/shadow.jpg',
 } as const
 
+// Écran d'activation (centre de contrôle Mission Horizon) : mot pour mot (fiche v3).
+export const activationM2 = {
+  surtitre: 'MISSION HORIZON — CENTRE DE CONTRÔLE',
+  titre: 'Activation du simulateur professionnel',
+  paragraphes: [
+    'Pour tester votre capacité à garder le contrôle sous pression, le centre de contrôle vous plonge dans une simulation professionnelle immersive.',
+    'Votre équipage devient une agence marketing chargée du lancement d’une nouvelle marque de sneakers.',
+    'Vos compétences seront mises à l’épreuve. Vos décisions auront des conséquences. Votre capacité d’adaptation fera la différence.',
+  ],
+  simulation: 'SIMULATION 02 — STRYDE',
+  format: '90 minutes • 4 épreuves • 100 points',
+  bouton: 'Activer le simulateur',
+  // Rédigé par Claude Code — à valider par Stéphanie.
+  activation: 'Activation en cours…',
+  // Message neutre affiché quand une partie de l'ancienne version (6 épreuves) a été effacée (CLAUDE.md, section 3.2).
+  miseAJour: 'Le simulateur a été mis à jour. Merci de relancer votre partie.',
+}
+
+// Écran de retour au centre de contrôle : mot pour mot (fiche v3).
+export const retourM2 = {
+  surtitre: 'MISSION HORIZON — FIN DE SIMULATION',
+  titre: 'Retour au centre de contrôle',
+  paragraphes: [
+    'Vous avez construit une stratégie, défendu vos recommandations et affronté des imprévus.',
+    'Votre prochaine mission consiste à analyser votre expérience et à en tirer des enseignements pour votre future vie professionnelle.',
+    'Vous ne pourrez pas toujours contrôler les événements. Mais vous pourrez apprendre à contrôler votre manière d’y réagir.',
+  ],
+  fin: 'Simulation terminée.',
+  // Rédigé par Claude Code — à valider par Stéphanie.
+  revoirVerdict: '← Revoir le verdict',
+}
+
 export const accueilM2 = {
   titre: 'Marketing Under Pressure',
   sousTitre: 'Garder le contrôle sous pression',
-  accroche: 'Un lancement. Des imprévus. 80 minutes pour faire la différence.',
-  mentions: ['80 minutes', '6 épreuves', 'Une connexion par équipe'],
-  // Mot pour mot (fiche).
+  // ⚠️ Passage de 80 à 90 minutes : à valider par Stéphanie (question ouverte 10).
+  accroche: 'Un lancement. Des imprévus. 90 minutes pour faire la différence.',
+  mentions: ['90 minutes', '4 épreuves', '100 points'],
+  // Mot pour mot (fiche v2, conservé).
   introduction:
     "Vous intégrez une agence de marketing et de communication chargée du lancement national d'une nouvelle marque de sneakers. Votre client ambitionne de bousculer les codes du streetwear et de se faire une place sur un marché particulièrement concurrentiel. Vous avez carte blanche pour construire sa stratégie de lancement. Mais entre les exigences du client, les opportunités inattendues et les crises qui se préparent, rien ne va se passer exactement comme prévu. Votre mission : créer le désir, prendre les bonnes décisions et garder le contrôle sous pression.",
   bouton: 'Entrer en mission',
@@ -37,16 +70,19 @@ export const accueilM2 = {
   codeAide: 'Il identifie votre équipe à l’écran. La partie se reprend uniquement sur ce navigateur.',
 }
 
-// Repères de la partie (fiche, section « Déroulé »).
-export const DUREE_PARTIE_MIN = 80
-export const NB_EPREUVES = 6
+// Repères de la partie (fiche v3, « Déroulé ») : 2 phases de 45 minutes, pause hors chronomètre.
+export const DUREE_PARTIE_MIN = 90
+export const NB_EPREUVES = 4
+export const NUMEROS_EPREUVES = [1, 2, 3, 4] as const
 // Une partie locale est purgée 24 h après sa création (CLAUDE.md, section 3.2).
 export const DUREE_VIE_PARTIE_MS = 24 * 60 * 60 * 1000
 
-// Durée de chaque épreuve en minutes (fiche, « Déroulé ») : 2 phases de 40 minutes.
-export const DUREES_EPREUVES_MIN: Record<number, number> = { 1: 15, 2: 15, 3: 10, 4: 15, 5: 15, 6: 10 }
-export const PHASE_EPREUVE: Record<number, 1 | 2> = { 1: 1, 2: 1, 3: 1, 4: 2, 5: 2, 6: 2 }
-// Alertes du chronomètre, en minutes restantes (fiche, « Chronomètre »).
+// Durée de chaque épreuve en minutes (fiche v3).
+export const DUREES_EPREUVES_MIN: Record<number, number> = { 1: 15, 2: 30, 3: 25, 4: 20 }
+export const PHASE_EPREUVE: Record<number, 1 | 2> = { 1: 1, 2: 1, 3: 2, 4: 2 }
+// Dernière épreuve de la phase 1 : la pause verrouillée suit.
+export const DERNIERE_EPREUVE_PHASE_1 = 2
+// Alertes du chronomètre, en minutes restantes.
 export const ALERTES_CHRONO_MIN = [5, 1] as const
 
 // Micro-textes du chronomètre et de la validation — à valider par Stéphanie.
@@ -55,6 +91,8 @@ export const textesChrono = {
   alerte1: 'Dernière minute. Vos réponses seront envoyées automatiquement à la fin du temps.',
   tempsAjoute: (min: number) => `L’intervenante vous accorde ${min} minute${min > 1 ? 's' : ''} de plus.`,
   boutonValider: 'Valider la décision',
+  // Bouton bloqué tant qu'un rebondissement peut encore arriver : message neutre (n'annonce pas l'heure).
+  attenteRebondissements: 'D’autres informations client peuvent encore arriver.',
   confirmerValider: 'Valider maintenant ? La décision sera définitive et le temps restant ne sera pas reporté.',
   confirmerOui: 'Oui, valider',
   confirmerNon: 'Continuer à travailler',
@@ -62,16 +100,19 @@ export const textesChrono = {
   soumisManuel: 'Décision validée.',
   epreuveSuivante: 'Passer à l’épreuve suivante',
   versPause: 'Terminer la phase 1',
-  versBilan: 'Voir le bilan de la mission',
+  versVerdict: 'Découvrir le verdict',
 }
 
-// Écran de pause (fiche) : titre mot pour mot ; micro-textes — à valider par Stéphanie.
+// Écran de fin de phase 1 (fiche v3) : texte de transition mot pour mot ; micro-textes — à valider par Stéphanie.
 export const textesPause = {
-  titre: 'Phase 1 terminée. Votre stratégie prend forme. Mais le marché n’a pas dit son dernier mot.',
+  surtitre: 'Phase 1 terminée',
+  // Mot pour mot (fiche v3).
+  titre: 'Votre stratégie prend forme. Mais le marché n’a pas dit son dernier mot.',
   attente: 'La phase 2 s’ouvrira quand l’intervenante le décidera. Votre partie est sauvegardée.',
   ouverte: 'La phase 2 est ouverte. Le marché vous attend.',
   bouton: 'Commencer la phase 2',
-  bilanTitre: 'Bilan de la phase 1',
+  bilanTitre: 'Votre agence après la phase 1',
+  messageCeo: 'Le message de votre client',
   sauvegarde: 'Toutes vos réponses de la phase 1 sont sauvegardées sur ce navigateur.',
   horsLigne: 'Connexion momentanément indisponible : nouvel essai automatique toutes les 10 secondes.',
   rappelSimulation: 'Ces indicateurs simulent les conséquences de vos décisions. Ce n’est pas une note.',
@@ -88,36 +129,76 @@ export const MAX_INDICATEUR = 25
 export const texteAnalyseEnAttente = (epreuvesEnAttente: number[]) =>
   `Analyse en attente : épreuve${epreuvesEnAttente.length > 1 ? 's' : ''} ${epreuvesEnAttente.join(', ')}. Les indicateurs seront mis à jour dès qu’elle sera disponible.`
 
-// Écran de fin (fiche) : titre mot pour mot.
-export const textesBilan = {
-  titre: 'Mission terminée. Il est temps de prendre du recul.',
-  // Mot pour mot (fiche).
-  messageCloture: 'Vous avez construit une stratégie, défendu vos recommandations et affronté des imprévus. Votre prochaine mission consiste à analyser votre expérience et à en tirer des enseignements pour votre future vie professionnelle. Vous ne pourrez pas toujours contrôler les événements. Mais vous pourrez apprendre à contrôler votre manière d’y réagir.',
-  // Micro-textes — à valider par Stéphanie.
-  scoreFinal: 'Score final de l’agence',
+// ═══ Alex Morgan, fondateur et CEO fictif de STRYDE ═════════════════════════
+// Personnage fictif. Portrait : illustration SVG (jamais la photo d'une personne réelle).
+// Rédigé par Claude Code — à valider par Stéphanie (question ouverte 11 pour le portrait).
+export const CEO = {
+  nom: 'Alex Morgan',
+  fonction: 'Fondateur et CEO de STRYDE',
+}
+
+/** Palier de ton d'Alex Morgan selon la Confiance du client (fiche v3, « comportement CEO »). */
+export const PALIERS_CONFIANCE = [
+  { min: 21, ton: 'Enthousiaste et confiant' },
+  { min: 16, ton: 'Constructif et vigilant' },
+  { min: 11, ton: 'Exigeant' },
+  { min: 6, ton: 'Impatient et sceptique' },
+  { min: 0, ton: 'Envisage de rompre le contrat' },
+] as const
+export const tonCeo = (confiance: number) => PALIERS_CONFIANCE.find(p => confiance >= p.min)!.ton
+
+// Micro-textes du retour d'Alex Morgan après chaque épreuve — à valider par Stéphanie.
+export const textesAnalyse = {
+  chargement: 'Alex Morgan lit votre proposition…',
+  titre: 'Le retour de votre client',
+  variations: 'Effets sur votre agence',
+  consequence: 'Conséquence',
+  // Message neutre du mode dégradé (fiche v3, exemple repris tel quel).
+  enAttente: 'Alex Morgan étudie votre proposition. Son retour arrivera sous peu.',
+  enAttenteDetail: 'Vos réponses sont conservées et la partie continue. L’analyse sera relancée automatiquement, ou depuis ce bouton.',
+  relancer: 'Relancer l’analyse',
+  relancesEpuisees: 'Nombre de relances atteint. Prévenez l’intervenante : vos réponses restent conservées.',
+  bandeauAttente: (n: number) => `Analyse en attente pour l’épreuve ${n}.`,
+}
+
+// ═══ Verdict final ══════════════════════════════════════════════════════════
+// Statut du contrat CALCULÉ PAR LE CODE à partir du score total (fiche v3), jamais par l'IA.
+export const BAREME_VERDICT = [
+  { min: 90, statut: 'Agence d’excellence' },
+  { min: 75, statut: 'Agence de confiance' },
+  { min: 60, statut: 'Agence sous surveillance' },
+  { min: 40, statut: 'Contrat menacé' },
+  { min: 0, statut: 'Contrat perdu' },
+] as const
+export const statutContrat = (total: number) => BAREME_VERDICT.find(b => total >= b.min)!.statut
+
+// Micro-textes de l'écran de verdict — à valider par Stéphanie.
+export const textesVerdict = {
+  surtitre: 'Fin de simulation · Verdict du client',
+  scoreFinal: 'Score de l’agence',
+  provisoire: 'provisoire',
+  statut: 'Statut du contrat',
   evolution: 'Évolution épreuve par épreuve',
-  decisions: 'Vos 6 décisions',
-  pointsForts: 'Points forts',
-  pointsVigilance: 'Points de vigilance',
-  competences: 'Compétences mobilisées',
-  recommandation: 'Recommandation de progression',
-  historique: 'Historique complet de vos réponses',
-  chargement: 'Votre client prépare le bilan de la mission…',
-  enAttente: 'Bilan en attente. Vos résultats sont conservés : vous pourrez relancer le bilan dans un instant.',
-  relancer: 'Relancer le bilan',
-  mettreAJour: 'De nouvelles analyses sont arrivées : mettre à jour le bilan',
+  decisions: 'Historique de vos décisions',
+  messageCeo: 'Le dernier mot d’Alex Morgan',
+  chargement: 'Alex Morgan prépare son verdict…',
+  enAttente: 'Alex Morgan étudie votre parcours. Son dernier message arrivera sous peu. Vos résultats sont conservés.',
+  relancer: 'Relancer le message',
+  mettreAJour: 'De nouvelles analyses sont arrivées : mettre à jour le message',
   relancesEpuisees: 'Nombre de relances atteint. Prévenez l’intervenante : vos résultats restent conservés.',
-  resumeIndisponible: 'Résumé indisponible : analyse en attente.',
+  resumeIndisponible: 'Décision non résumée : analyse en attente.',
   analyseAttente: 'Analyse en attente',
   depart: 'Départ',
-  rappelSimulation: 'Ces indicateurs simulent les conséquences de vos décisions. Ce n’est pas une note.',
+  historique: 'Vos réponses complètes',
+  rappelSimulation: 'Ces indicateurs simulent les conséquences de vos décisions dans le jeu. Ce n’est pas une note.',
+  versRetour: 'Revenir au centre de contrôle',
 }
 
 // ═══ Dossier client STRYDE ══════════════════════════════════════════════════
 // Brief et collection : fiche mission. Tout le reste : rédigé par Claude Code — À VALIDER PAR STÉPHANIE.
 // Règles respectées : marque et personnes fictives ; ni concurrents, ni benchmark, ni slogan,
 // ni campagne, ni stratégie fournis ; engagements environnementaux vérifiables et réalistes à 89 €.
-// La section « conception » contient les indices utiles à l'épreuve 5 (origine du design).
+// La section « conception » contient les indices utiles à l'épreuve 3 (origine du design).
 
 export interface ModeleStryde {
   id: 'origin' | 'impact' | 'shadow'
@@ -272,14 +353,15 @@ export const dossierClient: DossierClient = {
   ],
 }
 
-// ═══ Épreuves ═══════════════════════════════════════════════════════════════
-// Titres, durées, travail demandé et champs : fiche mission. Situations et aides : rédigées par
-// Claude Code — À VALIDER PAR STÉPHANIE, sauf l'alerte de l'épreuve 3 (mot pour mot).
-// Pas de QCM : uniquement des champs libres courts et argumentés. Seules exceptions de forme,
-// prévues par la fiche : la liste de 3 canaux maximum (épreuve 2) et la décision
-// accepter / refuser / négocier (épreuve 4), toujours accompagnées d'une justification.
+// ═══ Épreuves (v3) ══════════════════════════════════════════════════════════
+// Titres, durées, travail demandé et champs : fiche v3. Situations et aides : rédigées par
+// Claude Code — À VALIDER PAR STÉPHANIE.
+// Saisie réduite (fiche v3) : deux champs principaux par épreuve (« Quelle est votre décision ? »,
+// « Pourquoi avez-vous fait ce choix ? ») + uniquement les champs spécifiques prévus.
+// Aucune longueur minimale ; la longueur maximale est conservée (maîtrise des coûts IA).
 
 export type TypeChamp = 'texte' | 'canaux' | 'decision'
+export type RebondissementId = 'R1' | 'R2' | 'R3' | 'R4'
 
 export interface ChampEpreuve {
   id: string
@@ -287,6 +369,8 @@ export interface ChampEpreuve {
   aide: string
   maxCaracteres: number
   type?: TypeChamp
+  /** Champ affiché seulement après ce rebondissement (il le révèle : ce n'est pas un nouveau formulaire). */
+  visibleApres?: RebondissementId
 }
 
 export interface Epreuve {
@@ -307,154 +391,133 @@ export const DECISIONS_PARTENARIAT = [
   { id: 'negocier', label: 'Négocier' },
 ] as const
 
-// Les 5 étapes narratives structurent l'écran d'une épreuve, sans chronomètre propre.
-export const ETAPES_NARRATIVES = ['Alerte', 'Investigation', 'Concertation', 'Décision', 'Conséquences'] as const
-
-const AIDE_SOURCES = 'Liens ou références consultés, et ce que vous en avez retenu. Une URL seule ne prouve rien.'
-const AIDE_JUSTIFICATION = 'Pourquoi ce choix plutôt qu’un autre ? Appuyez-vous sur le dossier client et vos recherches.'
+const LABEL_DECISION = 'Quelle est votre décision ?'
+const LABEL_POURQUOI = 'Pourquoi avez-vous fait ce choix ?'
+const AIDE_POURQUOI = 'Vos arguments, appuyés sur le dossier client, vos recherches et les informations reçues. Les risques que vous acceptez.'
 
 export const epreuves: Epreuve[] = [
   {
     numero: 1,
-    titre: 'Trouver sa place sur le marché',
+    titre: 'Trouver sa place',
     dureeMin: DUREES_EPREUVES_MIN[1],
     phase: PHASE_EPREUVE[1],
-    situation: 'Premier rendez-vous avec STRYDE. Avant de parler campagne, le client veut une chose : savoir où sa marque peut exister sur un marché où tout le monde vend des sneakers.',
+    situation: 'Premier rendez-vous avec STRYDE. Avant de parler lancement, le client veut savoir où sa marque peut exister sur un marché où tout le monde vend des sneakers.',
     travailDemande: [
-      'Identifiez 3 concurrents réels de STRYDE (recherche Internet obligatoire, aucune liste n’est fournie).',
-      'Analysez leur positionnement et leur communication.',
-      'Repérez une opportunité de différenciation pour STRYDE.',
-      'Proposez un positionnement et justifiez-le.',
+      'Identifiez 2 concurrents réels de STRYDE (recherche Internet, aucune liste n’est fournie).',
+      'Repérez une opportunité de différenciation.',
+      'Recommandez un positionnement justifié par vos recherches. Pas d’étude de marché exhaustive.',
     ],
     champs: [
-      { id: 'concurrents', label: 'Trois concurrents', aide: 'Pour chacun : nom, prix, cible, ce qu’il met en avant. 3 à 6 lignes.', maxCaracteres: 700 },
-      { id: 'enseignements', label: 'Ce que vous en retenez', aide: 'Points communs, manques, excès observés. 2 à 4 phrases.', maxCaracteres: 500 },
-      { id: 'opportunite', label: 'Opportunité de différenciation', aide: 'L’espace que personne n’occupe vraiment. 1 à 3 phrases.', maxCaracteres: 400 },
-      { id: 'positionnement', label: 'Positionnement proposé', aide: 'STRYDE est… pour… qui veulent… 1 à 2 phrases.', maxCaracteres: 300 },
-      { id: 'justification', label: 'Justification', aide: AIDE_JUSTIFICATION, maxCaracteres: 500 },
-      { id: 'sources', label: 'Sources', aide: AIDE_SOURCES, maxCaracteres: 400 },
+      { id: 'decision', label: LABEL_DECISION, aide: 'Vos 2 concurrents, l’opportunité repérée et le positionnement que vous recommandez.', maxCaracteres: 900 },
+      { id: 'pourquoi', label: LABEL_POURQUOI, aide: AIDE_POURQUOI, maxCaracteres: 700 },
+      { id: 'sources', label: 'Sources', aide: 'Liens ou références consultés, et ce que vous en avez retenu. Une URL seule ne prouve rien.', maxCaracteres: 400 },
     ],
-    competences: ['Analyse de marché', 'Recherche et exploitation d’informations', 'Argumentation'],
+    competences: ['Analyse de marché', 'Exploitation d’informations', 'Argumentation'],
   },
   {
     numero: 2,
-    titre: 'Créer le désir',
+    titre: 'Réussir son lancement',
     dureeMin: DUREES_EPREUVES_MIN[2],
     phase: PHASE_EPREUVE[2],
-    situation: 'Le client valide l’idée d’un lancement national. Il attend maintenant une campagne qui donne envie, cohérente avec le positionnement que vous avez défendu.',
+    situation: 'Le client valide l’idée d’un lancement national dans 30 jours. Il attend un concept qui donne envie et des actions concrètes, cohérentes avec le positionnement que vous avez défendu.',
     travailDemande: [
-      'Inspirez-vous de tendances et de campagnes réelles.',
-      'Imaginez un concept et un message (ou un slogan).',
-      `Choisissez ${MAX_CANAUX} canaux au maximum et les actions associées.`,
-      'Expliquez comment vous allez susciter l’intérêt de la cible.',
+      'Imaginez un concept de lancement.',
+      'Choisissez librement 3 actions marketing (digital, communication, événementiel, influence, acquisition, expérience client, communauté).',
+      'Pas de slogan imposé, pas de plan média détaillé, pas de répartition budgétaire complexe.',
+      'Restez attentifs : le client peut revenir vers vous pendant l’épreuve.',
     ],
     champs: [
-      { id: 'concept', label: 'Concept de campagne', aide: 'L’idée centrale, en 2 à 4 phrases.', maxCaracteres: 400 },
-      { id: 'message', label: 'Message ou slogan', aide: 'Ce que la cible doit retenir. 1 phrase.', maxCaracteres: 200 },
-      { id: 'canaux', label: `Canaux (${MAX_CANAUX} maximum)`, aide: 'Un canal par ligne.', maxCaracteres: 60, type: 'canaux' },
-      { id: 'actions', label: 'Actions', aide: 'Ce qui se passe concrètement sur chaque canal. 3 à 6 lignes.', maxCaracteres: 600 },
-      { id: 'justification', label: 'Justification', aide: AIDE_JUSTIFICATION, maxCaracteres: 500 },
-      { id: 'sources', label: 'Sources et inspirations', aide: AIDE_SOURCES, maxCaracteres: 400 },
+      { id: 'decision', label: LABEL_DECISION, aide: 'Votre concept, vos 3 actions et, si la situation change, vos arbitrages.', maxCaracteres: 1200 },
+      { id: 'createur', label: 'Partenariat proposé : votre choix', aide: 'Accepter, refuser ou négocier. Justifiez ce choix dans le champ « Pourquoi ».', maxCaracteres: 20, type: 'decision', visibleApres: 'R2' },
+      { id: 'pourquoi', label: LABEL_POURQUOI, aide: AIDE_POURQUOI, maxCaracteres: 900 },
     ],
-    competences: ['Créativité', 'Cohérence stratégique', 'Choix des canaux'],
+    competences: ['Créativité', 'Arbitrage sous contrainte', 'Évaluation des risques'],
   },
   {
     numero: 3,
-    titre: 'Faire plus avec moins',
+    titre: 'Sauver la réputation de STRYDE',
     dureeMin: DUREES_EPREUVES_MIN[3],
     phase: PHASE_EPREUVE[3],
-    // Mot pour mot (fiche).
-    situation: 'Nous venons de revoir nos prévisions financières. Le budget marketing doit être réduit immédiatement. En revanche, nos ambitions restent inchangées. Nous comptons sur votre créativité.',
+    situation: 'Une publication devient virale : STRYDE est accusée d’avoir copié le design d’une sneaker concurrente. Les commentaires s’enchaînent et le client vous appelle.',
     travailDemande: [
-      'Le budget passe de 100 000 € à 60 000 € (-40 %). Aucun calcul n’est attendu.',
-      'Reprenez votre stratégie de l’épreuve 2 et arbitrez.',
-      'Proposez des alternatives et défendez vos choix.',
-      'Anticipez les conséquences de ces arbitrages.',
+      'Séparez les faits des accusations.',
+      'Identifiez les risques pour la marque.',
+      'Construisez un plan de réaction argumenté et rédigez le message officiel de STRYDE.',
+      'Aucune recherche de cas réel n’est demandée. Aucune expertise juridique n’est attendue.',
     ],
     champs: [
-      { id: 'conservees', label: 'Actions conservées', aide: 'Ce que vous gardez, et pourquoi c’est prioritaire.', maxCaracteres: 400 },
-      { id: 'supprimees', label: 'Actions supprimées ou remplacées', aide: 'Ce que vous abandonnez ou transformez.', maxCaracteres: 400 },
-      { id: 'alternatives', label: 'Alternatives', aide: 'Comment obtenir un effet comparable avec moins de moyens.', maxCaracteres: 500 },
-      { id: 'nouvelleStrategie', label: 'Nouvelle stratégie', aide: 'La version à 60 000 €, en 2 à 4 phrases.', maxCaracteres: 500 },
-      { id: 'justification', label: 'Justification', aide: 'Comment présenteriez-vous ces arbitrages au client ?', maxCaracteres: 500 },
-      { id: 'risques', label: 'Risques', aide: 'Ce que ces choix peuvent coûter, et comment le limiter.', maxCaracteres: 400 },
-    ],
-    competences: ['Arbitrage sous contrainte', 'Adaptation', 'Défense des recommandations'],
-  },
-  {
-    numero: 4,
-    titre: 'Le partenariat risqué',
-    dureeMin: DUREES_EPREUVES_MIN[4],
-    phase: PHASE_EPREUVE[4],
-    situation: 'Un créateur de contenu a contacté STRYDE : il propose un partenariat pour le lancement. Le client hésite et vous demande une recommandation claire.',
-    travailDemande: [
-      'Étudiez le profil du créateur et vérifiez ce qui peut l’être.',
-      'Pesez opportunités et risques pour la marque.',
-      'Décidez : accepter, refuser ou négocier un partenariat.',
-      'Fixez vos conditions et justifiez votre décision.',
-    ],
-    champs: [
-      { id: 'decision', label: 'Votre décision', aide: 'Choisissez, puis justifiez plus bas.', maxCaracteres: 20, type: 'decision' },
-      { id: 'opportunites', label: 'Opportunités', aide: 'Ce que STRYDE peut y gagner.', maxCaracteres: 400 },
-      { id: 'risques', label: 'Risques', aide: 'Ce que STRYDE peut y perdre.', maxCaracteres: 400 },
-      { id: 'conditions', label: 'Conditions', aide: 'Vos conditions pour accepter ou négocier, ou ce qui vous ferait changer d’avis.', maxCaracteres: 400 },
-      { id: 'justification', label: 'Justification', aide: AIDE_JUSTIFICATION, maxCaracteres: 500 },
-      { id: 'sources', label: 'Sources', aide: AIDE_SOURCES, maxCaracteres: 300 },
-    ],
-    competences: ['Évaluation des risques', 'Prise de décision', 'E-réputation et influence'],
-  },
-  {
-    numero: 5,
-    titre: 'La marque dans la tourmente',
-    dureeMin: DUREES_EPREUVES_MIN[5],
-    phase: PHASE_EPREUVE[5],
-    situation: 'Une publication devient virale : STRYDE est accusée d’avoir copié le design d’une autre marque. Les commentaires s’enchaînent et le client vous appelle.',
-    travailDemande: [
-      'Analysez la situation : qui accuse, de quoi, avec quel écho.',
-      'Distinguez les faits, les ressemblances, les accusations et ce qui reste à vérifier.',
-      'Construisez un plan d’action et rédigez le message officiel de la marque.',
-      'Appuyez-vous sur un exemple réel de crise comparable. Aucune expertise juridique n’est attendue : dites quoi vérifier et qui solliciter.',
-    ],
-    champs: [
-      { id: 'analyse', label: 'Analyse de la situation', aide: '2 à 4 phrases.', maxCaracteres: 500 },
-      { id: 'faits', label: 'Faits établis et points à vérifier', aide: 'Deux listes : ce que l’on sait, ce qu’il faut vérifier (et auprès de qui).', maxCaracteres: 500 },
-      { id: 'planAction', label: 'Plan d’action', aide: 'Quoi, qui, quand. 3 à 6 lignes.', maxCaracteres: 600 },
-      { id: 'message', label: 'Message officiel', aide: 'Le texte que STRYDE publierait.', maxCaracteres: 600 },
-      { id: 'exempleReel', label: 'Exemple réel et sources', aide: 'Une crise réelle comparable et ce qu’elle vous apprend.', maxCaracteres: 400 },
-      { id: 'justification', label: 'Justification', aide: AIDE_JUSTIFICATION, maxCaracteres: 400 },
+      { id: 'decision', label: LABEL_DECISION, aide: 'Votre plan de réaction : quoi, qui, quand.', maxCaracteres: 1000 },
+      { id: 'pourquoi', label: LABEL_POURQUOI, aide: AIDE_POURQUOI, maxCaracteres: 700 },
+      { id: 'message', label: 'Message officiel au public', aide: 'Le texte que STRYDE publierait.', maxCaracteres: 600 },
     ],
     competences: ['Gestion de crise', 'Communication responsable', 'Esprit critique'],
   },
   {
-    numero: 6,
+    numero: 4,
     titre: 'L’ultimatum',
-    dureeMin: DUREES_EPREUVES_MIN[6],
-    phase: PHASE_EPREUVE[6],
-    situation: 'Trois alertes arrivent en même temps. Respirez : tout ne peut pas être traité à la fois, mais tout doit être décidé.',
+    dureeMin: DUREES_EPREUVES_MIN[4],
+    phase: PHASE_EPREUVE[4],
+    situation: 'Trois alertes arrivent en même temps. Tout ne peut pas être traité à la fois, mais tout doit être décidé.',
     travailDemande: [
-      'Classez les trois alertes par ordre de priorité.',
-      'Construisez un plan d’urgence et répartissez les responsabilités.',
-      'Gérez le conflit dans l’équipe.',
-      'Adaptez la stratégie et rédigez votre message au client.',
+      'Construisez un plan d’urgence priorisé.',
+      'Répartissez les responsabilités dans l’agence.',
+      'Rédigez un message professionnel au client.',
     ],
     champs: [
-      { id: 'priorites', label: 'Ordre de priorité', aide: '1, 2, 3 : et pourquoi cet ordre.', maxCaracteres: 300 },
-      { id: 'planUrgence', label: 'Plan d’urgence', aide: 'Les actions des prochaines 48 heures.', maxCaracteres: 600 },
-      { id: 'responsabilites', label: 'Responsabilités', aide: 'Qui fait quoi dans l’agence.', maxCaracteres: 400 },
-      { id: 'conflit', label: 'Gestion du conflit', aide: 'Comment sortir du blocage entre les deux responsables.', maxCaracteres: 400 },
-      { id: 'adaptation', label: 'Adaptation de la stratégie', aide: 'Ce qui change avec un lancement avancé de 7 jours.', maxCaracteres: 400 },
-      { id: 'messageClient', label: 'Message au client', aide: 'Le message que vous lui envoyez maintenant.', maxCaracteres: 500 },
-      { id: 'justification', label: 'Justification', aide: AIDE_JUSTIFICATION, maxCaracteres: 400 },
+      { id: 'decision', label: LABEL_DECISION, aide: 'Votre plan d’urgence, dans l’ordre de priorité.', maxCaracteres: 900 },
+      { id: 'pourquoi', label: LABEL_POURQUOI, aide: AIDE_POURQUOI, maxCaracteres: 600 },
+      { id: 'responsabilites', label: 'Répartition des responsabilités', aide: 'Qui fait quoi dans l’agence.', maxCaracteres: 400 },
+      { id: 'messageClient', label: 'Message au client', aide: 'Le message que vous envoyez à Alex Morgan maintenant.', maxCaracteres: 500 },
     ],
     competences: ['Priorisation', 'Gestion de conflit', 'Posture professionnelle sous pression'],
   },
 ]
 
+// ═══ Rebondissements chronométrés (fiche v3) ═════════════════════════════════
+// Déclenchés à partir de l'heure de début de l'épreuve (une prolongation ne les décale pas),
+// une seule fois chacun (mémorisés dans l'état de partie). R1 : mot pour mot (fiche v3).
+// R2, R3 et l'habillage : rédigés par Claude Code — À VALIDER PAR STÉPHANIE.
+// R4 : le texte est la `nouvelleInformation` de la variante de crise tirée.
+export interface Rebondissement {
+  id: RebondissementId
+  epreuve: number
+  /** Minutes écoulées depuis le début de l'épreuve. */
+  minute: number
+  categorie: string
+  /** Message du client (affiché entre guillemets, signé Alex Morgan). */
+  messageClient: boolean
+  texte: string
+}
+
+export const REBONDISSEMENTS: Rebondissement[] = [
+  {
+    id: 'R1', epreuve: 2, minute: 10, categorie: 'Alerte client — Réduction budgétaire', messageClient: true,
+    // Mot pour mot (fiche v3).
+    texte: 'Je viens de terminer une réunion avec nos investisseurs. Notre budget marketing est réduit à 60 000 €. En revanche, nos ambitions restent inchangées. Je compte sur votre agence pour trouver des solutions.',
+  },
+  {
+    id: 'R2', epreuve: 2, minute: 20, categorie: 'Opportunité — Partenariat influenceur', messageClient: true,
+    texte: 'Un créateur de contenu vient de nous contacter : il propose une collaboration pour le lancement. Son profil est intéressant, mais je ne veux pas de mauvaise surprise. Acceptez-vous, refusez-vous ou négociez-vous ce partenariat ?',
+  },
+  {
+    id: 'R3', epreuve: 3, minute: 10, categorie: 'Alerte client — Réaction immédiate', messageClient: true,
+    texte: 'Je ne peux pas laisser cette polémique grossir pendant des heures. Je veux une prise de parole publique de STRYDE tout de suite. Je sais que tout n’est pas encore vérifié, mais chaque heure de silence nous coûte des précommandes.',
+  },
+  {
+    id: 'R4', epreuve: 3, minute: 15, categorie: 'Nouvelle information — Origine du design', messageClient: false,
+    texte: '',
+  },
+]
+
+export const rebondissementsEpreuve = (n: number) => REBONDISSEMENTS.filter(r => r.epreuve === n)
+
 // Micro-textes de l'écran d'épreuve — à valider par Stéphanie.
 export const textesEpreuve = {
+  situation: 'Situation',
   travailDemande: 'Ce que le client attend',
-  concertation: 'Avant d’écrire : chacun donne son avis en une phrase, puis l’équipe tranche. Un désaccord bien argumenté vaut mieux qu’un consensus mou.',
-  rechercheAutorisee: 'Recherche Internet et outils d’IA autorisés. Vos réponses, elles, doivent venir de l’équipe.',
+  alertesRecues: 'Alertes reçues pendant l’épreuve',
+  votreDecision: 'Votre décision',
+  rechercheAutorisee: 'Recherche Internet et outils d’IA autorisés. Vos décisions, elles, doivent venir de l’équipe.',
   ouvrirDossier: 'Consulter le dossier client',
   rappelTitre: 'Rappel de vos décisions',
   ajouterCanal: '+ Ajouter un canal',
@@ -463,23 +526,26 @@ export const textesEpreuve = {
   champsVides: (n: number) => `${n} champ${n > 1 ? 's' : ''} encore vide${n > 1 ? 's' : ''}.`,
   vosReponses: 'Vos réponses envoyées',
   nonRenseigne: 'Non renseigné',
+  alertePrioritaire: 'Alerte prioritaire',
+  signature: `${CEO.nom}, ${CEO.fonction}`,
+  fermerAlerte: 'J’ai pris connaissance de l’alerte',
+  retourCeo: 'Retour d’Alex Morgan',
 }
 
 // Rappels affichés en tête d'épreuve : uniquement des réponses réellement données par l'équipe,
 // jamais de préremplissage (CLAUDE.md, section 8). Clé = épreuve affichée.
 export const RAPPELS: Record<number, { epreuve: number; champs: string[] }[]> = {
-  2: [{ epreuve: 1, champs: ['positionnement', 'opportunite'] }],
-  3: [{ epreuve: 2, champs: ['concept', 'message', 'canaux', 'actions'] }],
-  4: [{ epreuve: 3, champs: ['nouvelleStrategie'] }],
-  5: [{ epreuve: 4, champs: ['decision', 'conditions'] }],
-  6: [{ epreuve: 4, champs: ['decision'] }, { epreuve: 5, champs: ['message'] }],
+  2: [{ epreuve: 1, champs: ['decision'] }],
+  3: [{ epreuve: 2, champs: ['decision', 'createur'] }],
+  4: [{ epreuve: 2, champs: ['createur'] }, { epreuve: 3, champs: ['message'] }],
 }
 
-// ═══ Épreuve 4 — Profils de créateurs de contenu ════════════════════════════
+// ═══ Épreuve 2 (R2) — Profils de créateurs de contenu ═══════════════════════
 // 5 profils fictifs (types imposés par la fiche), difficulté comparable : chacun a de vrais
 // atouts et de vrais risques, aucune décision n'est évidente. Rédigés par Claude Code — À VALIDER.
 // Avatars à initiales uniquement (jamais de photo). Tarifs cohérents avec un budget de 60 000 €.
-// `reactionCrise` : affichée à l'épreuve 5 UNIQUEMENT si l'équipe a choisi « Accepter » à l'épreuve 4.
+// Tiré au démarrage de l'épreuve 2, révélé par le rebondissement R2 (+20 min).
+// `reactionCrise` : affichée à l'épreuve 3 UNIQUEMENT si l'équipe a choisi « Accepter » à l'épreuve 2.
 
 export interface ProfilCreateur {
   id: string
@@ -609,7 +675,7 @@ export const profilsCreateurs: ProfilCreateur[] = [
   },
 ]
 
-// ═══ Épreuve 5 — Variantes de crise « copie de design » ═════════════════════
+// ═══ Épreuve 3 — Variantes de crise « copie de design » ═════════════════════
 // 3 variantes de difficulté comparable, aucune insoluble. Marques comparées TOUJOURS fictives.
 // Les 5 commentaires imposés par la fiche figurent mot pour mot dans chaque variante.
 // `faitsEtablis` et `aVerifier` ne sont PAS affichés aux équipes (c'est à elles de distinguer) :
@@ -636,6 +702,9 @@ export interface VarianteCrise {
   faitsEtablis: string[]
   aVerifier: string[]
   origineDesign: string[]
+  /** Rebondissement R4 (+15 min) : élément nouveau sur l'origine du design, cohérent avec la variante,
+   *  qui peut remettre en cause l'analyse initiale. Rédigé par Claude Code — À VALIDER. */
+  nouvelleInformation: string
 }
 
 // Mot pour mot (fiche).
@@ -689,6 +758,7 @@ export const variantesCrise: VarianteCrise[] = [
       'Premier prototype de l’IMPACT fabriqué par l’atelier portugais : juillet 2025.',
       'Brekko Volt Runner : annonce publique en juin 2025, mise en vente en septembre 2025.',
     ],
+    nouvelleInformation: 'Un ancien stagiaire du studio de STRYDE, passé par Brekko au printemps 2024, affirme avoir montré à Inès Ferrand en octobre 2024, quelques semaines avant ses premiers croquis de l’IMPACT, des planches de tendances internes à Brekko, dont une bande latérale orange. Inès Ferrand dit ne pas se souvenir de ces planches.',
   },
   {
     id: 'shadow-ondrel',
@@ -731,6 +801,7 @@ export const variantesCrise: VarianteCrise[] = [
       'Dépôt des dessins et modèles à l’INPI : avril 2025.',
       'Maison Ondrel Eclipse : en vente depuis mars 2023.',
     ],
+    nouvelleInformation: 'Le moodboard complet de la SHADOW vient d’être retrouvé : parmi une vingtaine d’images figure une photo de l’Eclipse de Maison Ondrel. Inès Ferrand reconnaît l’avoir vue, mais assure ne s’en être inspirée que pour l’ambiance monochrome, pas pour la semelle.',
   },
   {
     id: 'origin-solvane',
@@ -773,25 +844,26 @@ export const variantesCrise: VarianteCrise[] = [
       'Dépôt des dessins et modèles à l’INPI : avril 2025.',
       'Solvane Base 01 : en vente depuis 2022.',
     ],
+    nouvelleInformation: 'L’atelier portugais reconnaît par e-mail qu’en février 2025, un moule de semelle très proche de celui de l’ORIGIN a servi à une petite série pour un autre client, malgré l’exclusivité prévue à l’article 7 du contrat. L’atelier refuse de dire de quel client il s’agit.',
   },
 ]
 
-// ═══ Épreuve 6 — Alertes de l'ultimatum ═════════════════════════════════════
-// Trois alertes simultanées (client, équipe, planning). Elles reprennent UNIQUEMENT des décisions
-// réellement prises par l'équipe : si une information manque (champ vide), la formulation reste
-// neutre. L'application n'invente jamais une décision. Rédigé par Claude Code — À VALIDER.
+// ═══ Épreuve 4 — Alertes de l'ultimatum ═════════════════════════════════════
+// Trois alertes simultanées dès l'ouverture (fiche v3) : menace de changement d'agence, conflit
+// entre deux collaborateurs fictifs, lancement avancé de 7 jours. Elles reprennent UNIQUEMENT des
+// décisions réellement prises par l'équipe (créateur, variante de crise) : si une information
+// manque, la formulation reste neutre. L'application n'invente jamais une décision.
+// Rédigé par Claude Code — À VALIDER.
 
 export interface ContexteUltimatum {
   createur?: string
   decisionPartenariat?: 'accepter' | 'refuser' | 'negocier'
   modeleCrise?: string
   marqueCrise?: string
-  concept?: string
-  canaux: string[]
 }
 
 const PHRASE_PARTENARIAT: Record<NonNullable<ContexteUltimatum['decisionPartenariat']>, (createur: string) => string> = {
-  accepter: c => `Et notre direction s’inquiète du partenariat avec ${c} que vous nous avez recommandé.`,
+  accepter: c => `Et nos investisseurs s’inquiètent du partenariat avec ${c} que vous nous avez recommandé.`,
   refuser: c => `Vous nous avez conseillé de renoncer à ${c} : pendant ce temps, d’autres marques occupent le terrain.`,
   negocier: c => `La négociation avec ${c} n’avance pas et nous fait perdre du temps.`,
 }
@@ -802,39 +874,23 @@ export const alertesUltimatum = {
     texte: (c: ContexteUltimatum) => [
       c.modeleCrise ? `« Les précommandes ont chuté depuis la polémique autour de la ${c.modeleCrise}.` : '« Les précommandes ont chuté depuis le début de la polémique.',
       c.decisionPartenariat && c.createur ? PHRASE_PARTENARIAT[c.decisionPartenariat](c.createur) : '',
-      'Si vous ne nous présentez pas un plan crédible aujourd’hui, nous confierons le lancement à une autre agence. »',
+      'Si vous ne me présentez pas un plan crédible aujourd’hui, je confierai le lancement à une autre agence. »',
     ].filter(Boolean).join(' '),
   },
   equipe: {
     titre: 'Conflit dans l’agence',
-    texte: (c: ContexteUltimatum) => [
-      c.concept
-        ? `Le responsable créatif veut maintenir la campagne telle quelle (« ${c.concept.length > 90 ? `${c.concept.slice(0, 90).trimEnd()}…` : c.concept} ») : « On ne recule pas pour quelques commentaires. »`
-        : 'Le responsable créatif veut maintenir la campagne telle quelle : « On ne recule pas pour quelques commentaires. »',
-      'Le responsable communication veut tout suspendre tant que la polémique n’est pas réglée.',
+    texte: () => [
+      'Le responsable créatif veut maintenir le plan de lancement tel que vous l’avez défendu : « On ne recule pas pour quelques commentaires. »',
+      'La responsable communication veut tout suspendre tant que la polémique n’est pas réglée.',
       'Ils refusent désormais de travailler ensemble.',
     ].join(' '),
   },
   planning: {
     titre: 'Le lancement est avancé de 7 jours',
-    texte: (c: ContexteUltimatum) => [
-      'Le client avance la date de lancement d’une semaine.',
-      c.canaux.length > 0
-        ? `Vos actions prévues sur ${c.canaux.join(', ')} doivent être prêtes 7 jours plus tôt.`
-        : 'Toutes vos actions doivent être prêtes 7 jours plus tôt.',
+    texte: () => [
+      'Le client avance la date de lancement national d’une semaine.',
+      'Toutes vos actions doivent être prêtes 7 jours plus tôt, avec un budget toujours limité à 60 000 €.',
       'Le premier lot de 4 500 paires ne peut pas être augmenté.',
     ].join(' '),
   },
-}
-
-// Micro-textes de l'analyse IA — à valider par Stéphanie.
-export const textesAnalyse = {
-  chargement: 'Votre client analyse vos décisions…',
-  titre: 'Conséquences',
-  pointFort: 'Point fort',
-  pointVigilance: 'Point de vigilance',
-  enAttente: 'Analyse en attente. Vos réponses sont conservées : vous pouvez continuer à jouer et relancer l’analyse plus tard.',
-  relancer: 'Relancer l’analyse',
-  relancesEpuisees: 'Nombre de relances atteint. Prévenez l’intervenante : vos réponses restent conservées.',
-  bandeauAttente: (n: number) => `Analyse en attente pour l’épreuve ${n}.`,
 }

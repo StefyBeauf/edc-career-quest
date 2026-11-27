@@ -16,7 +16,7 @@ export default function Accueil({ onEntrer, desactive }: { onEntrer: (agence: st
       <div className="space-y-6">
         <div className="space-y-3">
           <p className="text-[11px] font-bold uppercase tracking-[0.3em]" style={{ color: STRYDE.orange }}>
-            Mission 2 · Brief confidentiel
+            Simulation 02 · Brief confidentiel
           </p>
           <h1 className="font-black uppercase leading-[0.9] tracking-tight text-5xl sm:text-6xl" style={{ color: STRYDE.blancCasse }}>
             {A.titre}
