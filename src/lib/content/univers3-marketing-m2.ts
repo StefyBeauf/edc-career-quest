@@ -5,13 +5,14 @@
 // Les compléments rédigés par Claude Code sont marqués « à valider par Stéphanie ».
 // ═══════════════════════════════════════════════════════════════════════════
 
-// Visuels STRYDE fournis par Stéphanie, à déposer dans /public/univers3/stryde/ sous ces noms.
-// Tant qu'un fichier est absent, l'interface affiche un emplacement graphique de remplacement.
+// Visuels STRYDE fournis par Stéphanie (/public/univers3/stryde/). Packshots des 3 modèles livrés
+// le 2026-11-27. Si un fichier manque, l'interface affiche un emplacement graphique de remplacement.
 export const VISUELS_STRYDE = {
   collection: '/univers3/stryde/collection.jpg',
-  origin: '/univers3/stryde/origin.jpg',
-  impact: '/univers3/stryde/impact.jpg',
-  shadow: '/univers3/stryde/shadow.jpg',
+  origin: '/univers3/stryde/origin.webp',
+  impact: '/univers3/stryde/impact.webp',
+  shadow: '/univers3/stryde/shadow.webp',
+  portraitCeo: '/univers3/stryde/portrait-ceo.webp',
 } as const
 
 // Écran d'activation (centre de contrôle Mission Horizon) : mot pour mot (fiche v3).
@@ -122,22 +123,21 @@ export const textesPause = {
 export const INDICATEURS = [
   { id: 'pertinence', label: 'Pertinence marketing' },
   { id: 'confiance', label: 'Confiance du client' },
-  { id: 'cohesion', label: 'Cohésion d’équipe (simulée)' },
+  { id: 'adaptation', label: 'Capacité d’adaptation' },
   { id: 'credibilite', label: 'Crédibilité professionnelle' },
 ] as const
 export const MAX_INDICATEUR = 25
 export const texteAnalyseEnAttente = (epreuvesEnAttente: number[]) =>
   `Analyse en attente : épreuve${epreuvesEnAttente.length > 1 ? 's' : ''} ${epreuvesEnAttente.join(', ')}. Les indicateurs seront mis à jour dès qu’elle sera disponible.`
 
-// ═══ Alex Morgan, fondateur et CEO fictif de STRYDE ═════════════════════════
-// Personnage fictif. Portrait : illustration SVG (jamais la photo d'une personne réelle).
-// Rédigé par Claude Code — à valider par Stéphanie (question ouverte 11 pour le portrait).
+// ═══ Stéphanie Vador, fondatrice et CEO de STRYDE ═══════════════════════════
+// Personnage et portrait choisis par Stéphanie le 2026-11-27 (remplacent Stéphanie Vador).
 export const CEO = {
-  nom: 'Alex Morgan',
-  fonction: 'Fondateur et CEO de STRYDE',
+  nom: 'Stéphanie Vador',
+  fonction: 'Fondatrice et CEO de STRYDE',
 }
 
-/** Palier de ton d'Alex Morgan selon la Confiance du client (fiche v3, « comportement CEO »). */
+/** Palier de ton de Stéphanie Vador selon la Confiance du client (fiche v3, « comportement CEO »). */
 export const PALIERS_CONFIANCE = [
   { min: 21, ton: 'Enthousiaste et confiant' },
   { min: 16, ton: 'Constructif et vigilant' },
@@ -147,14 +147,14 @@ export const PALIERS_CONFIANCE = [
 ] as const
 export const tonCeo = (confiance: number) => PALIERS_CONFIANCE.find(p => confiance >= p.min)!.ton
 
-// Micro-textes du retour d'Alex Morgan après chaque épreuve — à valider par Stéphanie.
+// Micro-textes du retour de Stéphanie Vador après chaque épreuve — à valider par Stéphanie.
 export const textesAnalyse = {
-  chargement: 'Alex Morgan lit votre proposition…',
+  chargement: 'Stéphanie Vador lit votre proposition…',
   titre: 'Le retour de votre client',
   variations: 'Effets sur votre agence',
   consequence: 'Conséquence',
   // Message neutre du mode dégradé (fiche v3, exemple repris tel quel).
-  enAttente: 'Alex Morgan étudie votre proposition. Son retour arrivera sous peu.',
+  enAttente: 'Stéphanie Vador étudie votre proposition. Son retour arrivera sous peu.',
   enAttenteDetail: 'Vos réponses sont conservées et la partie continue. L’analyse sera relancée automatiquement, ou depuis ce bouton.',
   relancer: 'Relancer l’analyse',
   relancesEpuisees: 'Nombre de relances atteint. Prévenez l’intervenante : vos réponses restent conservées.',
@@ -180,9 +180,9 @@ export const textesVerdict = {
   statut: 'Statut du contrat',
   evolution: 'Évolution épreuve par épreuve',
   decisions: 'Historique de vos décisions',
-  messageCeo: 'Le dernier mot d’Alex Morgan',
-  chargement: 'Alex Morgan prépare son verdict…',
-  enAttente: 'Alex Morgan étudie votre parcours. Son dernier message arrivera sous peu. Vos résultats sont conservés.',
+  messageCeo: 'Le dernier mot de Stéphanie Vador',
+  chargement: 'Stéphanie Vador prépare son verdict…',
+  enAttente: 'Stéphanie Vador étudie votre parcours. Son dernier message arrivera sous peu. Vos résultats sont conservés.',
   relancer: 'Relancer le message',
   mettreAJour: 'De nouvelles analyses sont arrivées : mettre à jour le message',
   relancesEpuisees: 'Nombre de relances atteint. Prévenez l’intervenante : vos résultats restent conservés.',
@@ -195,7 +195,8 @@ export const textesVerdict = {
 }
 
 // ═══ Dossier client STRYDE ══════════════════════════════════════════════════
-// Brief et collection : fiche mission. Tout le reste : rédigé par Claude Code — À VALIDER PAR STÉPHANIE.
+// Brief et collection : fiche mission. Histoire et équipe dirigeante : Stéphanie (2026-11-27).
+// Tout le reste : rédigé par Claude Code — À VALIDER PAR STÉPHANIE.
 // Règles respectées : marque et personnes fictives ; ni concurrents, ni benchmark, ni slogan,
 // ni campagne, ni stratégie fournis ; engagements environnementaux vérifiables et réalistes à 89 €.
 // La section « conception » contient les indices utiles à l'épreuve 3 (origine du design).
@@ -211,7 +212,7 @@ export interface DossierClient {
   brief: Record<string, string>
   collection: ModeleStryde[]
   histoire: string[]
-  fondateurs: { nom: string; role: string; parcours: string }[]
+  equipeDirigeante: { nom: string; role: string; parcours: string; portrait?: string }[]
   valeurs: { nom: string; description: string }[]
   materiaux: string[]
   fabrication: string[]
@@ -273,26 +274,35 @@ export const dossierClient: DossierClient = {
     },
   ],
   histoire: [
-    'STRYDE est née en 2024 à Montreuil, dans un atelier partagé où ses fondateurs se retrouvaient le soir après leur travail.',
+    'STRYDE a été fondée en 2024 à Montreuil par Stéphanie Vador, une entrepreneuse ambitieuse qui souhaite bousculer les codes du marché de la sneaker.',
+    'Pour accompagner le développement de sa marque, elle s’est entourée de trois experts aux compétences complémentaires (voir « Équipe dirigeante »).',
     'Point de départ : ne plus avoir à choisir entre une paire bon marché qui ne dure pas et une paire désirable hors de prix.',
     'Deux ans de prototypes, 14 versions de semelle testées par un panel de 40 personnes de 18 à 30 ans, avant d’arrêter les 3 modèles de la collection.',
     'Le lancement national est la première vraie prise de parole de la marque : jusqu’ici, STRYDE n’a été visible que par le bouche-à-oreille de son entourage.',
   ],
-  fondateurs: [
+  // Équipe dirigeante : rôles fournis par Stéphanie (2026-11-27). Stéphanie Vador est l'unique
+  // interlocutrice des agences pendant le business game.
+  equipeDirigeante: [
+    {
+      nom: 'Stéphanie Vador',
+      role: 'Fondatrice & CEO',
+      parcours: 'Vision stratégique, développement de la marque et décisions finales. Exigeante, audacieuse et orientée résultats. Seule interlocutrice de votre agence.',
+      portrait: VISUELS_STRYDE.portraitCeo,
+    },
     {
       nom: 'Inès Ferrand',
-      role: 'Cofondatrice, directrice artistique',
-      parcours: 'Formée au design produit, 6 ans comme designer chaussure en bureau d’études. Elle dessine tous les modèles STRYDE.',
+      role: 'Directrice marketing & communication',
+      parcours: 'Stratégie marketing, notoriété, acquisition, influence et image de marque.',
     },
     {
       nom: 'Malik Benhamou',
-      role: 'Cofondateur, directeur général',
-      parcours: 'Ancien responsable des achats dans l’industrie textile. Il gère la fabrication, les fournisseurs et les finances.',
+      role: 'Directeur artistique & innovation produit',
+      parcours: 'Design des sneakers, créativité, identité visuelle et développement des collections. Il dessine tous les modèles STRYDE.',
     },
     {
       nom: 'Clara Nguyen',
-      role: 'Associée, responsable e-commerce et relation client',
-      parcours: 'A travaillé 4 ans pour une boutique en ligne de mode. Elle a construit le site STRYDE et gère le service client.',
+      role: 'Directrice financière & opérations',
+      parcours: 'Gestion budgétaire, rentabilité, production, logistique et distribution.',
     },
   ],
   valeurs: [
@@ -319,9 +329,10 @@ export const dossierClient: DossierClient = {
     'Un code imprimé à l’intérieur de la boîte renvoie vers une page expliquant l’origine des matériaux.',
   ],
   ressources: [
-    'Équipe de 6 personnes : les 3 fondateurs, 1 développeuse web, 1 logisticien, 1 alternante en marketing.',
-    'Pas de service communication interne : c’est la raison pour laquelle STRYDE fait appel à votre agence.',
-    'Un compte Instagram de 2 300 abonnés, essentiellement l’entourage des fondateurs et du panel de testeurs.',
+    'Équipe de 7 personnes : Stéphanie Vador, ses 3 directeurs et directrices (marketing, artistique, finances et opérations), 1 développeuse web, 1 logisticien, 1 alternante en marketing.',
+    'Inès Ferrand définit les grandes orientations marketing, mais n’a pas d’équipe pour concevoir et déployer le lancement : c’est la raison pour laquelle STRYDE fait appel à votre agence.',
+    'Votre unique interlocutrice est Stéphanie Vador : c’est elle qui valide ou refuse vos recommandations.',
+    'Un compte Instagram de 2 300 abonnés, essentiellement l’entourage de l’équipe et le panel de testeurs.',
     'Une séance photo produit réalisée (packshots des 3 modèles sur fond neutre). Aucune photo portée, aucune vidéo.',
     'Un site e-commerce prêt, avec une capacité de livraison de 300 commandes par jour.',
   ],
@@ -335,11 +346,11 @@ export const dossierClient: DossierClient = {
     'Être reconnu comme une marque créative, pas comme « une marque de plus ».',
     'Des recommandations argumentées : le client veut comprendre pourquoi chaque euro est dépensé.',
     'Aucune promesse que la marque ne pourrait pas tenir (prix, délais, engagements environnementaux).',
-    'Être tenu informé rapidement en cas de problème : il préfère une mauvaise nouvelle tôt qu’une surprise tard.',
-    'Garder la main sur l’image de la marque : toute prise de parole publique importante doit lui être soumise.',
+    'Être tenu informé rapidement en cas de problème : elle préfère une mauvaise nouvelle tôt qu’une surprise tard.',
+    'Garder la main sur l’image de la marque : toute prise de parole publique importante doit être soumise à Stéphanie Vador.',
   ],
   conception: [
-    'Les 3 modèles ont été dessinés par Inès Ferrand entre octobre 2024 et mars 2025.',
+    'Les 3 modèles ont été dessinés par Malik Benhamou entre octobre 2024 et mars 2025.',
     'Les croquis, fichiers de conception et échanges avec l’atelier sont datés et archivés.',
     'Les dessins des 3 modèles ont été déposés à l’INPI (dessins et modèles) en avril 2025.',
     'Les prototypes ont été fabriqués par l’atelier portugais à partir de juin 2025 ; la semelle utilise un moule exclusif à STRYDE.',
@@ -467,7 +478,7 @@ export const epreuves: Epreuve[] = [
       { id: 'decision', label: LABEL_DECISION, aide: 'Votre plan d’urgence, dans l’ordre de priorité.', maxCaracteres: 900 },
       { id: 'pourquoi', label: LABEL_POURQUOI, aide: AIDE_POURQUOI, maxCaracteres: 600 },
       { id: 'responsabilites', label: 'Répartition des responsabilités', aide: 'Qui fait quoi dans l’agence.', maxCaracteres: 400 },
-      { id: 'messageClient', label: 'Message au client', aide: 'Le message que vous envoyez à Alex Morgan maintenant.', maxCaracteres: 500 },
+      { id: 'messageClient', label: 'Message au client', aide: 'Le message que vous envoyez à Stéphanie Vador maintenant.', maxCaracteres: 500 },
     ],
     competences: ['Priorisation', 'Gestion de conflit', 'Posture professionnelle sous pression'],
   },
@@ -484,7 +495,7 @@ export interface Rebondissement {
   /** Minutes écoulées depuis le début de l'épreuve. */
   minute: number
   categorie: string
-  /** Message du client (affiché entre guillemets, signé Alex Morgan). */
+  /** Message du client (affiché entre guillemets, signé Stéphanie Vador). */
   messageClient: boolean
   texte: string
 }
@@ -529,7 +540,7 @@ export const textesEpreuve = {
   alertePrioritaire: 'Alerte prioritaire',
   signature: `${CEO.nom}, ${CEO.fonction}`,
   fermerAlerte: 'J’ai pris connaissance de l’alerte',
-  retourCeo: 'Retour d’Alex Morgan',
+  retourCeo: 'Retour de Stéphanie Vador',
 }
 
 // Rappels affichés en tête d'épreuve : uniquement des réponses réellement données par l'équipe,
@@ -753,12 +764,12 @@ export const variantesCrise: VarianteCrise[] = [
       'L’avis d’un conseil en propriété industrielle sur la ressemblance.',
     ],
     origineDesign: [
-      'Croquis de l’IMPACT : premières versions datées du 14 novembre 2024 (archives d’Inès Ferrand).',
+      'Croquis de l’IMPACT : premières versions datées du 14 novembre 2024 (archives de Malik Benhamou).',
       'Dépôt des dessins et modèles à l’INPI : avril 2025.',
       'Premier prototype de l’IMPACT fabriqué par l’atelier portugais : juillet 2025.',
       'Brekko Volt Runner : annonce publique en juin 2025, mise en vente en septembre 2025.',
     ],
-    nouvelleInformation: 'Un ancien stagiaire du studio de STRYDE, passé par Brekko au printemps 2024, affirme avoir montré à Inès Ferrand en octobre 2024, quelques semaines avant ses premiers croquis de l’IMPACT, des planches de tendances internes à Brekko, dont une bande latérale orange. Inès Ferrand dit ne pas se souvenir de ces planches.',
+    nouvelleInformation: 'Un ancien stagiaire du studio de STRYDE, passé par Brekko au printemps 2024, affirme avoir montré à Malik Benhamou en octobre 2024, quelques semaines avant ses premiers croquis de l’IMPACT, des planches de tendances internes à Brekko, dont une bande latérale orange. Malik Benhamou dit ne pas se souvenir de ces planches.',
   },
   {
     id: 'shadow-ondrel',
@@ -796,12 +807,12 @@ export const variantesCrise: VarianteCrise[] = [
       'L’avis d’un juriste sur le risque réel.',
     ],
     origineDesign: [
-      'Croquis de la SHADOW : premières versions datées du 3 décembre 2024 (archives d’Inès Ferrand).',
+      'Croquis de la SHADOW : premières versions datées du 3 décembre 2024 (archives de Malik Benhamou).',
       'Moodboard de conception : architecture contemporaine, sneakers des années 2000, plusieurs modèles monochromes du marché.',
       'Dépôt des dessins et modèles à l’INPI : avril 2025.',
       'Maison Ondrel Eclipse : en vente depuis mars 2023.',
     ],
-    nouvelleInformation: 'Le moodboard complet de la SHADOW vient d’être retrouvé : parmi une vingtaine d’images figure une photo de l’Eclipse de Maison Ondrel. Inès Ferrand reconnaît l’avoir vue, mais assure ne s’en être inspirée que pour l’ambiance monochrome, pas pour la semelle.',
+    nouvelleInformation: 'Le moodboard complet de la SHADOW vient d’être retrouvé : parmi une vingtaine d’images figure une photo de l’Eclipse de Maison Ondrel. Malik Benhamou reconnaît l’avoir vue, mais assure ne s’en être inspiré que pour l’ambiance monochrome, pas pour la semelle.',
   },
   {
     id: 'origin-solvane',
@@ -839,7 +850,7 @@ export const variantesCrise: VarianteCrise[] = [
       'L’avis d’un conseil en propriété industrielle.',
     ],
     origineDesign: [
-      'Croquis de l’ORIGIN : premières versions datées du 21 octobre 2024 (archives d’Inès Ferrand).',
+      'Croquis de l’ORIGIN : premières versions datées du 21 octobre 2024 (archives de Malik Benhamou).',
       'Contrat avec l’atelier portugais : moule de semelle exclusif à STRYDE (article 7).',
       'Dépôt des dessins et modèles à l’INPI : avril 2025.',
       'Solvane Base 01 : en vente depuis 2022.',

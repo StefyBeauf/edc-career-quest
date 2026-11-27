@@ -3,7 +3,7 @@
 // Partagé entre la route serveur et le navigateur (types uniquement côté navigateur).
 // Noms de champs : ceux du code v2 (CLAUDE.md fait foi sur la fiche v3, section 3.6).
 
-export const INDICATEURS_IDS = ['pertinence', 'confiance', 'cohesion', 'credibilite'] as const
+export const INDICATEURS_IDS = ['pertinence', 'confiance', 'adaptation', 'credibilite'] as const
 export type IndicateurIdIA = (typeof INDICATEURS_IDS)[number]
 
 // Grille commune : variation entière de -5 à +3 par indicateur et par épreuve.

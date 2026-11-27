@@ -8,7 +8,7 @@ import { STRYDE } from './theme'
 import type { StatutPilotage } from './usePilotage'
 
 // Écran de fin de phase 1 (pause de 20 min, hors chronomètre). Les équipes en avance attendent ici.
-// Il affiche les 4 indicateurs, le dernier message d'Alex Morgan (sa réaction à l'épreuve 2,
+// Il affiche les 4 indicateurs, le dernier message de Stéphanie Vador (sa réaction à l'épreuve 2,
 // aucun appel IA supplémentaire) puis le texte de transition mot pour mot.
 // Verrou : la phase 2 ne démarre que si l'intervenante l'a ouverte depuis l'admin
 // (statut relu toutes les 10 s par Partie.tsx). Tant que le statut est inconnu

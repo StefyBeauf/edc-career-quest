@@ -9,7 +9,7 @@ import { validerSortieEpreuve, validerSortieVerdict } from './garde-fous'
 import { INDICATEURS_IDS, MAX_REACTION, MAX_RESUME, type IndicateurIdIA } from './schema'
 
 // Route d'analyse IA de la Mission 2 B3 Marketing Digital, v3 (CLAUDE.md, section 3.5).
-// Deux types d'appel : « epreuve » (1 par validation : variations, réaction d'Alex Morgan,
+// Deux types d'appel : « epreuve » (1 par validation : variations, réaction de Stéphanie Vador,
 // conséquence, résumé) et « verdict » (1 en fin de partie : dernier message du CEO).
 // - SANS ÉTAT : elle reçoit le contexte, renvoie l'analyse, ne conserve rien. L'idempotence
 //   (une seule attribution de points par épreuve) est garantie par le navigateur (état de partie).
@@ -207,7 +207,7 @@ function construireVerdict(c: Record<string, unknown>): string | null {
     `<decisions>\n${memoire.join('\n')}\n</decisions>`,
     `<indicateurs_finaux>\n${INDICATEURS_IDS.map(id => `${id} : ${scores[id]}/25`).join(' ; ')}\nScore total : ${total}/100. Confiance du client finale : ${scores.confiance}/25, palier « ${tonCeo(scores.confiance)} ».\n</indicateurs_finaux>`,
     `<statut_contrat>\n${statutContrat(total)}\n</statut_contrat>`,
-    'Rédige le dernier message d\'Alex Morgan et le verdict narratif, et réponds uniquement par l\'objet JSON demandé.',
+    'Rédige le dernier message de Stéphanie Vador et le verdict narratif, et réponds uniquement par l\'objet JSON demandé.',
   ].join('\n\n')
 }
 

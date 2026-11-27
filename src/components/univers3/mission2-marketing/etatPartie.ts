@@ -12,13 +12,14 @@ import { maintenant } from './usePilotage'
 //   Pointeur        : b3-marketing-digital-m2:<slug>:courante  → partieId en cours
 // Purge automatique : 24 h après la création, ou quand l'intervenante ferme la mission
 // (le repère de session du groupe change). Reprise possible sur le même navigateur seulement.
-// Version 3 (refonte à 4 épreuves) : un état d'une autre version (v2 à 6 épreuves, enregistré
-// avec `version: 1`) n'est JAMAIS interprété : il est effacé et l'équipe relance sa partie.
+// Version 4 (2026-11-27 : « cohésion » remplacée par « capacité d'adaptation ») : un état d'une
+// autre version (v2 à 6 épreuves, v3 avec la cohésion) n'est JAMAIS interprété : il est effacé
+// et l'équipe relance sa partie.
 
-export type IndicateurId = 'pertinence' | 'confiance' | 'cohesion' | 'credibilite'
+export type IndicateurId = 'pertinence' | 'confiance' | 'adaptation' | 'credibilite'
 export type Scores = Record<IndicateurId, number>
 
-/** Retour d'Alex Morgan après une épreuve (sortie IA validée par le serveur). */
+/** Retour de Stéphanie Vador après une épreuve (sortie IA validée par le serveur). */
 export interface Analyse {
   variations: Scores
   reaction_ceo: string
@@ -36,7 +37,7 @@ export interface VerdictCeo {
 /** 1 à 4 = épreuves ; 'pause' entre les phases ; 'verdict' puis 'retour' (centre de contrôle). */
 export type Etape = 1 | 2 | 3 | 4 | 'pause' | 'verdict' | 'retour'
 
-export const VERSION_ETAT = 3
+export const VERSION_ETAT = 4
 
 export interface EtatPartie {
   version: typeof VERSION_ETAT
@@ -77,7 +78,7 @@ export interface EtatPartie {
   termine: boolean
 }
 
-export const SCORES_DEPART: Scores = { pertinence: 25, confiance: 25, cohesion: 25, credibilite: 25 }
+export const SCORES_DEPART: Scores = { pertinence: 25, confiance: 25, adaptation: 25, credibilite: 25 }
 
 const PREFIXE = 'b3-marketing-digital-m2'
 const prefixeGroupe = (slug: string) => `${PREFIXE}:${slug}:`
@@ -331,7 +332,7 @@ export function appliquerAnalyse(e: EtatPartie, n: number, a: Analyse): EtatPart
     scores: {
       pertinence: borner(e.scores.pertinence + a.variations.pertinence),
       confiance: borner(e.scores.confiance + a.variations.confiance),
-      cohesion: borner(e.scores.cohesion + a.variations.cohesion),
+      adaptation: borner(e.scores.adaptation + a.variations.adaptation),
       credibilite: borner(e.scores.credibilite + a.variations.credibilite),
     },
     analyses: { ...e.analyses, [n]: a },
@@ -374,4 +375,4 @@ export function marquerVerdictEnAttente(e: EtatPartie): EtatPartie {
 }
 
 /** Total sur 100. */
-export const totalScores = (s: Scores) => s.pertinence + s.confiance + s.cohesion + s.credibilite
+export const totalScores = (s: Scores) => s.pertinence + s.confiance + s.adaptation + s.credibilite

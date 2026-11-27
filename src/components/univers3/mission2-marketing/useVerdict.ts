@@ -6,7 +6,7 @@ import {
   appliquerVerdict, compterTentativeVerdict, epreuvesAnalysees, marquerVerdictEnAttente, MAX_TENTATIVES_VERDICT, type EtatPartie,
 } from './etatPartie'
 
-// Dernier message d'Alex Morgan (1 appel par équipe, relances limitées).
+// Dernier message de Stéphanie Vador (1 appel par équipe, relances limitées).
 // Lancé automatiquement à l'arrivée sur l'écran de verdict, une fois qu'aucune analyse d'épreuve
 // n'est plus en cours. Les épreuves en attente sont signalées à l'IA, qui n'en tire rien.
 // Le statut du contrat ne dépend pas de cet appel : il est calculé par le code.

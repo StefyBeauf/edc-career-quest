@@ -4,6 +4,7 @@ import { useEffect, useRef, useState, type ReactNode } from 'react'
 import { createPortal } from 'react-dom'
 import { dossierClient as D } from '@/lib/content/univers3-marketing-m2'
 import { STRYDE } from './theme'
+import PortraitCeo from './PortraitCeo'
 import VisuelStryde from './VisuelStryde'
 
 // Dossier client STRYDE, consultable à tout moment dans un tiroir latéral.
@@ -56,7 +57,7 @@ function Contenu({ onglet }: { onglet: OngletId }) {
         <div className="space-y-6">
           {D.collection.map(m => (
             <article key={m.id} className="space-y-2">
-              <VisuelStryde src={m.visuel} legende={m.nom} hauteur="h-40" />
+              <VisuelStryde src={m.visuel} legende={m.nom} hauteur="aspect-video" />
               <h3 className="font-black uppercase tracking-wide">{m.nom}</h3>
               <Liste items={m.description} />
             </article>
@@ -67,14 +68,18 @@ function Contenu({ onglet }: { onglet: OngletId }) {
       return (
         <div className="space-y-6">
           <Bloc titre="Histoire"><Liste items={D.histoire} /></Bloc>
-          <Bloc titre="Fondateurs">
+          <Bloc titre="Équipe dirigeante">
             <ul className="space-y-3">
-              {D.fondateurs.map(f => (
+              {D.equipeDirigeante.map(f => (
                 <li key={f.nom} className="flex gap-3 text-sm">
-                  {/* Avatar à initiales : jamais de photo de personne réelle. */}
-                  <span aria-hidden="true" className="shrink-0 h-10 w-10 rounded-full flex items-center justify-center font-black text-xs" style={{ background: STRYDE.anthraciteClair, color: STRYDE.orange }}>
-                    {f.nom.split(' ').map(p => p[0]).join('')}
-                  </span>
+                  {f.portrait ? (
+                    <PortraitCeo taille={40} />
+                  ) : (
+                    // Avatar à initiales pour les autres membres de l'équipe.
+                    <span aria-hidden="true" className="shrink-0 h-10 w-10 rounded-full flex items-center justify-center font-black text-xs" style={{ background: STRYDE.anthraciteClair, color: STRYDE.orange }}>
+                      {f.nom.split(' ').map(p => p[0]).join('')}
+                    </span>
+                  )}
                   <span><strong>{f.nom}</strong>, {f.role}. <span style={{ color: STRYDE.texteSecondaire }}>{f.parcours}</span></span>
                 </li>
               ))}

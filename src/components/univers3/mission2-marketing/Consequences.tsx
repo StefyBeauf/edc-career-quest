@@ -5,7 +5,7 @@ import { MAX_TENTATIVES_ANALYSE, type EtatPartie } from './etatPartie'
 import PortraitCeo from './PortraitCeo'
 import { STRYDE } from './theme'
 
-// Retour d'Alex Morgan après une épreuve (fiche v3) : portrait et identité, réaction (2 à 4
+// Retour de Stéphanie Vador après une épreuve (fiche v3) : portrait et identité, réaction (2 à 4
 // phrases), variations RÉELLEMENT appliquées et conséquence simulée. `informations_manquantes`
 // reste dans l'état de partie mais n'est PAS affiché : la liste ressemblerait à un corrigé. Écran de restitution
 // uniquement : aucune messagerie ni conversation avec le CEO.

@@ -11,7 +11,7 @@ import { CarteRebondissement } from './Rebondissements'
 import { STRYDE } from './theme'
 
 // Écran d'une épreuve (v3), simplifié en 4 blocs sans saisie supplémentaire :
-// Situation → Alertes reçues → Votre décision → Retour d'Alex Morgan.
+// Situation → Alertes reçues → Votre décision → Retour de Stéphanie Vador.
 // Une décision validée est définitive (lecture seule ensuite).
 
 interface Props {
