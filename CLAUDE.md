@@ -57,7 +57,7 @@ Spécialisations B3 (Univers 3) :
 - verdict final sans bilan réflexif détaillé.
 
 Repères :
-- **Statut (2026-11-27)** : **codée et testée en local** sur la branche `feat/b3-marketing-m2-v3`, non commitée, non déployée. La v2 reste en production tant que la v3 n'est pas validée et déployée.
+- **Statut (2026-11-27)** : **v3 DÉPLOYÉE EN PRODUCTION** le 2026-11-27 (commit `114f2da`, déploiement Vercel `dpl_77Kz39Gbfx1LGVpPMoFdEAqZih6n`). Retour arrière possible vers la v2 : `dpl_ADbZVa8VLczuBbPf6B9oXyMtcaCC`. Contenus « à valider » encore à relire.
 - Spécification : section 3.2. IA et scoring : section 3.5. Écarts avec la fiche : section 3.6.
 - Fiche mission : `fiche-mission-horizon-stryde-m2.docx`.
 - **Principe** : modification ciblée de l'existant (lots 1 à 11 de la v2). Réutiliser le chronomètre, l'état de partie, le pilotage admin, le dossier client, les profils de créateurs, les variantes de crise et la route `/api/mission/analyse`. Ne rien reconstruire.
@@ -684,6 +684,11 @@ Livrables attendus :
 - Liste des contenus et points à valider (dont le prompt v3 et les textes des rebondissements).
 
 ### Journal
+
+**2026-11-27 — M2 Marketing Digital v3 : DÉPLOYÉE EN PRODUCTION** (sur demande de Stéphanie, aucune séance M2 en cours).
+- Commit `114f2da` fusionné en avance rapide dans `main`, poussé ; déploiement Vercel `dpl_77Kz39Gbfx1LGVpPMoFdEAqZih6n` prêt en ~35 s. Retour arrière possible vers `dpl_ADbZVa8VLczuBbPf6B9oXyMtcaCC` (v2, commit `e5a6a13`).
+- Vérifié en production : 9 groupes HTTP 200 ; B3 Négociation inchangée (6 missions) ; écran d'activation v3 et épreuve 1 affichés ; mode accéléré inactif (`?acceleration=30` ignoré, chrono à 15:00) ; analyse IA réelle OK (4 s) ; route admin M2 protégée (401 sans session). Partie de test effacée du navigateur, aucune écriture en base.
+- Reste : sécuriser le jeton GitHub de `.git/config` (toujours présent, poussé avec), relire les contenus « à valider », partie test réelle avec les vrais boutons admin (phase 2, prolongation) avant la prochaine séance.
 
 **2026-11-27 — M2 Marketing Digital v3 : codée et testée en local, non commitée** (branche `feat/b3-marketing-m2-v3`, plan validé par Stéphanie, option A pour la relance).
 - Relance d'une analyse en attente : par l'équipe (bouton) + automatique au retour du réseau et à chaque changement d'étape. Admin non modifié.
