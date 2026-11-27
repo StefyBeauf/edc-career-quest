@@ -685,12 +685,12 @@ Livrables attendus :
 
 ### Journal
 
-**2026-11-27 — M2 v3 : équipe dirigeante, photos produits, capacité d'adaptation** (demande de Stéphanie). Codé et vérifié en local, non commité ni déployé.
+**2026-11-27 — M2 v3 : équipe dirigeante, photos produits, capacité d'adaptation** (demande de Stéphanie). **Déployé en production** le 2026-11-27 (commit `e10dc5b`, déploiement `dpl_886PdonyhEkAPxrrLwUCGPniiFgf`). Retour arrière possible vers `dpl_77Kz39Gbfx1LGVpPMoFdEAqZih6n`. Vérifié en ligne : 4 images, page du groupe, analyse IA avec l'indicateur `adaptation`, admin M2 protégée (401).
 - Dossier client : STRYDE fondée par Stéphanie Vador, entourée d'Inès Ferrand (marketing & communication), Malik Benhamou (artistique & produit), Clara Nguyen (finances & opérations). Rubrique « Équipe dirigeante » avec le portrait de la CEO. Stéphanie Vador est l'unique interlocutrice. Les croquis (conception, variantes de crise, R4) sont désormais attribués à Malik Benhamou.
 - Collection : packshots `origin.webp`, `impact.webp`, `shadow.webp` dans `public/univers3/stryde/`.
 - Scoring : `cohesion` remplacé par `adaptation` (« Capacité d'adaptation ») dans les jauges, le schéma, le prompt, l'état de partie et le verdict. `VERSION_ETAT` passé à 4 : une partie v3 en cours est effacée avec le message neutre (déployer hors séance). Test IA réel OK.
 
-**2026-11-27 — M2 v3 : CEO renommée « Stéphanie Vador, Fondatrice et CEO de STRYDE »** (demande de Stéphanie), avec sa photo `public/univers3/stryde/portrait-ceo.webp` à la place du SVG. Prompts v3 accordés au féminin. Codé et vérifié en local, non commité ni déployé. Point résolu dans l'entrée suivante.
+**2026-11-27 — M2 v3 : CEO renommée « Stéphanie Vador, Fondatrice et CEO de STRYDE »** (demande de Stéphanie), avec sa photo `public/univers3/stryde/portrait-ceo.webp` à la place du SVG. Prompts v3 accordés au féminin. Déployé avec l'entrée suivante. Point résolu dans l'entrée suivante.
 
 **2026-11-27 — M2 Marketing Digital v3 : DÉPLOYÉE EN PRODUCTION** (sur demande de Stéphanie, aucune séance M2 en cours).
 - Commit `114f2da` fusionné en avance rapide dans `main`, poussé ; déploiement Vercel `dpl_77Kz39Gbfx1LGVpPMoFdEAqZih6n` prêt en ~35 s. Retour arrière possible vers `dpl_ADbZVa8VLczuBbPf6B9oXyMtcaCC` (v2, commit `e5a6a13`).
